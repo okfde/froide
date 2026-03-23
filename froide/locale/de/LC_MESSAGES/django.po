@@ -16,16 +16,15 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-23 17:13+0100\n"
-"PO-Revision-Date: 2026-02-09 17:42+0000\n"
+"PO-Revision-Date: 2026-03-23 16:32+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
-"Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
-"froide/de/>\n"
+"Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/froide/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 5.16.1\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -1015,12 +1014,18 @@ msgid ""
 "Cheers,\n"
 "%(site_name)s"
 msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"Sie haben bei Ihrer Registierung angegeben, journalistisch tätig zu sein und %(site_name)s für Ihre Recherchen nutzen zu wollen.\n"
+"Gerne können wir für Ihnen Account spezielle Funktionen freischalten, etwa um Anfragen an mehrere Behörden gleichzeitig stellen.\n"
+"Bitte senden Sie uns dazu einen kurzen Nachweis Ihrer Tätigkeit, damit wir Ihnen Zugang gewähren können.\n"
+"\n"
+"Beste Grüße\n"
+"%(site_name)s"
 
 #: froide/account/templates/account/emails/verify_vip_subject.txt
-#, fuzzy
-#| msgid "{site_name} for journalists"
 msgid "Unlock features for journalists"
-msgstr "{site_name} für Journalist*innen"
+msgstr "Funktionen für Journalist*innen aktivieren"
 
 #: froide/account/templates/account/go.html
 #: froide/foirequest/templates/foirequest/attachment/manage.html
@@ -5051,12 +5056,7 @@ msgid "Include proofs and other attachments"
 msgstr "Fügen Sie Nachweise und andere Anhänge bei"
 
 #: froide/foirequest/templates/foirequest/body/actions/send_message.html
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "                  The proof will be sent in the name of %(name)s. Storing "
-#| "them will store them in your account.\n"
-#| "                "
+#, python-format
 msgid ""
 "\n"
 "                The proof will be sent in the name of %(name)s. Storing them "
@@ -5064,9 +5064,8 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"                  Dieser Nachweis wird im Namen von %(name)s versendet. Wenn "
-"Sie ihn speichern, wird er in Ihrem Konto gespeichert.\n"
-"                "
+"                Dieser Nachweis wird im Namen von %(name)s versendet. Wenn Sie ihn speichern, wird er in Ihrem Konto gespeichert.\n"
+"            "
 
 #: froide/foirequest/templates/foirequest/body/actions/send_message.html
 msgid "If you need to provide an alternative email address, use this one:"
@@ -5963,10 +5962,11 @@ msgid ""
 "Legal Note: This mail was sent through a Freedom Of Information Portal. "
 "Replies might be published automatically.\n"
 msgstr ""
-"Rechtshinweis: Diese E-Mail wurde über den Webservice https://fragdenstaat."
-"de versendet. Antworten werden ggf. im Auftrag der Antragstellenden "
-"automatisch auf dem Internet-Portal veröffentlicht. Falls Sie noch Fragen "
-"haben, besuchen Sie https://fragdenstaat.de/hilfe/fuer-behoerden/\n"
+"Rechtshinweis: Diese E-Mail wurde über den Webservice https://"
+"fragdenstaat.de versendet. Antworten werden ggf. im Auftrag der "
+"Antragstellenden automatisch auf dem Internet-Portal veröffentlicht. Falls "
+"Sie noch Fragen haben, besuchen Sie https://fragdenstaat.de/hilfe/fuer-"
+"behoerden/\n"
 
 #: froide/foirequest/templates/foirequest/emails/request_update.txt
 #: froide/follow/templates/follow/emails/batch_update_follower.txt
@@ -6142,9 +6142,8 @@ msgid "is public?"
 msgstr "öffentlich?"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
-#, fuzzy
 msgid "has problems?"
-msgstr "Welches Problem liegt vor?"
+msgstr "hat Probleme?"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 #, python-format
@@ -6160,9 +6159,8 @@ msgid "No"
 msgstr "Nein"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
-#, fuzzy
 msgid "Unresolved problem reports"
-msgstr "Problemberichte"
+msgstr "Ungelöste Problemberichte"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 #: froide/foirequest/templates/foirequest/publicbody_upload.html
@@ -6655,26 +6653,14 @@ msgstr ""
 "geschwärzt.</p>"
 
 #: froide/foirequest/templates/foirequest/request.html
-#, fuzzy, python-format
-#| msgid ""
-#| "<p>Your request is accesible for everybody on this website. With your "
-#| "request, you contribute to a public archive of official information. You "
-#| "are part of a growing community that strives for transparency in politics "
-#| "and adminstration.</p><p>You can opt into publishing your request later, "
-#| "e.g. after the disclosure of your investigation or research.</p>"
+#, python-format
 msgid ""
 "<p>Your request is accesible for everybody on %(SITE_NAME)s. With your "
 "request, you contribute to a public archive of official information. You are "
 "part of a growing community that strives for transparency in politics and "
 "adminstration.</p><p>You can opt into publishing your request later, e.g. "
 "after the disclosure of your investigation or research.</p>"
-msgstr ""
-"<p>Ihre Anfrage ist für alle auf dieser Website sichtbar. Denn Sie tragen "
-"mit Ihrer Anfrage zu einem öffentlichen Archiv amtlicher Informationen bei "
-"und sorgen so mit einer wachsenden Community für Transparenz in Politik und "
-"Verwaltung.</p><p>Auf Wunsch können Sie Ihre Anfrage aber erst später "
-"öffentlich machen, z.B. nach Veröffentlichung Ihrer investigativen Recherche."
-"</p>"
+msgstr "<p>Ihre Anfrage ist für alle auf %(SITE_NAME)s sichtbar. Öffentliche Anfragen sind ein zentraler Bestandteil unserer Transparenz-Plattform: Sie tragen zu einem frei zugänglichen Archiv amtlicher Informationen bei und ermöglichen es anderen, von Ihren Fragen und den Antworten der Behörden zu profitieren. So schaffen wir gemeinsam mehr Transparenz in Politik und Verwaltung.</p><p>In begründeten Ausnahmenfällen können Sie Ihre Anfrage zunächst auch nicht veröffentlichen, zum Beispiel wenn Sie an einer investigativen Recherche arbeiten. Wir bitten Sie darum, Ihre Anfrage dann nachträglich zu veröffentlichen.</p>"
 
 #: froide/foirequest/templates/foirequest/request.html
 #, python-format
@@ -7629,17 +7615,17 @@ msgstr "Anfrage schreiben"
 msgid ""
 "Access information by filing a request to a public body. We'll guide you "
 "through the process."
-msgstr ""
+msgstr "Erhalten Sie Zugang zu Informationen, indem Sie eine eigene Anfrage an eine Behörde stellen. Wir unterstützen Sie dabei Schritt für Schritt."
 
 #: froide/foirequest/views/make_request.py
 msgid "Let's go!"
-msgstr ""
+msgstr "Los geht's!"
 
 #: froide/foirequest/views/make_request.py
 msgid ""
 "Or send a pre-written request with just one click, by participating in one "
 "of our campaigns:"
-msgstr ""
+msgstr "Oder stellen Sie mit nur einem Klick eine vorformulierte Anfrage, indem Sie bei einer unserer Aktionen teilnehmen:"
 
 #: froide/foirequest/views/make_request.py
 msgid "What can I request?"
@@ -8136,15 +8122,13 @@ msgid "Proof of identity"
 msgstr "Identitätsnachweis"
 
 #: froide/foirequest/views/make_request.py
-#, fuzzy
-#| msgid "Attach a proof of identity"
 msgid "You have provided a proof of your identity"
-msgstr "Identitätsnachweis beifügen"
+msgstr "Sie haben einen Identitätsnachweis angefügt"
 
 #: froide/foirequest/views/make_request.py
 msgid ""
 "You're not providing a proof of your identity (only required in rare cases)"
-msgstr ""
+msgstr "Kein Identitätsnachweis angegeben (nur selten nötig)"
 
 #: froide/foirequest/views/make_request.py
 msgid "Kind Regards"
@@ -8446,12 +8430,12 @@ msgstr "Wir führen Sie Schritt für Schritt durch den Prozess."
 #: froide/foirequest/views/message.py
 #, python-brace-format
 msgid ""
-"Should you experience problems, you can use <a class=\"alert-link\" "
-"href=\"${url}\">the older version</a> here. We welcome feedback!"
+"Should you experience problems, you can use <a class=\"alert-link\" href=\"$"
+"{url}\">the older version</a> here. We welcome feedback!"
 msgstr ""
-"Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" "
-"href=\"${url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über "
-"Feedback freuen."
+"Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" href=\"$"
+"{url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über Feedback "
+"freuen."
 
 #: froide/foirequest/views/message.py
 msgid "We have redone this part of the app."
@@ -9327,8 +9311,8 @@ msgstr "erhalten/<int:follow_id>/<str:check>/"
 msgctxt "url part"
 msgid "unfollow/<str:conf_slug>-<int:follow_id>/<str:check>/"
 msgstr ""
-"keine-benachrichtigungen-erhalten/<str:conf_slug>-<int:follow_id>/<str:"
-"check>/"
+"keine-benachrichtigungen-erhalten/<str:conf_slug>-<int:follow_id>/"
+"<str:check>/"
 
 #: froide/follow/urls.py
 msgctxt "url part"
@@ -10551,6 +10535,9 @@ msgid ""
 "rare cases, for example when requesting information about yourself or to "
 "prove you are a journalist."
 msgstr ""
+"Sie müssen in der Regel nicht Ihre Identität nachweisen! Dies ist nur in "
+"seltenen Fällen nötig, etwa wenn Sie Informationen zu sich selbst anfragen "
+"oder eine Presseanfrage stellen."
 
 #: froide/publicbody/admin.py
 msgid "Public Body Admin"
@@ -12015,8 +12002,8 @@ msgid ""
 "Open Knowledge Foundation</a>. If you want to support Froide, please visit "
 "the <a href=\"https://github.com/okfde/froide\">repository on GitHub</a>."
 msgstr ""
-"Froide ist ein freies und Open Source Projekt der <a href=\"https://okfn."
-"de\">Open Knowledge Foundation </a><br/>Wenn Sie Froide unterstützen "
+"Froide ist ein freies und Open Source Projekt der <a href=\"https://"
+"okfn.de\">Open Knowledge Foundation </a><br/>Wenn Sie Froide unterstützen "
 "möchten, besuchen Sie bitte unser <a href=\"https://github.com/okfde/"
 "froide\">GitHub-Repo</a>"
 
@@ -12873,16 +12860,18 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/foirequest/templates/foirequest/request.html
 #, python-format
-#~ msgid "Participate in %(name)s"
-#~ msgstr "Mitmachen bei %(name)s"
+msgid "Participate in %(name)s"
+msgstr "Mitmachen bei %(name)s"
 
-#, fuzzy
-#~ msgid "Write a request"
-#~ msgstr "Anfrage schreiben"
+#: froide/foirequest/templates/foirequest/snippets/request_campaign_main.html
+msgid "Write a request"
+msgstr "Anfrage stellen"
 
-#~ msgid "What do you want to do?"
-#~ msgstr "Was möchten Sie tun?"
+#: froide/foirequest/views/make_request.py
+msgid "What do you want to do?"
+msgstr "Was möchten Sie tun?"
 
 #~ msgid "If you want to send one of your proofs of identity, choose it here."
 #~ msgstr ""
@@ -13258,15 +13247,15 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgstr "Anzahl der Nutzer:innen"
 
 #~ msgid ""
-#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn."
-#~ "org\">the Open Knowledge Foundation</a>."
+#~ "Froide is a free and Open Source Project by <a href=\"http://"
+#~ "www.okfn.org\">the Open Knowledge Foundation</a>."
 #~ msgstr ""
 #~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/"
 #~ "spenden/\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
 
 #~ msgid ""
-#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://www."
-#~ "okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://"
+#~ "www.okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
 #~ msgstr ""
 #~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/spenden/"
 #~ "\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
@@ -14546,8 +14535,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, fuzzy
 #~ msgid ""
 #~ "If this document &lt;strong>is not a letter to you&lt;/strong> from a "
-#~ "public body, but any other kind of document, it very likely &lt;"
-#~ "strong>does not need a redaction&lt;/strong>."
+#~ "public body, but any other kind of document, it very likely "
+#~ "&lt;strong>does not need a redaction&lt;/strong>."
 #~ msgstr ""
 #~ "Falls dieses Dokument <strong>kein Brief an Sie</strong> von einer "
 #~ "Behörde ist, sondern ein andere Art von Dokument, dann müssen Sie es sehr "
@@ -14613,9 +14602,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "new status."
 #~ msgstr ""
 #~ "Diese Anfrage hat eine Antwort erhalten und ist in einem unbekannten "
-#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a "
-#~ "href=\"%(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen "
-#~ "Status."
+#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a href=\"%"
+#~ "(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen Status."
 
 #, fuzzy
 #~ msgid ""
@@ -14667,8 +14655,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #, fuzzy
 #~ msgid ""
-#~ "to &lt;a href=\"%(url)s\">%(name)s&lt;/a> and &lt;a "
-#~ "href=\"%(urlp)s\">%(count)s other public bodies&lt;/a>"
+#~ "to &lt;a href=\"%(url)s\">%(name)s&lt;/a> and &lt;a href=\"%(urlp)s\">%"
+#~ "(count)s other public bodies&lt;/a>"
 #~ msgstr ""
 #~ "an <a href=\"%(url)s\">%(name)s</a> und <a href=\"%(urlp)s\">%(count)s "
 #~ "andere Behörden</a>"
@@ -14676,8 +14664,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, fuzzy
 #~ msgid ""
 #~ "It looks like you are visiting from %(country_name)s. Did you know that "
-#~ "there is an &lt;a href=\"%(url)s\">FOI site for %(country_name)s called "
-#~ "%(name)s&lt;/a>?"
+#~ "there is an &lt;a href=\"%(url)s\">FOI site for %(country_name)s called %"
+#~ "(name)s&lt;/a>?"
 #~ msgstr ""
 #~ "Es sieht so aus, als kämen Sie aus %(country_name)s. Wussten Sie, dass es "
 #~ "eine <a href=\"%(url)s\">IFG-Seite für %(country_name)s namens %(name)s</"
@@ -14727,8 +14715,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #, fuzzy
 #~ msgid ""
-#~ "If you need assistance, you may reference this error as &lt;"
-#~ "strong>%(ref)s&lt;/strong>."
+#~ "If you need assistance, you may reference this error as &lt;strong>%"
+#~ "(ref)s&lt;/strong>."
 #~ msgstr ""
 #~ "Wenn Sie Hilfe benötigen, können Sie diesen Fehler so referenzieren: "
 #~ "<strong>%(ref)s</strong>."
@@ -15551,3 +15539,17 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Upload and manage attachments"
 #~ msgstr "Anhänge hochladen und verwalten"
+
+#~ msgid ""
+#~ "<p>Your request is accesible for everybody on this website. With your "
+#~ "request, you contribute to a public archive of official information. You "
+#~ "are part of a growing community that strives for transparency in politics "
+#~ "and adminstration.</p><p>You can opt into publishing your request later, "
+#~ "e.g. after the disclosure of your investigation or research.</p>"
+#~ msgstr ""
+#~ "<p>Ihre Anfrage ist für alle auf dieser Website sichtbar. Denn Sie tragen "
+#~ "mit Ihrer Anfrage zu einem öffentlichen Archiv amtlicher Informationen "
+#~ "bei und sorgen so mit einer wachsenden Community für Transparenz in "
+#~ "Politik und Verwaltung.</p><p>Auf Wunsch können Sie Ihre Anfrage aber "
+#~ "erst später öffentlich machen, z.B. nach Veröffentlichung Ihrer "
+#~ "investigativen Recherche.</p>"
