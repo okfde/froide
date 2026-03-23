@@ -76,23 +76,13 @@
 
               <!-- STEP: INTRO / CAMPAIGNS -->
 
-              <div v-if="step === STEPS.INTRO" class="mt-5" id="step_intro">
-                <h1>{{ i18n.makeRequest }}</h1>
-                <p>{{ i18n.whatDoYouWantToDo }}</p>
-                <IntroCampaigns :config="config" @step-next="setStep(stepNext)">
-                  <template #campaign_main>
-                    <DjangoSlot name="campaign_main" />
-                  </template>
-                  <template #campaigns>
-                    <DjangoSlot name="campaigns" />
-                  </template>
-                </IntroCampaigns>
-                <DjangoSlot
-                  name="campaign_other"
-                  has-onlinehelp-links
-                  @onlinehelp-click="onlineHelpShow($event)"
-                />
-              </div>
+              <RequestIntro
+                v-if="step === STEPS.INTRO"
+                class="mt-3 mt-md-5"
+                id="step_intro"
+                :config="config"
+                @step-next="setStep(stepNext)"
+              />
 
               <!-- STEP: INTRO / HOWTO -->
 
@@ -441,7 +431,7 @@ import {
 } from '../../store/mutation_types'
 
 import I18nMixin from '../../lib/i18n-mixin'
-import IntroCampaigns from './intro-campaigns.vue'
+import RequestIntro from './request-intro.vue'
 import IntroSkipPreference from './intro-skip-preference.vue'
 import LetterMixin from './lib/letter-mixin'
 import StoreValueMixin from './lib/store-values-mixin'
@@ -451,7 +441,7 @@ export default {
   name: 'RequestPage',
   components: {
     IntroSkipPreference,
-    IntroCampaigns,
+    RequestIntro,
     PublicbodyBetaChooser,
     PublicbodyMultiChooser,
     SimilarRequestSearch,

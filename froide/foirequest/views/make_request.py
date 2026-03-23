@@ -227,7 +227,13 @@ class MakeRequestView(FormView):
                 "makeRequestYourself": _("Make a request yourself"),
                 "writeRequest": _("Write the request"),
                 "recipientPb": _("Receiving public body"),
-                "whatDoYouWantToDo": _("What do you want to do?"),
+                "introText": _(
+                    "Access information by filing a request to a public body. We'll guide you through the process."
+                ),
+                "letsGo": _("Let's go!"),
+                "orCampaign": _(
+                    "Or send a pre-written request with just one click, by participating in one of our campaigns:"
+                ),
                 "whatCanIRequest": _("What can I request?"),
                 "whatCanINotRequest": _("What can’t I request?"),
                 "search": _("Search"),
