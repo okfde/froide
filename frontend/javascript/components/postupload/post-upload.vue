@@ -827,15 +827,13 @@ addEventListener('hashchange', () => {
   <div class="container">
     <!-- TODO button does not support going back throug pdfRedactionCurrentIndex-->
     <div v-if="step === STEP_INTRO" class="my-3">
-      <a class="btn btn-link text-decoration-none ps-0" href="../..">
-        <span aria-hidden="true">←</span>
-        <u>{{ i18n.cancel }}</u>
+      <a href="../.." class="action-link arrow-back ps-0">
+        {{ i18n.cancel }}
       </a>
     </div>
     <div v-else-if="step !== STEP_OUTRO" class="my-3">
-      <a @click="backStep" class="btn btn-link text-decoration-none ps-0">
-        <span aria-hidden="true">←</span>
-        <u>{{ i18n.back }}</u>
+      <a href="#!" @click="backStep" class="action-link arrow-back ps-0">
+        {{ i18n.back }}
       </a>
     </div>
   </div>
