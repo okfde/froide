@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-11 11:59+0100\n"
+"POT-Creation-Date: 2026-03-23 17:13+0100\n"
 "PO-Revision-Date: 2026-02-09 17:42+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -1000,6 +1000,27 @@ msgstr ""
 #: froide/account/templates/account/emails/password_reset_email.txt
 msgid "Please go to the following page and choose a new password:"
 msgstr "Bitte besuchen Sie folgende Seite und wählen Sie ein neues Passwort:"
+
+#: froide/account/templates/account/emails/verify_vip.txt
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"You have stated to be a journalist while signing up and to use %(site_name)s "
+"for your research.\n"
+"We can enable advanced features for your account, such as sending requests "
+"to multiple public bodies at once.\n"
+"Please provide some brief verification in order for us to grant you access.\n"
+"\n"
+"Cheers,\n"
+"%(site_name)s"
+msgstr ""
+
+#: froide/account/templates/account/emails/verify_vip_subject.txt
+#, fuzzy
+#| msgid "{site_name} for journalists"
+msgid "Unlock features for journalists"
+msgstr "{site_name} für Journalist*innen"
 
 #: froide/account/templates/account/go.html
 #: froide/foirequest/templates/foirequest/attachment/manage.html
@@ -4862,7 +4883,8 @@ msgstr ""
 "auch nach Öffentlich-Schalten der Anfrage nicht veröffentlicht."
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
-#: froide/upload/apps.py froide/upload/forms.py
+#: froide/foirequest/views/message.py froide/upload/apps.py
+#: froide/upload/forms.py
 msgid "Upload"
 msgstr "Upload"
 
@@ -6588,11 +6610,6 @@ msgid "Make a Freedom of Information request"
 msgstr "Stellen Sie eine Informationsfreiheitsanfrage"
 
 #: froide/foirequest/templates/foirequest/request.html
-#, python-format
-msgid "Participate in %(name)s"
-msgstr "Mitmachen bei %(name)s"
-
-#: froide/foirequest/templates/foirequest/request.html
 msgid "Make a request"
 msgstr "Anfrage stellen"
 
@@ -6638,8 +6655,15 @@ msgstr ""
 "geschwärzt.</p>"
 
 #: froide/foirequest/templates/foirequest/request.html
+#, fuzzy, python-format
+#| msgid ""
+#| "<p>Your request is accesible for everybody on this website. With your "
+#| "request, you contribute to a public archive of official information. You "
+#| "are part of a growing community that strives for transparency in politics "
+#| "and adminstration.</p><p>You can opt into publishing your request later, "
+#| "e.g. after the disclosure of your investigation or research.</p>"
 msgid ""
-"<p>Your request is accesible for everybody on this website. With your "
+"<p>Your request is accesible for everybody on %(SITE_NAME)s. With your "
 "request, you contribute to a public archive of official information. You are "
 "part of a growing community that strives for transparency in politics and "
 "adminstration.</p><p>You can opt into publishing your request later, e.g. "
@@ -6953,11 +6977,6 @@ msgstr ""
 "Dokument die Informationen nicht mehr enthält. Falls das Dokument nicht "
 "ordentlich lädt, brechen Sie ab und informieren Sie eine:n Moderator:in der "
 "Seite."
-
-#: froide/foirequest/templates/foirequest/snippets/request_campaign_main.html
-#, fuzzy
-msgid "Write a request"
-msgstr "Anfrage schreiben"
 
 #: froide/foirequest/templates/foirequest/snippets/request_hints.html
 msgid "Important Notes:"
@@ -7607,8 +7626,20 @@ msgid "Write the request"
 msgstr "Anfrage schreiben"
 
 #: froide/foirequest/views/make_request.py
-msgid "What do you want to do?"
-msgstr "Was möchten Sie tun?"
+msgid ""
+"Access information by filing a request to a public body. We'll guide you "
+"through the process."
+msgstr ""
+
+#: froide/foirequest/views/make_request.py
+msgid "Let's go!"
+msgstr ""
+
+#: froide/foirequest/views/make_request.py
+msgid ""
+"Or send a pre-written request with just one click, by participating in one "
+"of our campaigns:"
+msgstr ""
 
 #: froide/foirequest/views/make_request.py
 msgid "What can I request?"
@@ -8100,6 +8131,21 @@ msgstr "Zum Login"
 msgid "Show entire message"
 msgstr "Gesamte Nachricht anzeigen"
 
+#: froide/foirequest/views/make_request.py froide/proof/forms.py
+msgid "Proof of identity"
+msgstr "Identitätsnachweis"
+
+#: froide/foirequest/views/make_request.py
+#, fuzzy
+#| msgid "Attach a proof of identity"
+msgid "You have provided a proof of your identity"
+msgstr "Identitätsnachweis beifügen"
+
+#: froide/foirequest/views/make_request.py
+msgid ""
+"You're not providing a proof of your identity (only required in rare cases)"
+msgstr ""
+
 #: froide/foirequest/views/make_request.py
 msgid "Kind Regards"
 msgstr "Mit freundlichen Grüßen"
@@ -8360,10 +8406,6 @@ msgstr "brief.pdf"
 #: froide/foirequest/views/message.py
 msgid "Upload or scan letter"
 msgstr "Brief hochladen oder scannen"
-
-#: froide/foirequest/views/message.py
-msgid "Hochladen"
-msgstr ""
 
 #: froide/foirequest/views/message.py
 msgid "Enter information"
@@ -10383,11 +10425,6 @@ msgid "Proof"
 msgstr "Nachweis"
 
 #: froide/proof/forms.py
-msgid "If you want to send one of your proofs of identity, choose it here."
-msgstr ""
-"Wenn Sie einen Ihrer Nachweise mitsenden möchten, wählen Sie ihn hier aus."
-
-#: froide/proof/forms.py
 msgid "Name of Proof"
 msgstr "Bezeichnung"
 
@@ -10428,10 +10465,6 @@ msgstr ""
 "kann. Den Hinweis zur empfohlenen Vornahme von Schwärzungen, sowie <a "
 "href=\"{url_privacy}\" target=\"_blank\">die Datenschutzerklärung</a> habe "
 "ich zur Kenntnis genommen."
-
-#: froide/proof/forms.py
-msgid "Proof of identity"
-msgstr "Identitätsnachweis"
 
 #: froide/proof/models.py
 #, python-brace-format
@@ -10511,6 +10544,13 @@ msgstr ""
 msgid "Click or touch and drag over the image to redact parts of it."
 msgstr ""
 "Klicken und ziehen Sie ein Rechteck über das Bild, um den Teil zu schwärzen."
+
+#: froide/proof/widgets.py
+msgid ""
+"You usually do not need to prove your identity! This is only required in "
+"rare cases, for example when requesting information about yourself or to "
+"prove you are a journalist."
+msgstr ""
 
 #: froide/publicbody/admin.py
 msgid "Public Body Admin"
@@ -12832,6 +12872,21 @@ msgstr "organisation/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#, python-format
+#~ msgid "Participate in %(name)s"
+#~ msgstr "Mitmachen bei %(name)s"
+
+#, fuzzy
+#~ msgid "Write a request"
+#~ msgstr "Anfrage schreiben"
+
+#~ msgid "What do you want to do?"
+#~ msgstr "Was möchten Sie tun?"
+
+#~ msgid "If you want to send one of your proofs of identity, choose it here."
+#~ msgstr ""
+#~ "Wenn Sie einen Ihrer Nachweise mitsenden möchten, wählen Sie ihn hier aus."
 
 #~ msgid ""
 #~ "This site is <strong>public</strong>. Everything you type and any "
