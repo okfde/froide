@@ -81,7 +81,7 @@ async def test_campaign_request_match_live(
     await do_login(page, live_server)
     await go_to_make_request_url(page, live_server)
 
-    await page.get_by_role("button", name="Make request").click()
+    await page.get_by_role("button", name="Let's go").click()
     await page.locator("#step_find_similar").get_by_role("button", name="Skip").click()
 
     pb = PublicBody.objects.first()
