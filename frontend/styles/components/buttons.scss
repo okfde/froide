@@ -56,6 +56,10 @@ a,
     content: '→ ';
   }
 
+  &.arrow-back::before {
+    content: '← ';
+  }
+
   &.arrow-end::after {
     content: ' →';
   }
