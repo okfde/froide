@@ -10,16 +10,6 @@
   display: none;
 }
 
-@include media-breakpoint-up(md) {
-  .btn .hover-detail {
-    display: none;
-  }
-
-  .btn:hover .hover-detail {
-    display: inline-block;
-  }
-}
-
 .hover-btn-success {
   @include button-outline-variant(map-get($theme-colors, 'success'));
   background-color: var(--#{$prefix}body-bg);
@@ -43,67 +33,30 @@
   );
 }
 
-.btn-warning-blink {
-  @include button-variant(
-    map-get($theme-colors, 'warning'),
-    map-get($theme-colors, 'warning')
-  );
-  animation: warning-blink 1s ease-in-out infinite;
-}
-.btn-warning-blink:hover {
-  animation: none;
-}
-
 .btn-outline-redact {
   @include button-outline-variant(map-get($theme-colors, 'dark'));
   border-color: var(--#{$prefix}body-color);
   color: var(--#{$prefix}body-color);
 }
 
-@keyframes warning-blink {
-  0% {
-    background-color: $warning;
-  }
-  50% {
-    background-color: lighten($warning, 25%);
-  }
-}
+.action-link {
+  font-weight: 500;
+  transition: font-weight 0.3s ease;
 
-.btn-group-forms {
-  position: relative;
-  display: inline-flex;
-  vertical-align: middle; // match .btn alignment given font-size hack above
-
-  .btn {
-    position: relative;
-    flex: 1 1 auto;
-
-    // Bring the hover, focused, and "active" buttons to the front to overlay
-    // the borders properly
-    &:hover,
-    &:focus,
-    &:active,
-    &.active {
-      z-index: 1;
-    }
+  &:hover {
+    text-decoration: none;
+    font-weight: 600;
   }
 }
 
-.btn-group-forms {
-  // Prevent double borders when buttons are next to each other
-  > .btn:not(:first-child),
-  > form:not(:first-child) > .btn {
-    margin-left: -$btn-border-width;
+a,
+.btn,
+.action-link {
+  &.arrow::before {
+    content: '→ ';
   }
 
-  // Reset rounded corners
-  > .btn:not(:last-child):not(.dropdown-toggle),
-  > form:not(:last-child) > .btn {
-    @include border-end-radius(0);
-  }
-
-  > .btn:not(:first-child),
-  > form:not(:first-child) > .btn {
-    @include border-start-radius(0);
+  &.arrow-end::after {
+    content: ' →';
   }
 }
