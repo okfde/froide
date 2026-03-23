@@ -30,14 +30,16 @@
 
           <div class="row justify-content-lg-center">
             <div class="col-lg-12">
-              <div v-if="stepBack" class="my-3 d-flex justify-content-between">
+              <div
+                v-if="stepBack"
+                class="my-3 d-flex justify-content-between align-items-center"
+              >
                 <a
-                  class="btn btn-link text-decoration-none ps-0"
+                  class="action-link arrow-back text-decoration-none ps-0"
                   :href="'#step-' + stepBack"
                   @click="setStep(stepBack)"
                 >
-                  <span aria-hidden="true">←</span>
-                  <u>{{ i18n.back }}</u>
+                  {{ i18n.back }}
                 </a>
                 <button
                   v-if="topNextLabel"
