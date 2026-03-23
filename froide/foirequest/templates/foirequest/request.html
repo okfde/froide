@@ -1,7 +1,6 @@
 {% extends 'foirequest/base.html' %}
 {% load i18n %}
 {% load static %}
-{% load markup %}
 {% load searchtags %}
 {% load block_helper %}
 {% load form_helper %}
@@ -52,29 +51,27 @@
             {# request-page will skip the INTRO_HOWTO step if this is empty #}
             {% include "foirequest/snippets/request_intro_howto.html" %}
         </template>
-        <template data-slot="campaign_main">
-            {% include "foirequest/snippets/request_campaign_main.html" %}
-        </template>
-        <template data-slot="campaign_other">
-            {% include "foirequest/snippets/request_campaign_other.html" %}
-        </template>
         <template data-slot="campaigns">
-            {% for campaign in campaigns %}
-                <div class="col-12 col-sm-6 col-md-4 mb-4">
-                    <div class="d-flex flex-column border border-2 border-light h-100 p-3">
-                        {% if campaign.logo %}
-                            <img src="{{ campaign.logo.url }}"
-                                 alt=""
-                                 class="campaign-logo d-block object-fit-contain w-100 mb-3" />
-                        {% endif %}
-                        <h2 class="h5">{% blocktrans with name=campaign.name %}Participate in {{ name }}{% endblocktrans %}</h2>
-                        {% if campaign.short_description %}<div class="fs-6">{{ campaign.short_description|markdown }}</div>{% endif %}
-                        <div class="mt-auto">
-                            <a href="{{ campaign.url }}" class="btn btn-outline-primary w-100">{% trans "Make a request" %}</a>
+            <ul class="list-unstyled p-0 row g-3">
+                {% for campaign in campaigns %}
+                    <li class="col-12 col-md-4">
+                        <div class="d-flex flex-column border border-2 border-light h-100 p-3">
+                            {% if campaign.logo %}
+                                <h2>
+                                    <img src="{{ campaign.logo.url }}"
+                                         alt="{{ campaign.name }}"
+                                         class="img-md mb-3" />
+                                </h2>
+                            {% endif %}
+                            {% if campaign.short_description %}<p>{{ campaign.short_description }}</p>{% endif %}
+                            <div class="mt-auto">
+                                <a href="{{ campaign.url }}" class="action-link arrow-end">{% trans "Make a request" %}</a>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            {% endfor %}
+                    </li>
+                {% endfor %}
+                {% include "foirequest/snippets/request_campaign_other.html" %}
+            </ul>
         </template>
         <template data-slot="messages">
             {% include "snippets/messages.html" %}
