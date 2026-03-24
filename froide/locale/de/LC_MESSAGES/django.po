@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-24 10:49+0100\n"
+"POT-Creation-Date: 2026-03-24 11:28+0100\n"
 "PO-Revision-Date: 2026-03-23 16:32+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/froide/de/>\n"
@@ -673,14 +673,8 @@ msgstr "Ihre E-Mail-Adresse wurde bestätigt!"
 
 #: froide/account/templates/account/confirmed.html
 #, python-format
-msgid ""
-"\n"
-"              Your request “<a href=\"%(url)s\">%(title)s</a>” has been sent.\n"
-"            "
-msgstr ""
-"\n"
-"              Ihre Anfrage „<a href=\"%(url)s\">%(title)s</a>“ wurde versendet.\n"
-"            "
+msgid "Your request “<a href=\"%(url)s\">%(title)s</a>” has been sent."
+msgstr "Ihre Anfrage „<a href=\"%(url)s\">%(title)s</a>“ wurde versendet."
 
 #: froide/account/templates/account/confirmed.html
 #: froide/foirequest/templates/foirequest/sent.html
@@ -982,14 +976,8 @@ msgstr "Passwort ändern"
 
 #: froide/account/templates/account/includes/impostor.html
 #, python-format
-msgid ""
-"\n"
-"  WARNING! %(impostor)s, you are an impostor! You pretend to be <strong>%(user)s</strong>!\n"
-"  "
-msgstr ""
-"\n"
-"  ACHTUNG! %(impostor)s, du bist ein Impostor! Du tust so als wärest du <strong>%(user)s</strong>!\n"
-"  "
+msgid "WARNING! %(impostor)s, you are an impostor! You pretend to be <strong>%(user)s</strong>!"
+msgstr "ACHTUNG! %(impostor)s, du bist ein Impostor! Du tust so als wärest du <strong>%(user)s</strong>!"
 
 #: froide/account/templates/account/includes/impostor.html
 msgid "Eject"
@@ -1037,14 +1025,8 @@ msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse!"
 
 #: froide/account/templates/account/new.html
 #, python-format
-msgid ""
-"\n"
-"            Your request “%(title)s” will only be sent to the public body, when you confirm your email address.\n"
-"          "
-msgstr ""
-"\n"
-"            Ihre Anfrage „%(title)s“ wird erst an die Behörde versendet, wenn Sie Ihre E-Mail-Adresse bestätigen.\n"
-"          "
+msgid "Your request “%(title)s” will only be sent to the public body, when you confirm your email address."
+msgstr "Ihre Anfrage „%(title)s“ wird erst an die Behörde versendet, wenn Sie Ihre E-Mail-Adresse bestätigen."
 
 #: froide/account/templates/account/new.html
 msgid "Check your emails for your account"
@@ -1052,14 +1034,8 @@ msgstr "Rufen Sie Ihre E-Mails für diese Adresse ab:"
 
 #: froide/account/templates/account/new.html
 #, python-format
-msgid ""
-"\n"
-"            Click the <strong class=\"highlight\">confirmation link</strong> in the email from %(SITE_NAME)s.\n"
-"          "
-msgstr ""
-"\n"
-"            Klicken Sie den <strong class=\"highlight\">Bestätigungslink</strong> in der E-Mail von %(SITE_NAME)s.\n"
-"          "
+msgid "Click the <strong class=\"highlight\">confirmation link</strong> in the email from %(SITE_NAME)s."
+msgstr "Klicken Sie den <strong class=\"highlight\">Bestätigungslink</strong> in der E-Mail von %(SITE_NAME)s."
 
 #: froide/account/templates/account/new.html
 msgid "Please go to your email account and <strong>click the confirmation link.</strong>"
@@ -1158,14 +1134,8 @@ msgstr "Zeige alle Anfragen von %(name)s"
 
 #: froide/account/templates/account/profile.html
 #, python-format
-msgid ""
-"\n"
-"              %(name)s has taken part in these campaigns\n"
-"            "
-msgstr ""
-"\n"
-"              %(name)s hat an diesen Aktionen teilgenommen\n"
-"            "
+msgid "%(name)s has taken part in these campaigns"
+msgstr "%(name)s hat an diesen Aktionen teilgenommen"
 
 #: froide/account/templates/account/reauth.html
 msgid "Authenticate again"
@@ -1226,14 +1196,8 @@ msgid "Make my account private"
 msgstr "Mein Nutzerkonto auf privat schalten"
 
 #: froide/account/templates/account/settings.html
-msgid ""
-"\n"
-"            If you changed your mind about the public visibility of your account name, we can change your account to <b>private</b>. This will automatically remove your name where it is currently publicly visible.\n"
-"          "
-msgstr ""
-"\n"
-"                Wenn Sie sich bezüglich der Sichtbarkeit Ihres Namens umentschieden haben, dann können Sie hier Ihr Konto auf <b>privat</b> schalten. Dies wird automatisch Ihren Namen entfernen, wo er gerade öffentlich sichtbar ist.\n"
-"              "
+msgid "If you changed your mind about the public visibility of your account name, we can change your account to <b>private</b>. This will automatically remove your name where it is currently publicly visible."
+msgstr "Wenn Sie sich bezüglich der Sichtbarkeit Ihres Namens umentschieden haben, dann können Sie hier Ihr Konto auf <b>privat</b> schalten. Dies wird automatisch Ihren Namen entfernen, wo er gerade öffentlich sichtbar ist."
 
 #: froide/account/templates/account/settings.html
 msgid "This account-wide setting <b>cannot be undone</b>.<br /> Your account will <b>stay private</b> once you set it to private."
@@ -1731,14 +1695,8 @@ msgstr "Aktionen"
 
 #: froide/campaign/templates/campaign/request_banner.html
 #, python-format
-msgid ""
-"\n"
-"              This request was made as part of the campaign <a href=\"%(url)s\">“%(name)s”</a>.\n"
-"            "
-msgstr ""
-"\n"
-"              Diese Anfrage wurde als Teil der Aktion <a href=\"%(url)s\">„%(name)s“</a> gestellt.\n"
-"            "
+msgid "This request was made as part of the campaign <a href=\"%(url)s\">“%(name)s”</a>."
+msgstr "Diese Anfrage wurde als Teil der Aktion <a href=\"%(url)s\">„%(name)s“</a> gestellt."
 
 #: froide/campaign/templates/campaign/request_banner.html
 #: froide/foirequest/views/make_request.py
@@ -1848,14 +1806,8 @@ msgstr "Kommentar absenden"
 
 #: froide/comments/templates/froide_comments/list.html
 #, python-format
-msgid ""
-"\n"
-"            Show %(count)s other comments\n"
-"          "
-msgstr ""
-"\n"
-"              Zeige %(count)s weitere Kommentare\n"
-"            "
+msgid "Show %(count)s other comments"
+msgstr "Zeige %(count)s weitere Kommentare"
 
 #: froide/document/admin.py
 msgid "Add documents to collection..."
@@ -2068,14 +2020,8 @@ msgstr "Beschreibung bearbeiten"
 
 #: froide/document/templates/filingcabinet/document_detail.html
 #, python-format
-msgid ""
-"\n"
-"        This document is part of the request ”<a href=\"%(request_url)s\">%(title)s</a>”.\n"
-"        "
-msgstr ""
-"\n"
-"        Dieses Dokument ist Teil der Anfrage „<a href=\"%(request_url)s\">%(title)s</a>“\n"
-"        "
+msgid "This document is part of the request ”<a href=\"%(request_url)s\">%(title)s</a>”."
+msgstr "Dieses Dokument ist Teil der Anfrage „<a href=\"%(request_url)s\">%(title)s</a>“."
 
 #. Translators: request URL
 #: froide/document/urls.py froide/foirequest/urls/__init__.py
@@ -4208,14 +4154,8 @@ msgstr "Eindeutige Aktionen:"
 
 #: froide/foirequest/templates/foirequest/_assign_project_form.html
 #, python-format
-msgid ""
-"\n"
-"        Currently, the project <a href=\"%(url)s\">%(title)s</a> is assigned.\n"
-"      "
-msgstr ""
-"\n"
-"           Momentan ist das Projekt <a href=\"%(url)s\">%(title)s</a> zugewiesen.\n"
-"          "
+msgid "Currently, the project <a href=\"%(url)s\">%(title)s</a> is assigned."
+msgstr "Momentan ist das Projekt <a href=\"%(url)s\">%(title)s</a> zugewiesen."
 
 #: froide/foirequest/templates/foirequest/_assign_project_form.html
 msgid "Currently no project assigned."
@@ -4252,41 +4192,17 @@ msgstr "Suchen Sie in Ihren Entwürfen"
 #: froide/foirequest/templates/foirequest/account/list_drafts.html
 #: froide/foirequest/templates/foirequest/account/list_projects.html
 #, python-format
-msgid ""
-"\n"
-"            Your search for “%(query)s” produced one search result.\n"
-"          "
-msgid_plural ""
-"\n"
-"            Your search for “%(query)s” produced %(request_count)s search results.\n"
-"          "
-msgstr[0] ""
-"\n"
-"            Ihre Suche nach “%(query)s” ergab eine Anfrage.\n"
-"          "
-msgstr[1] ""
-"\n"
-"            Ihre Suche nach „%(query)s“ ergab %(request_count)s Anfragen.\n"
-"          "
+msgid "Your search for “%(query)s” produced one search result."
+msgid_plural "Your search for “%(query)s” produced %(request_count)s search results."
+msgstr[0] "Ihre Suche nach “%(query)s” ergab eine Anfrage."
+msgstr[1] "Ihre Suche nach „%(query)s“ ergab %(request_count)s Anfragen."
 
 #: froide/foirequest/templates/foirequest/account/list_drafts.html
 #, python-format
-msgid ""
-"\n"
-"            You have one request draft.\n"
-"          "
-msgid_plural ""
-"\n"
-"            You have %(request_count)s request drafts.\n"
-"          "
-msgstr[0] ""
-"\n"
-"            Sie haben einen Anfrageentwurf.\n"
-"          "
-msgstr[1] ""
-"\n"
-"            Sie haben %(request_count)s Anfrageentwürfe.\n"
-"          "
+msgid "You have one request draft."
+msgid_plural "You have %(request_count)s request drafts."
+msgstr[0] "Sie haben einen Anfrageentwurf."
+msgstr[1] "Sie haben %(request_count)s Anfrageentwürfe."
 
 #: froide/foirequest/templates/foirequest/account/list_drafts.html
 #: froide/foirequest/templates/foirequest/account/list_projects.html
@@ -4315,18 +4231,8 @@ msgstr[1] "„%(subject)s” an %(count)s Behörden"
 
 #: froide/foirequest/templates/foirequest/account/list_drafts.html
 #, python-format
-msgid ""
-"\n"
-"          last used for <a href=\"%(url)s\">\n"
-"            %(title)s\n"
-"          </a>\n"
-"        "
-msgstr ""
-"\n"
-"        zuletzt genutzt für <a href=\"%(url)s\">\n"
-"\t %(title)s\n"
-"\t</a>\n"
-"      "
+msgid "last used for <a href=\"%(url)s\">%(title)s</a>"
+msgstr "zuletzt genutzt für <a href=\"%(url)s\">%(title)s</a>"
 
 #: froide/foirequest/templates/foirequest/account/list_drafts.html
 msgid "no request made yet"
@@ -4342,41 +4248,17 @@ msgstr "Suchen Sie nach Anfragen, denen Sie folgen"
 
 #: froide/foirequest/templates/foirequest/account/list_following.html
 #, python-format
-msgid ""
-"\n"
-"            You follow one request matching your search for “%(query)s”.\n"
-"          "
-msgid_plural ""
-"\n"
-"            You follow %(request_count)s requests matching your search for “%(query)s”.\n"
-"          "
-msgstr[0] ""
-"\n"
-"            Sie folgen einer Anfrage mit dem Suchbegriff „%(query)s“.\n"
-"          "
-msgstr[1] ""
-"\n"
-"            Sie folgen %(request_count)s Anfragen mit dem Suchbegriff „%(query)s“.\n"
-"          "
+msgid "You follow one request matching your search for “%(query)s”."
+msgid_plural "You follow %(request_count)s requests matching your search for “%(query)s”."
+msgstr[0] "Sie folgen einer Anfrage mit dem Suchbegriff „%(query)s“."
+msgstr[1] "Sie folgen %(request_count)s Anfragen mit dem Suchbegriff „%(query)s“."
 
 #: froide/foirequest/templates/foirequest/account/list_following.html
 #, python-format
-msgid ""
-"\n"
-"            You follow one request so far.\n"
-"          "
-msgid_plural ""
-"\n"
-"            You follow %(request_count)s requests.\n"
-"          "
-msgstr[0] ""
-"\n"
-"            Sie folgen bisher einer Anfrage.\n"
-"          "
-msgstr[1] ""
-"\n"
-"            Sie folgen %(request_count)s Anfragen.\n"
-"          "
+msgid "You follow one request so far."
+msgid_plural "You follow %(request_count)s requests."
+msgstr[0] "Sie folgen bisher einer Anfrage."
+msgstr[1] "Sie folgen %(request_count)s Anfragen."
 
 #: froide/foirequest/templates/foirequest/account/list_following.html
 #: froide/foirequest/templates/foirequest/account/list_requests.html
@@ -4390,60 +4272,25 @@ msgstr "Suchen Sie in Ihren Projekten"
 
 #: froide/foirequest/templates/foirequest/account/list_projects.html
 #, python-format
-msgid ""
-"\n"
-"            You have one project.\n"
-"          "
-msgid_plural ""
-"\n"
-"            You have %(request_count)s projects.\n"
-"          "
-msgstr[0] ""
-"\n"
-"            Sie haben ein Projekt.\n"
-"          "
-msgstr[1] ""
-"\n"
-"            Sie haben %(request_count)s Projekte.\n"
-"          "
+msgid "You have one project."
+msgid_plural "You have %(request_count)s projects."
+msgstr[0] "Sie haben ein Projekt."
+msgstr[1] "Sie haben %(request_count)s Projekte."
+
+#: froide/foirequest/templates/foirequest/account/list_requests.html
+#: froide/helper/templates/helper/search/search_base.html
+#, python-format
+msgid "Your search produced one search result."
+msgid_plural "Your search produced %(request_count)s search results."
+msgstr[0] "Ihre Suche ergab eine Anfrage."
+msgstr[1] "Ihre Suche ergab %(request_count)s Anfragen."
 
 #: froide/foirequest/templates/foirequest/account/list_requests.html
 #, python-format
-msgid ""
-"\n"
-"            Your search produced one search result.\n"
-"          "
-msgid_plural ""
-"\n"
-"            Your search produced %(request_count)s search results.\n"
-"          "
-msgstr[0] ""
-"\n"
-"            Ihre Suche nach ergab eine Anfrage.\n"
-"          "
-msgstr[1] ""
-"\n"
-"            Ihre Suche ergab %(request_count)s Anfragen.\n"
-"          "
-
-#: froide/foirequest/templates/foirequest/account/list_requests.html
-#, python-format
-msgid ""
-"\n"
-"            You have one request so far.\n"
-"          "
-msgid_plural ""
-"\n"
-"            You have %(request_count)s requests.\n"
-"          "
-msgstr[0] ""
-"\n"
-"            Sie haben bisher eine Anfrage.\n"
-"          "
-msgstr[1] ""
-"\n"
-"            Sie haben %(request_count)s Anfragen.\n"
-"          "
+msgid "You have one request so far."
+msgid_plural "You have %(request_count)s requests."
+msgstr[0] "Sie haben bisher eine Anfrage."
+msgstr[1] "Sie haben %(request_count)s Anfragen."
 
 #: froide/foirequest/templates/foirequest/account/list_requests.html
 msgid "Send request"
@@ -4616,14 +4463,8 @@ msgstr "Anhang „%(name)s“"
 
 #: froide/foirequest/templates/foirequest/attachment/show.html
 #, python-format
-msgid ""
-"\n"
-"    This attachment is part of the request ”<a href=\"%(message_url)s\">%(title)s</a>”.\n"
-"    "
-msgstr ""
-"\n"
-"        Dieser Anhang ist Teil der Anfrage „<a href=\"%(message_url)s\">%(title)s</a>“.\n"
-"        "
+msgid "This attachment is part of the request ”<a href=\"%(message_url)s\">%(title)s</a>”."
+msgstr "Dieser Anhang ist Teil der Anfrage „<a href=\"%(message_url)s\">%(title)s</a>“."
 
 #: froide/foirequest/templates/foirequest/attachment/show.html
 msgid "Don't forget to set the status of this request!"
@@ -4663,16 +4504,8 @@ msgid "Ask for mediation for this request"
 msgstr "Fragen Sie nach Vermittlung zu dieser Anfrage"
 
 #: froide/foirequest/templates/foirequest/body/actions/escalate.html
-msgid ""
-"\n"
-"    If you think your request was not properly handled or it is delayed, you can ask for assistance.\n"
-"    Here you can explain your case to the authority that is responsible for your request.\n"
-"    "
-msgstr ""
-"\n"
-"                          Wenn Sie denken, dass diese Anfrage nicht ordentlich beantwortet wurde oder verspätet ist, dann können Sie um Vermittlung bitten.\n"
-"                          Hier können Sie der zuständigen Vermittlungsbehörde Ihren Fall erklären.\n"
-"                          "
+msgid "If you think your request was not properly handled or it is delayed, you can ask for assistance. Here you can explain your case to the authority that is responsible for your request."
+msgstr "Wenn Sie denken, dass diese Anfrage nicht ordentlich beantwortet wurde oder verspätet ist, dann können Sie um Vermittlung bitten. Hier können Sie der zuständigen Vermittlungsbehörde Ihren Fall erklären."
 
 #: froide/foirequest/templates/foirequest/body/actions/escalate.html
 #: froide/publicbody/templates/publicbody/show_foilaw.html
@@ -4697,24 +4530,12 @@ msgid "Your request is <b>overdue</b>. You should send a reminder to the Public 
 msgstr "Ihre Anfrage ist <b>verspätet</b>. Sie sollten der Behörde eine Nachricht schicken."
 
 #: froide/foirequest/templates/foirequest/body/actions/send_message.html
-msgid ""
-"\n"
-"        You can reply to the public body here.\n"
-"        "
-msgstr ""
-"\n"
-"                    Hier können Sie der Behörde antworten.\n"
-"                  "
+msgid "You can reply to the public body here."
+msgstr "Hier können Sie der Behörde antworten."
 
 #: froide/foirequest/templates/foirequest/body/actions/send_message.html
-msgid ""
-"\n"
-"        Here you can send another message to this public body.\n"
-"        "
-msgstr ""
-"\n"
-"                    Hier können Sie eine weitere Nachricht an die Behörde senden.\n"
-"                  "
+msgid "Here you can send another message to this public body."
+msgstr "Hier können Sie eine weitere Nachricht an die Behörde senden."
 
 #: froide/foirequest/templates/foirequest/body/actions/send_message.html
 msgid "Include proofs and other attachments"
@@ -4722,14 +4543,8 @@ msgstr "Fügen Sie Nachweise und andere Anhänge bei"
 
 #: froide/foirequest/templates/foirequest/body/actions/send_message.html
 #, python-format
-msgid ""
-"\n"
-"                The proof will be sent in the name of %(name)s. Storing them will store them in your account.\n"
-"            "
-msgstr ""
-"\n"
-"                Dieser Nachweis wird im Namen von %(name)s versendet. Wenn Sie ihn speichern, wird er in Ihrem Konto gespeichert.\n"
-"            "
+msgid "The proof will be sent in the name of %(name)s. Storing them will store them in your account."
+msgstr "Dieser Nachweis wird im Namen von %(name)s versendet. Wenn Sie ihn speichern, wird er in Ihrem Konto gespeichert."
 
 #: froide/foirequest/templates/foirequest/body/actions/send_message.html
 msgid "If you need to provide an alternative email address, use this one:"
@@ -4853,14 +4668,8 @@ msgstr "Prüfen, um freizugeben"
 
 #: froide/foirequest/templates/foirequest/body/message/attachments/list.html
 #, python-format
-msgid ""
-"\n"
-"            Show %(count)s more attachments\n"
-"          "
-msgstr ""
-"\n"
-"              Zeige %(count)s weitere Anhänge\n"
-"            "
+msgid "Show %(count)s more attachments"
+msgstr "Zeige %(count)s weitere Anhänge"
 
 #: froide/foirequest/templates/foirequest/body/message/guidance.html
 #: froide/guide/templates/guide/guidance.html
@@ -5134,22 +4943,10 @@ msgstr "Diese URL gibt anderen Lese-Zugriff."
 
 #: froide/foirequest/templates/foirequest/body/timeline.html
 #, python-format
-msgid ""
-"\n"
-"                                    One Message\n"
-"                                "
-msgid_plural ""
-"\n"
-"                                    %(counter)s Messages\n"
-"                                "
-msgstr[0] ""
-"\n"
-"                                    Eine Nachricht\n"
-"                                "
-msgstr[1] ""
-"\n"
-"                                    %(counter)s Nachrichten\n"
-"                                "
+msgid "One Message"
+msgid_plural "%(counter)s Messages"
+msgstr[0] "Eine Nachricht"
+msgstr[1] "%(counter)s Nachrichten"
 
 #: froide/foirequest/templates/foirequest/body/timeline.html
 msgid "overdue"
@@ -5627,36 +5424,18 @@ msgstr "Zurück zur Projektseite"
 
 #: froide/foirequest/templates/foirequest/foiproject_action.html
 #, python-format
-msgid ""
-"\n"
-"            Request to %(pb_name)s [#%(req_id)s]\n"
-"            "
-msgstr ""
-"\n"
-"            Anfrage an %(pb_name)s [#%(req_id)s]\n"
-"            "
+msgid "Request to %(pb_name)s [#%(req_id)s]"
+msgstr "Anfrage an %(pb_name)s [#%(req_id)s]"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 #, python-format
-msgid ""
-"\n"
-"      Created on %(date)s with currently %(num)s requests.\n"
-"      "
-msgstr ""
-"\n"
-"       Erstellt am %(date)s mit aktuell %(num)s Anfragen.\n"
-"       "
+msgid "Created on %(date)s with currently %(num)s requests."
+msgstr "Erstellt am %(date)s mit aktuell %(num)s Anfragen."
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 #, python-format
-msgid ""
-"\n"
-"      Created on %(date)s with currently %(num)s public requests.\n"
-"      "
-msgstr ""
-"\n"
-"        Erstellt am %(date)s mit aktuell %(num)s öffentlichen Anfragen.\n"
-"        "
+msgid "Created on %(date)s with currently %(num)s public requests."
+msgstr "Erstellt am %(date)s mit aktuell %(num)s öffentlichen Anfragen."
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "This project and all its requests are <strong>public</strong>."
@@ -5912,14 +5691,8 @@ msgstr "Frist bearbeiten"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
 #, python-format
-msgid ""
-"\n"
-"                  Extend deadline by a number of %(unit)s.\n"
-"                "
-msgstr ""
-"\n"
-"                  Verlängern Sie die Frist um eine Anzahl %(unit)s.\n"
-"                "
+msgid "Extend deadline by a number of %(unit)s."
+msgstr "Verlängern Sie die Frist um eine Anzahl %(unit)s."
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
 msgid "Extend deadline"
@@ -6064,12 +5837,8 @@ msgstr "Mit freundlichen Grüßen"
 
 #: froide/foirequest/templates/foirequest/publicbody_upload.html
 #, python-format
-msgid ""
-"\n"
-"  File transfer by <mark>%(name)s</mark> for request [#%(reqid)s]\n"
-msgstr ""
-"\n"
-"  Dateiübermittlung als <mark>%(name)s</mark> zur Anfrage [#%(reqid)s]\n"
+msgid "File transfer by <mark>%(name)s</mark> for request [#%(reqid)s]"
+msgstr "Dateiübermittlung als <mark>%(name)s</mark> zur Anfrage [#%(reqid)s]"
 
 #: froide/foirequest/templates/foirequest/publicbody_upload.html
 msgid "Please enter the email address of the requester to use the upload form."
@@ -6153,14 +5922,8 @@ msgstr "Sie können eine bestimmte Behörde nicht finden?"
 
 #: froide/foirequest/templates/foirequest/request.html
 #, python-format
-msgid ""
-"\n"
-"                    <a href=\"%(propose_url)s\">Contact us so we can add this public body to our database.</a>\n"
-"                "
-msgstr ""
-"\n"
-"                    <a href=\"%(propose_url)s\">Schreiben Sie uns, damit wir diese Behörde in unsere Datenbank aufnehmen.</a>\n"
-"                "
+msgid "<a href=\"%(propose_url)s\">Contact us so we can add this public body to our database.</a>"
+msgstr "<a href=\"%(propose_url)s\">Schreiben Sie uns, damit wir diese Behörde in unsere Datenbank aufnehmen.</a>"
 
 #: froide/foirequest/templates/foirequest/request.html
 msgid "<p>Before you write your own request, you can search our archives. Maybe the information you are looking for has already been published.</p>"
@@ -6264,13 +6027,8 @@ msgstr "Die Anfrage „%(title)s“ ist zu Dokumenten, die wir nicht veröffentl
 
 #: froide/foirequest/templates/foirequest/snippets/make_same_request.html
 #, python-format
-msgid ""
-"\n"
-"    The documents in your request “%(title)s” cannot be published. However, every person can get individual access to these documents by requesting them for themselves on this page.\n"
-"    "
-msgstr ""
-"\n"
-"  Die Dokumente in Ihrer Anfrage „%(title)s“ können nicht veröffentlicht werden. Allerdings kann jede Person Zugang zu diesen Dokumenten erhalten, indem sie diese selbst auf dieser Seite anfragt."
+msgid "The documents in your request “%(title)s” cannot be published. However, every person can get individual access to these documents by requesting them for themselves on this page."
+msgstr "Die Dokumente in Ihrer Anfrage „%(title)s“ können nicht veröffentlicht werden. Allerdings kann jede Person Zugang zu diesen Dokumenten erhalten, indem sie diese selbst auf dieser Seite anfragt."
 
 #: froide/foirequest/templates/foirequest/snippets/make_same_request.html
 msgid "You made the original request."
@@ -6294,20 +6052,10 @@ msgstr "Eine identische Anfrage in Ihrem Namen stellen"
 
 #: froide/foirequest/templates/foirequest/snippets/make_same_request.html
 #, python-format
-msgid ""
-"\n"
-"    So far one person also requested this document.\n"
-"    "
-msgid_plural ""
-"\n"
-"    So far <strong>%(counter)s people</strong> requested this document.\n"
-"  "
-msgstr[0] ""
-"\n"
-"   Bisher hat eine weitere Person dieses Dokument angefragt."
-msgstr[1] ""
-"\n"
-"    Bisher haben <strong>%(counter)s weitere Personen</strong> dieses Dokument angefragt."
+msgid "So far one person also requested this document."
+msgid_plural "So far <strong>%(counter)s people</strong> requested this document."
+msgstr[0] "Bisher hat eine weitere Person dieses Dokument angefragt."
+msgstr[1] "Bisher haben <strong>%(counter)s weitere Personen</strong> dieses Dokument angefragt."
 
 #: froide/foirequest/templates/foirequest/snippets/message_edit.html
 msgid "Edit message"
@@ -6422,23 +6170,12 @@ msgid "Please use proper spelling and stay polite."
 msgstr "Bitte achten Sie auf Ihre Rechtschreibung und bleiben Sie höflich."
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
+#: froide/follow/templates/follow/follow_count_badge.html
 #, python-format
-msgid ""
-"\n"
-"        One follower\n"
-"      "
-msgid_plural ""
-"\n"
-"        %(counter)s followers\n"
-"      "
-msgstr[0] ""
-"\n"
-"    Ein:e Follower:in\n"
-"  "
-msgstr[1] ""
-"\n"
-"    %(counter)s Follower\n"
-"  "
+msgid "One follower"
+msgid_plural "%(counter)s followers"
+msgstr[0] "Ein:e Follower:in"
+msgstr[1] "%(counter)s Follower"
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
 #, python-format
@@ -6447,14 +6184,8 @@ msgstr "an <a href=\"%(url)s\">%(name)s</a> und <a href=\"%(urlp)s\">%(count)s a
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
 #, python-format
-msgid ""
-"\n"
-"        <a href=\"%(url)s\" class=\"link-secondary\">%(name)s</a>\n"
-"      "
-msgstr ""
-"\n"
-"        <a href=\"%(url)s\" class=\"link-secondary\">%(name)s</a>\n"
-"      "
+msgid "<a href=\"%(url)s\" class=\"link-secondary\">%(name)s</a>"
+msgstr "<a href=\"%(url)s\" class=\"link-secondary\">%(name)s</a>"
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
 #: froide/foirequest/views/make_request.py
@@ -8452,25 +8183,6 @@ msgstr ""
 msgid "The following just happend to %(title)s that you follow:"
 msgstr "Folgendes passierte gerade bei „%(title)s“, dem Sie folgen:"
 
-#: froide/follow/templates/follow/follow_count_badge.html
-#, python-format
-msgid ""
-"\n"
-"    One follower\n"
-"  "
-msgid_plural ""
-"\n"
-"    %(counter)s followers\n"
-"  "
-msgstr[0] ""
-"\n"
-"    Ein:e Follower:in\n"
-"  "
-msgstr[1] ""
-"\n"
-"    %(counter)s Follower:innen\n"
-"  "
-
 #: froide/follow/templates/follow/show_follow.html
 msgid "Please check your email inbox for a confirmation email."
 msgstr "Bitte überprüfen Sie Ihre E-Mails. Sie haben eine E-Mail mit einem Bestätigungslink von uns erhalten."
@@ -8848,25 +8560,6 @@ msgid "Search term"
 msgstr "Suchbegriff"
 
 #: froide/helper/templates/helper/search/search_base.html
-#, python-format
-msgid ""
-"\n"
-"              Your search produced one search result.\n"
-"            "
-msgid_plural ""
-"\n"
-"              Your search produced %(request_count)s search results.\n"
-"            "
-msgstr[0] ""
-"\n"
-"            Ihre Suche ergab ein Ergebnis.\n"
-"          "
-msgstr[1] ""
-"\n"
-"            Ihre Suche ergab %(request_count)s Ergebnisse.\n"
-"          "
-
-#: froide/helper/templates/helper/search/search_base.html
 msgid "No results with these filters."
 msgstr "Keine Ergebnisse mit diesen Filtereinstellungen."
 
@@ -9069,37 +8762,19 @@ msgstr "Organisationsmitglieder"
 
 #: froide/organization/templates/organization/organization_join.html
 #, python-format
-msgid ""
-"\n"
-"        Organization “%(name)s” has invited you\n"
-"      "
-msgstr ""
-"\n"
-"             Organisation „%(name)s“ hat Sie eingeladen\n"
-"            "
+msgid "Organization “%(name)s” has invited you"
+msgstr "Organisation „%(name)s“ hat Sie eingeladen"
 
 #: froide/organization/templates/organization/organization_join.html
 #: froide/team/templates/team/team_join.html
 #, python-format
-msgid ""
-"\n"
-"          This invite was sent to “%(email)s” which is different from the current account “%(account)s”!\n"
-"      "
-msgstr ""
-"\n"
-"        Diese Einladung wurde an „%(email)s“ gesendet, was nicht mit Ihrem aktuellen Konto „%(account)s“ identisch ist!\n"
-"      "
+msgid "This invite was sent to “%(email)s” which is different from the current account “%(account)s”!"
+msgstr "Diese Einladung wurde an „%(email)s“ gesendet, was nicht mit Ihrem aktuellen Konto „%(account)s“ identisch ist!"
 
 #: froide/organization/templates/organization/organization_join.html
 #, python-format
-msgid ""
-"\n"
-"        Do you want to join this organization with the account “%(account)s”?\n"
-"      "
-msgstr ""
-"\n"
-"        Wollen Sie dieser Organisation mit Ihrem Konto „%(account)s“ beitreten?\n"
-"      "
+msgid "Do you want to join this organization with the account “%(account)s”?"
+msgstr "Wollen Sie dieser Organisation mit Ihrem Konto „%(account)s“ beitreten?"
 
 #: froide/organization/templates/organization/organization_join.html
 msgid "Join this organization"
@@ -9166,14 +8841,8 @@ msgid "Roles"
 msgstr "Funktionen"
 
 #: froide/organization/templates/organization/organization_update_form.html
-msgid ""
-"\n"
-"            A member is shown on the team page.\n"
-"          "
-msgstr ""
-"\n"
-"            Ein Mitglied wird auf der Team-Seite angezeigt.\n"
-"          "
+msgid "A member is shown on the team page."
+msgstr "Ein Mitglied wird auf der Team-Seite angezeigt."
 
 #: froide/organization/templates/organization/organization_update_form.html
 #: froide/team/templates/team/team_detail.html
@@ -9181,14 +8850,8 @@ msgid "Owner"
 msgstr "Eigentümer:in"
 
 #: froide/organization/templates/organization/organization_update_form.html
-msgid ""
-"\n"
-"            An owner can do everything a member can. In addition they can also change the organization details, add or remove members from the organization and change their roles.\n"
-"          "
-msgstr ""
-"\n"
-"            Ein:e Eigentümer:in kann alles, was ein Mitglied auch kann. Zusätzlich können Eigentümer:innen auch Details der Organisation bearbeiten und Mitglieder anlegen, entfernen oder ihre Rollen ändern.\n"
-"          "
+msgid "An owner can do everything a member can. In addition they can also change the organization details, add or remove members from the organization and change their roles."
+msgstr "Ein:e Eigentümer:in kann alles, was ein Mitglied auch kann. Zusätzlich können Eigentümer:innen auch Details der Organisation bearbeiten und Mitglieder anlegen, entfernen oder ihre Rollen ändern."
 
 #: froide/organization/templates/organization/organization_update_form.html
 msgid "Add organization member"
@@ -9600,14 +9263,8 @@ msgstr "Nachweis hochladen"
 
 #: froide/proof/templates/proof/proof_settings.html
 #, python-format
-msgid ""
-"\n"
-"                  Uploaded on %(date)s as “%(name)s”.\n"
-"                "
-msgstr ""
-"\n"
-"                  Hochgeladen am %(date)s als „%(name)s“.\n"
-"                "
+msgid "Uploaded on %(date)s as “%(name)s”."
+msgstr "Hochgeladen am %(date)s als „%(name)s“."
 
 #: froide/proof/templates/proof/proof_settings.html
 msgid "Delete this proof"
@@ -10391,24 +10048,12 @@ msgstr "Schlagen Sie eine neue Behörde vor"
 
 #: froide/publicbody/templates/publicbody/propose.html
 #, python-format
-msgid ""
-"\n"
-"        <a href=\"%(url)s\">Please check the list of public bodies</a> if it really does not exist yet.\n"
-"      "
-msgstr ""
-"\n"
-"        <a href=\"%(url)s\">Bitte prüfen Sie unsere Liste der Behörden</a>, ob die gewünschte Behörde nicht doch schon existiert.\n"
-"      "
+msgid "<a href=\"%(url)s\">Please check the list of public bodies</a> if it really does not exist yet."
+msgstr "<a href=\"%(url)s\">Bitte prüfen Sie unsere Liste der Behörden</a>, ob die gewünschte Behörde nicht doch schon existiert."
 
 #: froide/publicbody/templates/publicbody/propose.html
-msgid ""
-"\n"
-"        Then fill as many fields as you can in the form below.\n"
-"      "
-msgstr ""
-"\n"
-"        Dann füllen Sie bitte dieses Formular möglichst vollständig aus.\n"
-"      "
+msgid "Then fill as many fields as you can in the form below."
+msgstr "Dann füllen Sie bitte dieses Formular möglichst vollständig aus."
 
 #: froide/publicbody/templates/publicbody/propose.html
 msgid "If you'd like to add a lot of public bodies at once, please contact the site moderators."
@@ -10545,14 +10190,8 @@ msgid "Legal text"
 msgstr "Gesetzestext"
 
 #: froide/publicbody/templates/publicbody/show_foilaw.html
-msgid ""
-"\n"
-"                                This is a copy of the law, for which we can't guarantee correctness.\n"
-"                            "
-msgstr ""
-"\n"
-"                                Dies ist eine Kopie des Gesetzes, deren rechtliche Gültigkeit wir nicht garantieren können.\n"
-"                            "
+msgid "This is a copy of the law, for which we can't guarantee correctness."
+msgstr "Dies ist eine Kopie des Gesetzes, deren rechtliche Gültigkeit wir nicht garantieren können."
 
 #: froide/publicbody/templates/publicbody/show_foilaw.html
 #, python-format
@@ -10774,14 +10413,8 @@ msgstr "Team-Einladung von %(name)s"
 
 #: froide/team/templates/team/_assign_team_form.html
 #, python-format
-msgid ""
-"\n"
-"        Currently, the team <a href=\"%(url)s\">%(name)s</a> is assigned to this project.\n"
-"      "
-msgstr ""
-"\n"
-"           Gerade ist das Team <a href=\"%(url)s\">%(name)s</a> diesem Projekt zugewiesen.\n"
-"          "
+msgid "Currently, the team <a href=\"%(url)s\">%(name)s</a> is assigned to this project."
+msgstr "Gerade ist das Team <a href=\"%(url)s\">%(name)s</a> diesem Projekt zugewiesen."
 
 #: froide/team/templates/team/_assign_team_form.html
 msgid "Currently no team assigned."
@@ -10826,38 +10459,20 @@ msgid "Viewer"
 msgstr "Betrachter:in"
 
 #: froide/team/templates/team/team_detail.html
-msgid ""
-"\n"
-"            A viewer has read-only access to all team projects and requests.\n"
-"          "
-msgstr ""
-"\n"
-"            Ein:e Betrachter:in hat nur Lesezugriff auf alle Team-Projekte und Anfragen.\n"
-"          "
+msgid "A viewer has read-only access to all team projects and requests."
+msgstr "Ein:e Betrachter:in hat nur Lesezugriff auf alle Team-Projekte und Anfragen."
 
 #: froide/team/templates/team/team_detail.html
 msgid "Editor"
 msgstr "Bearbeiter:in"
 
 #: froide/team/templates/team/team_detail.html
-msgid ""
-"\n"
-"            An editor can make requests in team projects, send messages, set the status of requests.\n"
-"          "
-msgstr ""
-"\n"
-"            Ein:e Bearbeiter:in kann Anfragen in den Team-Projekten stellen, Nachrichten senden, den Status von Anfragen ändern etc.\n"
-"          "
+msgid "An editor can make requests in team projects, send messages, set the status of requests."
+msgstr "Ein:e Bearbeiter:in kann Anfragen in den Team-Projekten stellen, Nachrichten senden, den Status von Anfragen ändern etc."
 
 #: froide/team/templates/team/team_detail.html
-msgid ""
-"\n"
-"            An owner can do everything an editor can do. In addition they can also add or remove team members, change their roles and delete the team.\n"
-"          "
-msgstr ""
-"\n"
-"            Ein:e Eigentümer:in kann alles, was ein:e Bearbeiter:in auch kann. Zusätzlich können Eigentümer:innen auch Team-Mitglieder anlegen, entfernen oder ihre Funktionen ändern und das Team löschen.\n"
-"          "
+msgid "An owner can do everything an editor can do. In addition they can also add or remove team members, change their roles and delete the team."
+msgstr "Ein:e Eigentümer:in kann alles, was ein:e Bearbeiter:in auch kann. Zusätzlich können Eigentümer:innen auch Team-Mitglieder anlegen, entfernen oder ihre Funktionen ändern und das Team löschen."
 
 #: froide/team/templates/team/team_detail.html
 msgid "Add team member"
@@ -10898,25 +10513,13 @@ msgstr "Team „%(name)s“ löschen"
 
 #: froide/team/templates/team/team_join.html
 #, python-format
-msgid ""
-"\n"
-"        Team “%(name)s” has invited you\n"
-"      "
-msgstr ""
-"\n"
-"             Team „%(name)s“ hat Sie eingeladen\n"
-"            "
+msgid "Team “%(name)s” has invited you"
+msgstr "Team „%(name)s“ hat Sie eingeladen"
 
 #: froide/team/templates/team/team_join.html
 #, python-format
-msgid ""
-"\n"
-"        Do you want to join this team with the account “%(account)s”?\n"
-"      "
-msgstr ""
-"\n"
-"        Wollen Sie diesem Team mit Ihrem Konto “%(account)s” beitreten?\n"
-"      "
+msgid "Do you want to join this team with the account “%(account)s”?"
+msgstr "Wollen Sie diesem Team mit Ihrem Konto “%(account)s” beitreten?"
 
 #: froide/team/templates/team/team_list.html
 msgid "Your Teams"
@@ -11020,16 +10623,9 @@ msgstr "Menü"
 msgid "Make a Request!"
 msgstr "Stellen Sie eine Anfrage!"
 
-#: froide/templates/header.html
-#, python-format
-msgid ""
-"\n"
-"                Hello %(name)s\n"
-"              "
-msgstr ""
-"\n"
-"              Hallo %(name)s\n"
-"            "
+#: froide/templates/header.html froide/templates/header_minimal.html
+msgid "Hello %(name)s"
+msgstr "Hallo %(name)s"
 
 #: froide/templates/header.html
 msgid "Logout"
@@ -11038,17 +10634,6 @@ msgstr "Ausloggen"
 #: froide/templates/header.html
 msgid "Sign in"
 msgstr "Anmelden"
-
-#: froide/templates/header_minimal.html
-#, python-format
-msgid ""
-"\n"
-"      Hello %(name)s\n"
-"    "
-msgstr ""
-"\n"
-"      Hallo %(name)s\n"
-"    "
 
 #. Translators: URL part
 #: froide/templates/help/base.html
@@ -11117,18 +10702,8 @@ msgid "Use a recovery code."
 msgstr "Nutzen Sie einen Wiederherstellungs-Code."
 
 #: froide/templates/mfa/auth_recovery.html
-msgid ""
-"\n"
-"  <strong>WARNING</strong>:\n"
-"  The recovery code will be removed after it has been used.\n"
-"  Make sure to create a new one after login!\n"
-"  "
-msgstr ""
-"\n"
-"  <strong>WARNUNG</strong>:\n"
-"  Der Wiederherstellungs-Code wird nach Benutzung entfernt.\n"
-"  Sie müssen nach dem Login einen neuen erstellen!\n"
-"  "
+msgid "<strong>WARNING</strong>: The recovery code will be removed after it has been used. Make sure to create a new one after login!"
+msgstr "<strong>WARNUNG</strong>: Der Wiederherstellungs-Code wird nach Benutzung entfernt. Sie müssen nach dem Login einen neuen erstellen!"
 
 #: froide/templates/mfa/base.html
 msgid "Two-factor setup"
@@ -11225,16 +10800,8 @@ msgid "Two-factor authentication adds an additional layer of security to your ac
 msgstr "Der Zwei-Faktor-Login fügt eine weitere Sicherheitsebene zu Ihrem Konto hinzu, weil Sie mehr als nur ein Passwort brauchen, um sich einzuloggen."
 
 #: froide/templates/mfa/mfakey_list.html
-msgid ""
-"\n"
-"    <strong>WARNING</strong>:\n"
-"    You have registered only a single key. If you lose access to that key you won't be able log into your account again.\n"
-"    "
-msgstr ""
-"\n"
-"    <strong>WARNUNG</strong>:\n"
-"    Sie haben nur einen Schlüssel registriert. Wenn Sie diesen verlieren, können Sie sich nicht mehr einloggen.\n"
-"    "
+msgid "<strong>WARNING</strong>: You have registered only a single key. If you lose access to that key you won't be able log into your account again."
+msgstr "<strong>WARNUNG</strong>: Sie haben nur einen Schlüssel registriert. Wenn Sie diesen verlieren, können Sie sich nicht mehr einloggen."
 
 #: froide/templates/mfa/mfakey_list.html
 msgid "You have not created any recovery codes!"
@@ -11798,6 +11365,171 @@ msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
 #, python-format
+#~ msgid ""
+#~ "\n"
+#~ "            You follow one request so far.\n"
+#~ "          "
+#~ msgid_plural ""
+#~ "\n"
+#~ "            You follow %(request_count)s requests.\n"
+#~ "          "
+#~ msgstr[0] ""
+#~ "\n"
+#~ "            Sie folgen bisher einer Anfrage.\n"
+#~ "          "
+#~ msgstr[1] ""
+#~ "\n"
+#~ "            Sie folgen %(request_count)s Anfragen.\n"
+#~ "          "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "            You have one project.\n"
+#~ "          "
+#~ msgid_plural ""
+#~ "\n"
+#~ "            You have %(request_count)s projects.\n"
+#~ "          "
+#~ msgstr[0] ""
+#~ "\n"
+#~ "            Sie haben ein Projekt.\n"
+#~ "          "
+#~ msgstr[1] ""
+#~ "\n"
+#~ "            Sie haben %(request_count)s Projekte.\n"
+#~ "          "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "            Your search produced one search result.\n"
+#~ "          "
+#~ msgid_plural ""
+#~ "\n"
+#~ "            Your search produced %(request_count)s search results.\n"
+#~ "          "
+#~ msgstr[0] ""
+#~ "\n"
+#~ "            Ihre Suche nach ergab eine Anfrage.\n"
+#~ "          "
+#~ msgstr[1] ""
+#~ "\n"
+#~ "            Ihre Suche ergab %(request_count)s Anfragen.\n"
+#~ "          "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "                                    One Message\n"
+#~ "                                "
+#~ msgid_plural ""
+#~ "\n"
+#~ "                                    %(counter)s Messages\n"
+#~ "                                "
+#~ msgstr[0] ""
+#~ "\n"
+#~ "                                    Eine Nachricht\n"
+#~ "                                "
+#~ msgstr[1] ""
+#~ "\n"
+#~ "                                    %(counter)s Nachrichten\n"
+#~ "                                "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "                  Extend deadline by a number of %(unit)s.\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "                  Verlängern Sie die Frist um eine Anzahl %(unit)s.\n"
+#~ "                "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "        One follower\n"
+#~ "      "
+#~ msgid_plural ""
+#~ "\n"
+#~ "        %(counter)s followers\n"
+#~ "      "
+#~ msgstr[0] ""
+#~ "\n"
+#~ "    Ein:e Follower:in\n"
+#~ "  "
+#~ msgstr[1] ""
+#~ "\n"
+#~ "    %(counter)s Follower\n"
+#~ "  "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "    One follower\n"
+#~ "  "
+#~ msgid_plural ""
+#~ "\n"
+#~ "    %(counter)s followers\n"
+#~ "  "
+#~ msgstr[0] ""
+#~ "\n"
+#~ "    Ein:e Follower:in\n"
+#~ "  "
+#~ msgstr[1] ""
+#~ "\n"
+#~ "    %(counter)s Follower:innen\n"
+#~ "  "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "              Your search produced one search result.\n"
+#~ "            "
+#~ msgid_plural ""
+#~ "\n"
+#~ "              Your search produced %(request_count)s search results.\n"
+#~ "            "
+#~ msgstr[0] ""
+#~ "\n"
+#~ "            Ihre Suche ergab ein Ergebnis.\n"
+#~ "          "
+#~ msgstr[1] ""
+#~ "\n"
+#~ "            Ihre Suche ergab %(request_count)s Ergebnisse.\n"
+#~ "          "
+
+#~ msgid ""
+#~ "\n"
+#~ "                                This is a copy of the law, for which we can't guarantee correctness.\n"
+#~ "                            "
+#~ msgstr ""
+#~ "\n"
+#~ "                                Dies ist eine Kopie des Gesetzes, deren rechtliche Gültigkeit wir nicht garantieren können.\n"
+#~ "                            "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "                Hello %(name)s\n"
+#~ "              "
+#~ msgstr ""
+#~ "\n"
+#~ "              Hallo %(name)s\n"
+#~ "            "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "      Hello %(name)s\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "      Hallo %(name)s\n"
+#~ "    "
+
+#, python-format
 #~ msgid "Participate in %(name)s"
 #~ msgstr "Mitmachen bei %(name)s"
 
@@ -11900,15 +11632,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, python-format
 #~ msgid "It looks like you are visiting from %(country_name)s. Did you know that there is an <a href=\"%(url)s\">FOI site for %(country_name)s called %(name)s</a>?"
 #~ msgstr "Es sieht so aus, als kämen Sie aus %(country_name)s. Wussten Sie, dass es eine <a href=\"%(url)s\">IFG-Seite für %(country_name)s namens %(name)s</a> gibt?"
-
-#~ msgid ""
-#~ "\n"
-#~ "            This is a copy of the law, for which we can't guarantee correctness.\n"
-#~ "          "
-#~ msgstr ""
-#~ "\n"
-#~ "Dies ist eine Kopie des Gesetzes, deren rechtliche Gültigkeit wir nicht garantieren können.\n"
-#~ "          "
 
 #, python-format
 #~ msgid ""
@@ -12223,9 +11946,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Mark as not an FOI request?"
 #~ msgstr "Al nicht IFG-Anfrage markieren?"
-
-#~ msgid "Extend deadline by a number of months."
-#~ msgstr "Frist um eine Anzahl von Monaten verlängern."
 
 #, python-format
 #~ msgid "Accept proposal of %(name)s"
@@ -12595,9 +12315,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Wants Newsletter"
 #~ msgstr "Möchte Newsletter"
-
-#~ msgid "You follow this request"
-#~ msgstr "Sie folgen der Anfrage!"
 
 #~ msgid "You will not get notified anymore."
 #~ msgstr "Sie erhalten keine Benachrichtigungen mehr."
@@ -13407,23 +13124,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "No results yet."
 #~ msgstr "Noch keine "
-
-#~ msgid ""
-#~ "\n"
-#~ "        Your search produced one search result.\n"
-#~ "      "
-#~ msgid_plural ""
-#~ "\n"
-#~ "        Your search produced %(request_count)s search results.\n"
-#~ "      "
-#~ msgstr[0] ""
-#~ "\n"
-#~ "            Ihre Suche nach ergab eine Anfrage.\n"
-#~ "          "
-#~ msgstr[1] ""
-#~ "\n"
-#~ "            Ihre Suche ergab %(request_count)s Anfragen.\n"
-#~ "          "
 
 #~ msgid "Show all public bodies"
 #~ msgstr "Zeige alle Behörden"
