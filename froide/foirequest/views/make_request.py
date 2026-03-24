@@ -367,7 +367,7 @@ class MakeRequestView(FormView):
                     ),
                 ],
                 "results": [
-                    _("One result"),
+                    pgettext("js", "One result"),
                     _("{count} results").format(count="${count}"),
                 ],
                 "searchResults": _("Search results"),
