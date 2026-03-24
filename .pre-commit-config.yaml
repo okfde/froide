@@ -20,3 +20,10 @@ repos:
     hooks:
       - id: djlint-reformat-django
       - id: djlint-django
+  - repo: local
+    hooks:
+      - id: django-blocktrans-trimmed
+        name: Ensure blocktrans/blocktranslate use trimmed
+        language: python
+        entry: scripts/enforce_blocktrans_trimmed.py
+        files: \.html$
