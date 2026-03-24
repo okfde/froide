@@ -9,10 +9,9 @@
 {% endfor %}
 {% with url=update.content_object.get_absolute_domain_short_url %}{% if url %}{{ url }}{% endif %}{% endwith %}
 
-{% endfor %}{% blocktranslate with site_name=site_name %}
-Cheers,
-{{ site_name }}
-{% endblocktranslate %}
+{% endfor %}
+{% blocktranslate with site_name=site_name %}Cheers,
+{{ site_name }}{% endblocktranslate %}
 
 {% for update in update_list %}
 {% blocktranslate with title=update.object_label %}Unfollow {{ title }}:{% endblocktranslate %}

@@ -5,7 +5,6 @@
 {{ action_url }}
 
 {% blocktranslate with site_name=site_name %}Cheers,
-{{ site_name }}
-{% endblocktranslate %}
+{{ site_name }}{% endblocktranslate %}
 {% endautoescape %}
 {% include "emails/footer.txt" %}
