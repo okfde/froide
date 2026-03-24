@@ -34,9 +34,9 @@
         {% endif %}
         {% if object.foirequest %}
             <p>
-                {% blocktrans with title=object.foirequest.title request_url=object.foirequest.get_absolute_url %}
-        This document is part of the request ”<a href="{{ request_url }}">{{ title }}</a>”.
-        {% endblocktrans %}
+                {% blocktrans trimmed with title=object.foirequest.title request_url=object.foirequest.get_absolute_url %}
+                    This document is part of the request ”<a href="{{ request_url }}">{{ title }}</a>”.
+                {% endblocktrans %}
             </p>
             {% if object.foirequest.campaign %}
                 <div class="my-3">{% include object.foirequest.campaign.banner_templates with object=object.foirequest %}</div>

@@ -15,10 +15,10 @@
     {% get_mfa_keys as mfa_keys %}
     {% if object_list|length == 1 %}
         <div class="alert alert-warning">
-            {% blocktranslate %}
-    <strong>WARNING</strong>:
-    You have registered only a single key. If you lose access to that key you won't be able log into your account again.
-    {% endblocktranslate %}
+            {% blocktranslate trimmed %}
+                <strong>WARNING</strong>:
+                You have registered only a single key. If you lose access to that key you won't be able log into your account again.
+            {% endblocktranslate %}
         </div>
     {% endif %}
     {% if object_list|length >= 1 and not mfa_keys.by_method.recovery %}

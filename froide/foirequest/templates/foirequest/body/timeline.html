@@ -11,7 +11,7 @@
                         <div class="alpha-timeline__month">{{ group.date|date:'F Y' }}</div>
                         <div>
                             {% spaceless %}
-                                {% blocktrans count counter=group.messages|length %}
+                                {% blocktrans trimmed count counter=group.messages|length %}
                                     One Message
                                 {% plural %}
                                     {{ counter }} Messages

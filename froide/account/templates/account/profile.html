@@ -131,9 +131,9 @@
                 <div class="card mb-3">
                     <div class="card-header">
                         <h5>
-                            {% blocktrans with name=object.first_name %}
-              {{ name }} has taken part in these campaigns
-            {% endblocktrans %}
+                            {% blocktrans trimmed with name=object.first_name %}
+                                {{ name }} has taken part in these campaigns
+                            {% endblocktrans %}
                         </h5>
                     </div>
                     <div class="card-body">

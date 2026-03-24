@@ -23,13 +23,13 @@
     <h1>{{ object.title }}</h1>
     <p>
         {% if object|can_read_foiproject_authenticated:request %}
-            {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=object.request_count %}
-      Created on {{ date }} with currently {{ num }} requests.
-      {% endblocktrans %}
+            {% blocktrans trimmed with date=object.created|date:"SHORT_DATE_FORMAT" num=object.request_count %}
+                Created on {{ date }} with currently {{ num }} requests.
+            {% endblocktrans %}
         {% else %}
-            {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=public_requests %}
-      Created on {{ date }} with currently {{ num }} public requests.
-      {% endblocktrans %}
+            {% blocktrans trimmed with date=object.created|date:"SHORT_DATE_FORMAT" num=public_requests %}
+                Created on {{ date }} with currently {{ num }} public requests.
+            {% endblocktrans %}
         {% endif %}
     </p>
     {% if object|can_read_foiproject_authenticated:request and not all_public or not object.public %}

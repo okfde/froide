@@ -59,7 +59,7 @@
                 {% if legal_text %}
                     <div class="tab-pane active" id="legaltext">
                         <div class="alert alert-info">
-                            {% blocktrans %}
+                            {% blocktrans trimmed %}
                                 This is a copy of the law, for which we can't guarantee correctness.
                             {% endblocktrans %}
                             <a href="{{ object.url }}"

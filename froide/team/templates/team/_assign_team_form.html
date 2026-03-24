@@ -7,9 +7,9 @@
     {% csrf_token %}{# needs to be below <h5> for `tight-margin` class to work #}
     <p>
         {% if object.team %}
-            {% blocktrans with name=object.team.name url=object.team.get_absolute_url %}
-        Currently, the team <a href="{{ url }}">{{ name }}</a> is assigned to this project.
-      {% endblocktrans %}
+            {% blocktrans trimmed with name=object.team.name url=object.team.get_absolute_url %}
+                Currently, the team <a href="{{ url }}">{{ name }}</a> is assigned to this project.
+            {% endblocktrans %}
         {% else %}
             {% trans "Currently no team assigned." %}
         {% endif %}

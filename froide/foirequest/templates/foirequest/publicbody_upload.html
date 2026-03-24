@@ -8,9 +8,9 @@
 {% endblock %}
 {% block app_body %}
     <h3>
-        {% blocktrans with reqid=foirequest.id name=foirequest.public_body.name %}
-  File transfer by <mark>{{ name }}</mark> for request [#{{ reqid }}]
-{% endblocktrans %}
+        {% blocktrans trimmed with reqid=foirequest.id name=foirequest.public_body.name %}
+            File transfer by <mark>{{ name }}</mark> for request [#{{ reqid }}]
+        {% endblocktrans %}
     </h3>
     {% if not authenticated %}
         <form action="" method="post" class="mb-5">

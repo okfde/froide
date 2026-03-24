@@ -11,9 +11,9 @@
     {% if request.user.is_authenticated %}
         <li class="nav-item dropdown account-dropdown {% block nav_account %}{% endblock %}">
             <span class="d-none d-md-none d-lg-inline">
-                {% blocktrans with name=request.user.first_name|truncatechars:12 %}
-      Hello {{ name}}
-    {% endblocktrans %}
+                {% blocktrans trimmed with name=request.user.first_name|truncatechars:12 %}
+                    Hello {{ name }}
+                {% endblocktrans %}
             </span>
         </li>
     {% endif %}

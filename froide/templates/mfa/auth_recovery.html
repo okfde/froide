@@ -12,11 +12,11 @@
     <h1>{% translate "Two-factor login" %}</h1>
     <p>{% translate "Use a recovery code." %}</p>
     <p>
-        {% blocktranslate %}
-  <strong>WARNING</strong>:
-  The recovery code will be removed after it has been used.
-  Make sure to create a new one after login!
-  {% endblocktranslate %}
+        {% blocktranslate trimmed %}
+            <strong>WARNING</strong>:
+            The recovery code will be removed after it has been used.
+            Make sure to create a new one after login!
+        {% endblocktranslate %}
     </p>
     {% get_mfa_keys as mfa_keys %}
     <form method="POST" class="disable-submit">

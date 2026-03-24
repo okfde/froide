@@ -20,17 +20,17 @@
             {% include "foirequest/_request_search.html" with search_url=search_url %}
             <p>
                 {% if is_filtered %}
-                    {% blocktrans with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
-            Your search produced one search result.
-          {% plural %}
-            Your search produced {{ request_count }} search results.
-          {% endblocktrans %}
+                    {% blocktrans trimmed with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
+                        Your search produced one search result.
+                    {% plural %}
+                        Your search produced {{ request_count }} search results.
+                    {% endblocktrans %}
                 {% else %}
-                    {% blocktrans with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
-            You have one request so far.
-          {% plural %}
-            You have {{ request_count }} requests.
-          {% endblocktrans %}
+                    {% blocktrans trimmed with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
+                        You have one request so far.
+                    {% plural %}
+                        You have {{ request_count }} requests.
+                    {% endblocktrans %}
                 {% endif %}
             </p>
         </div>

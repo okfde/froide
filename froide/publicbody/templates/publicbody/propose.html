@@ -8,14 +8,14 @@
             <h2>{% trans "Propose a new public body" %}</h2>
             <p>
                 {% url 'publicbody-list' as pb_list %}
-                {% blocktrans with url=pb_list %}
-        <a href="{{ url }}">Please check the list of public bodies</a> if it really does not exist yet.
-      {% endblocktrans %}
+                {% blocktrans trimmed with url=pb_list %}
+                    <a href="{{ url }}">Please check the list of public bodies</a> if it really does not exist yet.
+                {% endblocktrans %}
             </p>
             <p>
-                {% blocktrans %}
-        Then fill as many fields as you can in the form below.
-      {% endblocktrans %}
+                {% blocktrans trimmed %}
+                    Then fill as many fields as you can in the form below.
+                {% endblocktrans %}
             </p>
             <form action="{% url 'publicbody-propose' %}" method="post">
                 {% csrf_token %}

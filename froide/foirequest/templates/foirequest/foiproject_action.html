@@ -21,9 +21,9 @@
                 {% for foirequest in foirequests %}
                     <li>
                         <input type="hidden" name="foirequest" value="{{ foirequest.pk }}" />
-                        {% blocktranslate with req_id=foirequest.id pb_name=foirequest.public_body.name %}
-            Request to {{ pb_name }} [#{{ req_id }}]
-            {% endblocktranslate %}
+                        {% blocktranslate trimmed with req_id=foirequest.id pb_name=foirequest.public_body.name %}
+                            Request to {{ pb_name }} [#{{ req_id }}]
+                        {% endblocktranslate %}
                     </li>
                 {% endfor %}
             </ul>
