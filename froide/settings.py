@@ -48,6 +48,7 @@ class Base(Configuration):
             "django_celery_beat",
             "mfa",
             "easy_thumbnails",
+            "django_extended_makemessages",
             # local
             "froide.foirequest",
             "froide.follow",
