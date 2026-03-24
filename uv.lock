@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -742,6 +742,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-extended-makemessages"
+version = "1.7.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1b/9a/a2b267702d1afdaf8afa2bd1509f9e475a1b74f917234c80a64dc091abc7/django_extended_makemessages-1.7.1.tar.gz", hash = "sha256:38d8e6b933a566654d2a873009aad162ab2325895c5da8b09e69b51f2588051e", size = 11941, upload-time = "2025-10-28T23:16:36.733Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a2/9c/627d539617258d0e03b3ff57706417f236d379ef49c3271b7886036dcc98/django_extended_makemessages-1.7.1-py3-none-any.whl", hash = "sha256:427c6bfafe6703c3b6e1735c0c11d3447c146eb4b80afc672e9d2864b9a91813", size = 13054, upload-time = "2025-10-28T23:16:35.62Z" },
+]
+
+[[package]]
 name = "django-filingcabinet"
 version = "0.0.1"
 source = { git = "https://github.com/okfde/django-filingcabinet.git?rev=main#e15f2199b19178ae9b0dd42a994829bc04634bac" }
@@ -1206,6 +1218,7 @@ dev = [
     { name = "beautifulsoup4" },
     { name = "coverage" },
     { name = "django-coverage-plugin" },
+    { name = "django-extended-makemessages" },
     { name = "django-stubs" },
     { name = "factory-boy" },
     { name = "faker" },
@@ -1286,6 +1299,7 @@ dev = [
     { name = "beautifulsoup4" },
     { name = "coverage", extras = ["toml"] },
     { name = "django-coverage-plugin" },
+    { name = "django-extended-makemessages", specifier = ">=1.7.1" },
     { name = "django-stubs" },
     { name = "factory-boy" },
     { name = "faker" },

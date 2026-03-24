@@ -69,6 +69,7 @@ dev = [
   "beautifulsoup4",
   "coverage[toml]",
   "django-coverage-plugin",
+  "django-extended-makemessages>=1.7.1",
   "django-stubs",
   "factory-boy",
   "faker",
