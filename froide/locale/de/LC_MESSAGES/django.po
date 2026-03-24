@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-24 12:24+0100\n"
+"POT-Creation-Date: 2026-03-24 15:00+0100\n"
 "PO-Revision-Date: 2026-03-23 16:32+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/froide/de/>\n"
@@ -25,19 +25,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.16.1\n"
-
-#: froide/foirequest/templates/foirequest/emails/request_update.txt
-#: froide/follow/templates/follow/emails/batch_update_follower.txt
-#: froide/problem/templates/problem/email_problem_resolved.txt
-#, python-format
-msgid ""
-"\n"
-"Cheers,\n"
-"%(site_name)s\n"
-msgstr ""
-"\n"
-"Grüße,\n"
-"%(site_name)s\n"
 
 #: froide/foirequest/templates/foirequest/emails/dummy_mail_end.txt
 msgid ""
@@ -692,7 +679,6 @@ msgid "Add comment..."
 msgstr "Kommentar hinzufügen..."
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
-#: froide/guide/templates/guide/guidance.html
 msgid "Add custom"
 msgstr "Eigene hinzufügen"
 
@@ -750,7 +736,6 @@ msgid "Add team member"
 msgstr "Team-Mitglied hinzufügen"
 
 #: froide/foirequest/templates/foirequest/body/message/guidance.html
-#: froide/guide/templates/guide/guidance.html
 msgid "Add to reply"
 msgstr "Zur Antwort hinzufügen"
 
@@ -1412,22 +1397,19 @@ msgstr "Rufen Sie Ihre E-Mails für diese Adresse ab:"
 msgid "Check your mail, we sent you a password reset link. If you don't receive an email, check if you entered your email correctly or if you really have an account."
 msgstr "Schauen Sie in Ihre E-Mails, wir haben Ihnen einen Passwort-Zurücksetzen-Link geschickt. Falls Sie keine E-Mail erhalten haben, prüfen Sie, ob Sie Ihre E-Mail-Adresse richtig eingegeben haben und ob Sie wirklich damit einen Account haben."
 
-#: froide/guide/templates/guide/emails/new_guidance.txt
-#, python-format
-msgid ""
-"Cheers\n"
-"%(site_name)s"
-msgstr ""
-"Beste Grüße,\n"
-"%(site_name)s"
-
 #: froide/account/templates/account/emails/account_reminder.txt
 #: froide/account/templates/account/emails/change_email.txt
 #: froide/account/templates/account/emails/confirm_action.txt
 #: froide/account/templates/account/emails/confirmation_mail.txt
 #: froide/account/templates/account/emails/password_reset_email.txt
 #: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt
+#: froide/foirequest/templates/foirequest/emails/request_update.txt
+#: froide/follow/templates/follow/emails/batch_update_follower.txt
+#: froide/follow/templates/follow/emails/confirm_follow.txt
+#: froide/follow/templates/follow/emails/update_follower.txt
+#: froide/guide/templates/guide/emails/new_guidance.txt
 #: froide/organization/templates/organization/emails/organization_invite.txt
+#: froide/problem/templates/problem/email_problem_resolved.txt
 #: froide/team/templates/team/emails/team_invite.txt
 #, python-format
 msgid ""
@@ -1436,16 +1418,6 @@ msgid ""
 msgstr ""
 "Grüße,\n"
 "%(site_name)s"
-
-#: froide/follow/templates/follow/emails/confirm_follow.txt
-#: froide/follow/templates/follow/emails/update_follower.txt
-#, python-format
-msgid ""
-"Cheers,\n"
-"%(site_name)s\n"
-msgstr ""
-"Grüße,\n"
-"%(site_name)s\n"
 
 #: froide/account/templates/account/emails/confirmation_mail.html
 #, python-format
@@ -3114,7 +3086,6 @@ msgid "Generate a code with the app and submit it."
 msgstr "Generieren Sie einen Code mit der App und geben Sie ihn ein."
 
 #: froide/foirequest/templates/foirequest/body/message/guidance.html
-#: froide/guide/templates/guide/guidance.html
 #: froide/letter/templates/letter/default.html
 msgid "Generate letter"
 msgstr "Brief erstellen"
@@ -4115,7 +4086,6 @@ msgid "Important: Have you checked all pages?"
 msgstr "Wichtig: Haben Sie alle Seiten überprüft?"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
-#: froide/guide/templates/guide/guidance.html
 msgid "In admin"
 msgstr "Im Admin"
 
@@ -5170,13 +5140,17 @@ msgid_plural "%(count)s requests to this public body"
 msgstr[0] "Eine Anfrage an diese Behörde"
 msgstr[1] "%(count)s Anfragen an diese Behörde"
 
-#: froide/foirequest/views/make_request.py
 #: froide/helper/templates/helper/search/search_base.html
 #, python-format
 msgid "One result"
 msgid_plural "%(num)s results"
 msgstr[0] "Ein Ergebnis"
 msgstr[1] "%(num)s Ergebnisse"
+
+#: froide/foirequest/views/make_request.py
+msgctxt "js"
+msgid "One result"
+msgstr "Ein Ergebnis"
 
 #: froide/foirequest/api_views/attachment.py
 msgid "Only PDF attachments can be converted to a document."
@@ -5475,6 +5449,11 @@ msgstr "Bitte bestätigen Sie das Absenden der Anfrage."
 msgid "Please correct the errors below."
 msgstr "Bitte korrigieren Sie die unten stehenden Fehler."
 
+#: froide/foirequest/templates/foirequest/body/actions/send_message.html
+msgctxt "formal"
+msgid "Please correct the errors below."
+msgstr "Bitte korrigieren Sie die unten stehenden Fehler."
+
 #: froide/account/views.py
 msgid "Please correct the errors below. You account settings were not changed."
 msgstr "Bitte korrigieren Sie die Fehler unten. Ihre Kontoeinstellungen wurden nicht geändert."
@@ -5695,7 +5674,6 @@ msgid "Post Logout Redirect Uris"
 msgstr "Post-Logout Redirect-URIs"
 
 #: froide/foirequest/templates/foirequest/body/message/guidance.html
-#: froide/guide/templates/guide/guidance.html
 msgid "Prepare message"
 msgstr "Nachricht aufrufen"
 
@@ -6510,7 +6488,6 @@ msgid "Requires signature"
 msgstr "Benötigt Unterschrift"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
-#: froide/guide/templates/guide/guidance.html
 msgid "Rerun guidance"
 msgstr "Beratung aktualisieren"
 
@@ -6660,7 +6637,6 @@ msgid "Rules"
 msgstr "Regeln"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
-#: froide/guide/templates/guide/guidance.html
 msgid "Run + Notify"
 msgstr "Aktualisieren + Benachrichtigungen"
 
@@ -6940,6 +6916,12 @@ msgstr "Sende Zurücksetzen-Link"
 #: froide/foirequest/admin.py
 msgid "Send selected drafts as requests"
 msgstr "Ausgewählte Entwürfe als Anfrage absenden"
+
+#: froide/foirequest/templates/foirequest/body/actions/send_message.html
+#, fuzzy
+#| msgid "Change your address"
+msgid "Send your address"
+msgstr "Change your address"
 
 #: froide/foirequest/forms/message.py
 msgid "Sender Name"
@@ -7369,7 +7351,6 @@ msgid "Successfully marked requests as identical."
 msgstr "Markierung als identisch war erfolgreich."
 
 #: froide/foirequest/templates/foirequest/body/message/guidance.html
-#: froide/guide/templates/guide/guidance.html
 msgid "Suggested reply"
 msgstr "Antwortvorschlag"
 
@@ -8678,7 +8659,7 @@ msgid "We automatically redacted some text for you already. Please check if we g
 msgstr "Wir haben schon automatisiert ein paar Textstellen geschwärzt. Bitte prüfen Sie, ob wir etwas übersehen haben."
 
 #: froide/guide/templates/guide/emails/new_guidance.txt
-msgid "We can now provide you with the following guidance concerning how you can procede."
+msgid "We can now provide you with the following guidance concerning how you can proceed."
 msgstr "Wir können Ihnen nun folgenden Hinweis geben, wie Sie sich verhalten können."
 
 #: froide/foirequest/views/message.py
@@ -11606,6 +11587,16 @@ msgstr "👋 Viel Erfolg!"
 #~ "Grüße,\n"
 #~ "%(site_name)s"
 
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "Cheers,\n"
+#~ "%(site_name)s\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Grüße,\n"
+#~ "%(site_name)s\n"
+
 #~ msgid "%(counter)s identical request"
 #~ msgid_plural "%(counter)s identical requests"
 #~ msgstr[0] "eine identische Anfrage"
@@ -11853,14 +11844,27 @@ msgstr "👋 Viel Erfolg!"
 #~ msgid "Change address"
 #~ msgstr "Adresse ändern"
 
-#~ msgid "Change your address"
-#~ msgstr "Change your address"
-
 #~ msgid "Check delivery status"
 #~ msgstr "Zustellungsstatus überprüfen"
 
 #~ msgid "Check the text only view to see if the underlying text is also gone. If the document does not load correctly, cancel and inform a site moderator."
 #~ msgstr "Prüfen Sie auch, dass die Text-Ansicht die Informationen nicht mehr enthält. Falls das Dokument nicht ordentlich lädt, brechen Sie ab und informieren Sie eine:n Moderator:in der Seite."
+
+#, python-format
+#~ msgid ""
+#~ "Cheers\n"
+#~ "%(site_name)s"
+#~ msgstr ""
+#~ "Beste Grüße,\n"
+#~ "%(site_name)s"
+
+#, python-format
+#~ msgid ""
+#~ "Cheers,\n"
+#~ "%(site_name)s\n"
+#~ msgstr ""
+#~ "Grüße,\n"
+#~ "%(site_name)s\n"
 
 #~ msgid "Choose Public Body"
 #~ msgstr "Behörde auswählen"
