@@ -15,17 +15,17 @@
             {% trans "Search the requests you follow" as search_title %}
             <p>
                 {% if view.query %}
-                    {% blocktrans with query=view.query count request_count=page_obj.paginator.count %}
-            You follow one request matching your search for “{{ query }}”.
-          {% plural %}
-            You follow {{ request_count }} requests matching your search for “{{ query }}”.
-          {% endblocktrans %}
+                    {% blocktrans trimmed with query=view.query count request_count=page_obj.paginator.count %}
+                        You follow one request matching your search for “{{ query }}”.
+                    {% plural %}
+                        You follow {{ request_count }} requests matching your search for “{{ query }}”.
+                    {% endblocktrans %}
                 {% else %}
-                    {% blocktrans count request_count=page_obj.paginator.count %}
-            You follow one request so far.
-          {% plural %}
-            You follow {{ request_count }} requests.
-          {% endblocktrans %}
+                    {% blocktrans trimmed count request_count=page_obj.paginator.count %}
+                        You follow one request so far.
+                    {% plural %}
+                        You follow {{ request_count }} requests.
+                    {% endblocktrans %}
                 {% endif %}
             </p>
         </div>

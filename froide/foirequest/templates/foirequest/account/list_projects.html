@@ -15,17 +15,17 @@
             {% trans "Search your projects" as search_title %}
             <p>
                 {% if view.query %}
-                    {% blocktrans with query=view.query count request_count=page_obj.paginator.count %}
-            Your search for “{{ query }}” produced one search result.
-          {% plural %}
-            Your search for “{{ query }}” produced {{ request_count }} search results.
-          {% endblocktrans %}
+                    {% blocktrans trimmed with query=view.query count request_count=page_obj.paginator.count %}
+                        Your search for “{{ query }}” produced one search result.
+                    {% plural %}
+                        Your search for “{{ query }}” produced {{ request_count }} search results.
+                    {% endblocktrans %}
                 {% else %}
-                    {% blocktrans count request_count=page_obj.paginator.count %}
-            You have one project.
-          {% plural %}
-            You have {{ request_count }} projects.
-          {% endblocktrans %}
+                    {% blocktrans trimmed count request_count=page_obj.paginator.count %}
+                        You have one project.
+                    {% plural %}
+                        You have {{ request_count }} projects.
+                    {% endblocktrans %}
                 {% endif %}
             </p>
         </div>

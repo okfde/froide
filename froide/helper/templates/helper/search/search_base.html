@@ -34,11 +34,11 @@
                 <div class="mb-4 text-end">
                     <p>
                         {% if filtered_objects %}
-                            {% blocktrans with request_count=page_obj.paginator.formatted_count count counter=page_obj.paginator.count %}
-              Your search produced one search result.
-            {% plural %}
-              Your search produced {{ request_count }} search results.
-            {% endblocktrans %}
+                            {% blocktrans trimmed with request_count=page_obj.paginator.formatted_count count counter=page_obj.paginator.count %}
+                                Your search produced one search result.
+                            {% plural %}
+                                Your search produced {{ request_count }} search results.
+                            {% endblocktrans %}
                         {% else %}
                             {% blocktrans with num=page_obj.paginator.formatted_count count counter=count %}One result{% plural %}{{ num }} results{% endblocktrans %}
                         {% endif %}

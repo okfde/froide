@@ -6,10 +6,10 @@
     {% csrf_token %}
     <h4>{% blocktrans %}Ask for mediation for this request{% endblocktrans %}</h4>
     <p>
-        {% blocktrans %}
-    If you think your request was not properly handled or it is delayed, you can ask for assistance.
-    Here you can explain your case to the authority that is responsible for your request.
-    {% endblocktrans %}
+        {% blocktrans trimmed %}
+            If you think your request was not properly handled or it is delayed, you can ask for assistance.
+            Here you can explain your case to the authority that is responsible for your request.
+        {% endblocktrans %}
     </p>
     <div class="row mb-3">
         <span class="fw-bold col-md-4">{% translate "Mediating authority" %}</span>

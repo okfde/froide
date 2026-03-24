@@ -89,7 +89,7 @@
             <h3 class="fs-6">{% trans "Can’t find a specific public body?" %}</h3>
             <p>
                 {% url 'publicbody-propose' as pb_propose_url %}
-                {% blocktrans with propose_url=pb_propose_url %}
+                {% blocktrans trimmed with propose_url=pb_propose_url %}
                     <a href="{{ propose_url }}">Contact us so we can add this public body to our database.</a>
                 {% endblocktrans %}
             </p>

@@ -110,9 +110,9 @@
                     {% if object|can_write_foirequest:request %}
                         <div class="d-none d-print-none" id="request-duedate-form">
                             <small class="text-mute">
-                                {% blocktranslate with unit=object.law.get_max_response_time_unit_display %}
-                  Extend deadline by a number of {{ unit }}.
-                {% endblocktranslate %}
+                                {% blocktranslate trimmed with unit=object.law.get_max_response_time_unit_display %}
+                                    Extend deadline by a number of {{ unit }}.
+                                {% endblocktranslate %}
                             </small>
                             <form class="disable-submit"
                                   method="post"

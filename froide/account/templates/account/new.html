@@ -18,9 +18,9 @@
             <h1>{% trans "Please confirm your email address!" %}</h1>
             {% if title %}
                 <p class="lead">
-                    {% blocktrans with title=title %}
-            Your request “{{ title }}” will only be sent to the public body, when you confirm your email address.
-          {% endblocktrans %}
+                    {% blocktrans trimmed with title=title %}
+                        Your request “{{ title }}” will only be sent to the public body, when you confirm your email address.
+                    {% endblocktrans %}
                 </p>
             {% endif %}
         </div>
@@ -35,9 +35,9 @@
                         <strong class="highlight">{{ email }}</strong>
                     </li>
                     <li>
-                        {% blocktrans %}
-            Click the <strong class="highlight">confirmation link</strong> in the email from {{ SITE_NAME }}.
-          {% endblocktrans %}
+                        {% blocktrans trimmed %}
+                            Click the <strong class="highlight">confirmation link</strong> in the email from {{ SITE_NAME }}.
+                        {% endblocktrans %}
                     </li>
                 </ol>
             {% else %}

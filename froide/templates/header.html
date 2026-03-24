@@ -84,9 +84,9 @@
                                    aria-expanded="false"
                                    id="navbaraccount-link">
                                     <span class="d-none d-md-none d-lg-inline">
-                                        {% blocktrans with name=request.user.first_name|truncatechars:12 %}
-                Hello {{ name}}
-              {% endblocktrans %}
+                                        {% blocktrans trimmed with name=request.user.first_name|truncatechars:12 %}
+                                            Hello {{ name }}
+                                        {% endblocktrans %}
                                     </span>
                                     <span class="d-lg-none fa fa-user-circle-o"></span>
                                 </a>

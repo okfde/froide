@@ -15,15 +15,15 @@
     {% else %}
         {% if object.reply_received %}
             <p>
-                {% blocktrans %}
-        You can reply to the public body here.
-        {% endblocktrans %}
+                {% blocktrans trimmed %}
+                    You can reply to the public body here.
+                {% endblocktrans %}
             </p>
         {% else %}
             <p>
-                {% blocktrans %}
-        Here you can send another message to this public body.
-        {% endblocktrans %}
+                {% blocktrans trimmed %}
+                    Here you can send another message to this public body.
+                {% endblocktrans %}
             </p>
         {% endif %}
     {% endif %}

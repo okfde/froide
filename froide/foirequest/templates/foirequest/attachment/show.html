@@ -14,9 +14,9 @@
         {% block attachment_top %}
             <h2>{% blocktrans with name=attachment.name %}Attachment “{{ name }}”{% endblocktrans %}</h2>
             <p>
-                {% blocktrans with title=foirequest.title message_url=message.get_absolute_url %}
-    This attachment is part of the request ”<a href="{{ message_url }}">{{ title }}</a>”.
-    {% endblocktrans %}
+                {% blocktrans trimmed with title=foirequest.title message_url=message.get_absolute_url %}
+                    This attachment is part of the request ”<a href="{{ message_url }}">{{ title }}</a>”.
+                {% endblocktrans %}
             </p>
         {% endblock %}
         {% if foirequest.campaign %}

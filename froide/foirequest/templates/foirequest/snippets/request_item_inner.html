@@ -5,11 +5,11 @@
         <a href="{{ object.url }}">{{ object.title }}</a>
         {% if object.follower_count %}
             <span class="badge text-bg-primary ms-2">
-                {% blocktrans count counter=object.follower_count %}
-        One follower
-      {% plural %}
-        {{ counter }} followers
-      {% endblocktrans %}
+                {% blocktrans trimmed count counter=object.follower_count %}
+                    One follower
+                {% plural %}
+                    {{ counter }} followers
+                {% endblocktrans %}
             </span>
         {% endif %}
     </h5>
@@ -19,9 +19,9 @@
         {% elif object.public_body_name %}
             {% blocktrans with name=object.public_body_name %}to {{ name }}{% endblocktrans %}
         {% elif object.public_body %}
-            {% blocktrans with url=object.public_body.get_absolute_url name=object.public_body.name %}
-        <a href="{{ url }}" class="link-secondary">{{ name }}</a>
-      {% endblocktrans %}
+            {% blocktrans trimmed with url=object.public_body.get_absolute_url name=object.public_body.name %}
+                <a href="{{ url }}" class="link-secondary">{{ name }}</a>
+            {% endblocktrans %}
             – <span class="muted">{{ object.jurisdiction.name }}</span>
         {% else %}
             {% blocktrans %}Not yet set{% endblocktrans %}
