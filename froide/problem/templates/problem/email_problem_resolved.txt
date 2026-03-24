@@ -11,8 +11,8 @@
 
 {{ url }}
 {% endif %}
-{% blocktrans with site_name=site_name %}
-Cheers,
+
+{% blocktrans with site_name=site_name %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
 {% include "emails/footer.txt" %}

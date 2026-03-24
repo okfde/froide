@@ -8,8 +8,8 @@
 {% blocktrans with link=request_dict.go_url %}Visit your request: {{ link }}{% endblocktrans %}
 
 {% endfor %}
-{% blocktrans with site_name=site_name %}
-Cheers,
-{{ site_name }}
-{% endblocktrans %}{% endautoescape %}
+
+{% blocktrans with site_name=site_name %}Cheers,
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
 {% include "emails/footer.txt" %}

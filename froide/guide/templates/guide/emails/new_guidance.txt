@@ -3,7 +3,7 @@
 {% if single_request %}{% blocktrans with title=request_title %}You recently received a reply to your request “{{ title }}”.{% endblocktrans %}
 {% else %}{% blocktrans %}You recently received replies to some of your requests.{% endblocktrans %}
 {% endif %}
-{% trans "We can now provide you with the following guidance concerning how you can procede." %}
+{% trans "We can now provide you with the following guidance concerning how you can proceed." %}
 {% for action, messages in guidances %}
 ## {{ action.get_label }}
 {{ action.get_description }}
@@ -19,7 +19,7 @@
 
 {% trans "We hope this information can help you." %}
 
-{% blocktrans %}Cheers
+{% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
 {% include "emails/footer.txt" %}
