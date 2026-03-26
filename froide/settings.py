@@ -48,7 +48,6 @@ class Base(Configuration):
             "django_celery_beat",
             "mfa",
             "easy_thumbnails",
-            "django_extended_makemessages",
             # local
             "froide.foirequest",
             "froide.follow",
@@ -713,10 +712,16 @@ class Base(Configuration):
 
 
 class Dev(Base):
-    pass
+    INSTALLED_APPS = values.ListValue(
+        Base.INSTALLED_APPS.default + ["django_extended_makemessages"]
+    )
 
 
 class TestBase(Base):
+    INSTALLED_APPS = values.ListValue(
+        Base.INSTALLED_APPS.default + ["django_extended_makemessages"]
+    )
+
     DEBUG = False
 
     PASSWORD_HASHERS = [
