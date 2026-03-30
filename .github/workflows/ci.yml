@@ -23,6 +23,8 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/fragdenstaat/fds-base
     strategy:
       matrix:
         python-version: ['3.12', '3.13', '3.14']
@@ -39,8 +41,6 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - name: Install system-level dependencies
-        run: sudo apt-get update && sudo apt-get install libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev poppler-utils ghostscript
       - name: Install dependencies
         run: |
           uv sync
