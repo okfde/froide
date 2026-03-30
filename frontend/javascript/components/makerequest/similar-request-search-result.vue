@@ -93,7 +93,13 @@ const { object } = props
 const selectPublicBody = (id) => {
   store
     .dispatch('setPublicBodyById', { id, scope: pbScope })
-    .then(() => store.commit(SET_STEP, STEPS.WRITE_REQUEST))
+    .then(() => {
+      if (store.getters.userValid) {
+        store.commit(SET_STEP, STEPS.WRITE_REQUEST)
+      } else {
+        store.commit(SET_STEP, STEPS.LOGIN_CREATE)
+      }
+    })
     .catch((err) => {
       console.error('publicbody not found', err)
     })
