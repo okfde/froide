@@ -284,7 +284,7 @@ class MakeRequestView(FormView):
                 "loadMore": _("load more..."),
                 "next": _("next"),
                 "previous": _("previous"),
-                "choosePublicBody": _("Choose public authority"),
+                "choosePublicBody": _("Choose public body"),
                 "checkSelection": _("Check selection"),
                 "checkRequest": _("Check request"),
                 "goNextStep": _("Go to next step"),
