@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-24 15:00+0100\n"
+"POT-Creation-Date: 2026-03-30 13:55+0200\n"
 "PO-Revision-Date: 2026-03-23 16:32+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/froide/de/>\n"
@@ -1461,11 +1461,8 @@ msgstr "Beratung für letzte Nachricht auswählen..."
 msgid "Choose guidance action to attach..."
 msgstr "Wähle einen Hinweis zum Anhängen aus..."
 
-#: froide/foirequest/views/make_request.py
-msgid "Choose public authority"
-msgstr "Behörde wählen"
-
 #: froide/foirequest/templates/foirequest/request.html
+#: froide/foirequest/views/make_request.py
 msgid "Choose public body"
 msgstr "Behörde auswählen"
 
@@ -11871,6 +11868,9 @@ msgstr "👋 Viel Erfolg!"
 
 #~ msgid "Choose object to assign"
 #~ msgstr "Wähle zuzuweisendes Objekt aus"
+
+#~ msgid "Choose public authority"
+#~ msgstr "Behörde wählen"
 
 #~ msgid "Choose replacement public body"
 #~ msgstr "Wählen Sie eine Behörde als Ersatz aus"
