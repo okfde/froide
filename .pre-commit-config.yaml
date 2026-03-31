@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.4
+    rev: v0.15.8
     hooks:
       - id: ruff
         args: [--fix]
@@ -16,7 +16,7 @@ repos:
         args: [--no-warn-ignored]
 
   - repo: https://github.com/Riverside-Healthcare/djLint
-    rev: v1.34.1
+    rev: v1.36.4
     hooks:
       - id: djlint-reformat-django
       - id: djlint-django
