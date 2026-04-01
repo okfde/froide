@@ -8,12 +8,18 @@
 {% endblock %}
 {% block app_body %}
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-lg-10">
             <h3>{% blocktrans with name=object.name %}Propose a change for “{{ name }}”{% endblocktrans %}</h3>
             <form action="" method="post">
                 {% csrf_token %}
                 {% render_form form %}
-                <button class="btn btn-primary" type="submit">{% trans "Propose change" %}</button>
+                <details class="mb-3" {% if contact_formset.is_bound %}open{% endif %}>
+                    <summary>{% translate "Contact information for specific responsibilities" %}</summary>
+                    {% include "publicbody/_contact_formset.html" with contact_formset=contact_formset %}
+                </details>
+                <div class="text-end">
+                    <button class="btn btn-primary" type="submit">{% trans "Propose change" %}</button>
+                </div>
             </form>
         </div>
     </div>

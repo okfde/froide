@@ -22,6 +22,10 @@
     <form action="" method="post">
         {% csrf_token %}
         {% include "publicbody/snippets/publicbody_proposals.html" %}
+        {% if contact_formset %}
+            <h4>{% translate "Contact information for specific responsibilities" %}</h4>
+            {% include "publicbody/_contact_formset.html" with contact_formset=contact_formset %}
+        {% endif %}
         <button class="btn btn-primary" type="submit">
             {% if object.confirmed %}
                 {% trans "Apply change" %}

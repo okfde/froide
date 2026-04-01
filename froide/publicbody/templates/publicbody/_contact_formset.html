@@ -1,0 +1,28 @@
+{% load i18n %}
+{% load form_helper %}
+<details class="mb-3" {% if contact_formset.is_bound %}open{% endif %}>
+    <summary>{% translate "Contact information for specific responsibilities" %}</summary>
+    <div data-formset="{{ contact_formset.prefix }}">
+        {{ contact_formset.management_form }}
+        {% if contact_formset.non_form_errors %}
+            <div class="alert alert-danger">
+                {% for error in contact_formset.non_form_errors %}
+                    {{ error }}
+                    {% if not forloop.last %}<br />{% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% for form in contact_formset %}
+            <div data-formsetform
+                 class="card mb-3 {% if form.instance and not form.instance.confirmed %}border-warning{% endif %}">
+                <div class="card-body">
+                    {% if form.instance and not form.instance.confirmed %}
+                        <span class="badge text-bg-warning float-end">{% translate "Unconfirmed" %}</span>
+                    {% endif %}
+                    {% render_form form horizontal=False %}
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary" data-formsetadd>{% translate "Add another" %}</button>
+        {% endfor %}
+    </div>
+</details>
