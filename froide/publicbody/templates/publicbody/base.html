@@ -1,6 +1,38 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% block nav_publicbodies %}active{% endblock %}
+{% block nav_publicbodies %}
+    active
+{% endblock nav_publicbodies %}
 {% block title %}
     {% trans "Public Bodies" %} - {{ SITE_NAME }}
-{% endblock %}
+{% endblock title %}
+{% block body %}
+    <div class="bg-body-tertiary">
+        <nav class="container" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    {# djlint:off D018 #}
+                    <a href="/">
+                        <i class="fa fa-home"></i>
+                        <span class="visually-hidden">{% trans "Home Page" %}</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    {# djlint:off D018 #}
+                    <a href="{% url 'publicbody-list' %}">{% trans "Public Bodies" %}</a>
+                </li>
+                {% if object %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
+                    </li>
+                {% endif %}
+                {% if breacrumb_item %}
+                    <li class="breadcrumb-item active">
+                        <span>{{ breacrumb_item }}</span>
+                    </li>
+                {% endif %}
+            </ol>
+        </nav>
+    </div>
+    {{ block.super }}
+{% endblock body %}
