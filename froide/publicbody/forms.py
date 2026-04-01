@@ -1,8 +1,8 @@
 from django import forms
 from django.conf import settings
 from django.contrib.admin.models import DELETION, LogEntry
-from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model, Q, QuerySet
+from django.forms import BaseInlineFormSet, inlineformset_factory
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -15,12 +15,20 @@ from froide.helper.form_utils import JSONMixin
 from froide.helper.text_utils import slugify
 from froide.helper.widgets import (
     AutocompleteMultiWidget,
+    BootstrapCheckboxInput,
     BootstrapSelect,
     BootstrapTextarea,
     TagAutocompleteWidget,
 )
+from froide.publicbody.models.category import Category
 
-from .models import Classification, Jurisdiction, PublicBody, PublicBodyChangeProposal
+from .models import (
+    Classification,
+    Jurisdiction,
+    PublicBody,
+    PublicBodyChangeProposal,
+    PublicBodyContact,
+)
 from .widgets import PublicBodySelect
 
 
@@ -215,24 +223,8 @@ class PublicBodyProposalForm(forms.ModelForm):
         ),
     )
 
-    def clean_fax(self):
-        fax = self.cleaned_data["fax"]
-        if not fax:
-            return ""
-
-        try:
-            # FIXME: language code used for country code
-            number = phonenumbers.parse(fax, settings.LANGUAGE_CODE.upper())
-        except phonenumbers.phonenumberutil.NumberParseException:
-            raise forms.ValidationError(_("Fax number not a valid number!")) from None
-        if not phonenumbers.is_possible_number(number):
-            raise forms.ValidationError(_("Fax number not possible!"))
-        if not phonenumbers.is_valid_number(number):
-            raise forms.ValidationError(_("Fax number not valid!"))
-        fax_number = phonenumbers.format_number(
-            number, phonenumbers.PhoneNumberFormat.E164
-        )
-        return fax_number
+    class Media:
+        js = ["js/publicbody_changes.js"]
 
     class Meta:
         model = PublicBody
@@ -266,6 +258,25 @@ class PublicBodyProposalForm(forms.ModelForm):
                 _("Public authority with a similar name already exists!")
             )
         return name
+
+    def clean_fax(self):
+        fax = self.cleaned_data["fax"]
+        if not fax:
+            return ""
+
+        try:
+            # FIXME: language code used for country code
+            number = phonenumbers.parse(fax, settings.LANGUAGE_CODE.upper())
+        except phonenumbers.phonenumberutil.NumberParseException:
+            raise forms.ValidationError(_("Fax number not a valid number!")) from None
+        if not phonenumbers.is_possible_number(number):
+            raise forms.ValidationError(_("Fax number not possible!"))
+        if not phonenumbers.is_valid_number(number):
+            raise forms.ValidationError(_("Fax number not valid!"))
+        fax_number = phonenumbers.format_number(
+            number, phonenumbers.PhoneNumberFormat.E164
+        )
+        return fax_number
 
     def save(self, user):
         pb = super().save(commit=False)
@@ -401,14 +412,11 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
         return pb
 
     def delete_proposed_publicbody(self, pb, user, delete_reason="", batch=False):
-        LogEntry.objects.log_action(
+        LogEntry.objects.log_actions(
             user_id=user.id,
-            content_type_id=ContentType.objects.get_for_model(pb).pk,
-            object_id=pb.pk,
-            object_repr=str(pb),
+            queryset=[pb],
             action_flag=DELETION,
         )
-
         creator = pb.created_by
         if creator and not batch:
             creator.send_mail(
@@ -421,3 +429,118 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
             )
         PublicBody.proposal_rejected.send(sender=pb, user=user)
         pb.delete()
+
+
+class PublicBodyContactForm(forms.ModelForm):
+    category = forms.ModelChoiceField(
+        label=_("Responsibility"),
+        required=True,
+        help_text=_(
+            "Try finding a matching classification for this authority. "
+            "If you cannot find one, leave it blank and we will take care."
+        ),
+        widget=BootstrapSelect,
+        queryset=Category.objects.all().order_by("name"),
+    )
+    email = forms.EmailField(
+        label=_("Email"),
+        required=True,
+        help_text=_("Email address for this responsibility."),
+        widget=forms.EmailInput(attrs={"class": "form-control"}),
+    )
+    fax = forms.CharField(
+        label=_("Fax number"),
+        help_text=_("Optionally a fax number for this this responsibility."),
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "type": "tel",
+                "pattern": "\\+?[\\d -\\/]+",
+                "placeholder": "+49 ...",
+            }
+        ),
+    )
+
+    class Meta:
+        model = PublicBodyContact
+        fields = ("category", "email", "fax")
+
+
+class BasePublicBodyContactFormSet(BaseInlineFormSet):
+    deletion_widget = BootstrapCheckboxInput(attrs={"class": "form-check-input"})
+
+    def clean(self):
+        if any(self.errors):
+            # Don't bother validating the formset unless each form is valid on its own
+            return
+        categories = set()
+        for form in self.forms:
+            if self.can_delete and self._should_delete_form(form):
+                continue
+            category = form.cleaned_data.get("category")
+            if category in categories:
+                raise forms.ValidationError(_("Responsibilities can only appear once."))
+            categories.add(category)
+
+
+def get_publicbody_contact_formset(
+    publicbody: PublicBody | None = None,
+    user=None,
+    data=None,
+    can_delete=False,
+    extra=1,
+):
+    contacts = None
+    if publicbody:
+        contacts = publicbody.contacts.all()
+        if user is not None:
+            contacts = contacts.filter(Q(confirmed=True) | Q(user=user))
+
+    ContactFormSet = inlineformset_factory(
+        PublicBody,
+        PublicBodyContact,
+        formset=BasePublicBodyContactFormSet,
+        form=PublicBodyContactForm,
+        extra=extra,
+        max_num=10,
+        can_delete=can_delete,
+    )
+
+    return ContactFormSet(
+        data=data,
+        instance=publicbody,
+        queryset=contacts,
+        prefix="contacts",
+    )
+
+
+def save_publicbody_contact_formset(
+    publicbody: PublicBody, formset, user, confirmed=False
+):
+    # Adjusted version of formset.save() that ignores if initial forms are unchanged
+
+    deleted_objects = []
+    formset.saved_forms = []
+    instances = formset.save_new_objects(commit=False)
+
+    for form in formset.initial_forms:
+        obj = form.instance
+        # If the pk is None, it means either:
+        # 1. The object is an unexpected empty model, created by invalid
+        #    POST data such as an object outside the formset's queryset.
+        # 2. The object was already deleted from the database.
+        if not obj._is_pk_set():
+            continue
+        if formset.can_delete and form in formset.deleted_forms:
+            deleted_objects.append(obj)
+        else:
+            instances.append(obj)
+
+    for instance in instances:
+        instance.publicbody = publicbody
+        instance.user = user
+        instance.confirmed = confirmed
+        instance.save()
+    for obj in deleted_objects:
+        obj.delete()

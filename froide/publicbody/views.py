@@ -25,6 +25,8 @@ from .forms import (
     PublicBodyAcceptProposalForm,
     PublicBodyChangeProposalForm,
     PublicBodyProposalForm,
+    get_publicbody_contact_formset,
+    save_publicbody_contact_formset,
 )
 from .models import FoiLaw, Jurisdiction, PublicBody, PublicBodyChangeProposal
 from .utils import LawExtension
@@ -184,11 +186,38 @@ class PublicBodyProposalView(LoginRequiredMixin, CreateView):
     template_name = "publicbody/propose.html"
     form_class = PublicBodyProposalForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if "contact_formset" not in context:
+            context["contact_formset"] = get_publicbody_contact_formset(
+                publicbody=None, user=self.request.user, can_delete=False
+            )
+        context["breacrumb_item"] = _("Propose new public body")
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        self.object = None
+        form = self.get_form()
+        contact_formset = get_publicbody_contact_formset(
+            publicbody=None, user=self.request.user, data=request.POST, can_delete=False
+        )
+        if form.is_valid() and contact_formset.is_valid():
+            return self.form_valid(form, contact_formset)
+        else:
+            return self.form_invalid(form, contact_formset)
+
     def get_success_url(self):
         return self.object.get_absolute_url()
 
-    def form_valid(self, form):
+    def form_valid(self, form, contact_formset):
         self.object = form.save(self.request.user)
+        save_publicbody_contact_formset(
+            self.object, contact_formset, self.request.user, confirmed=False
+        )
         messages.add_message(
             self.request,
             messages.INFO,
@@ -197,6 +226,12 @@ class PublicBodyProposalView(LoginRequiredMixin, CreateView):
             ),
         )
         return redirect(self.get_success_url())
+
+    def form_invalid(self, form, contact_formset):
+        """If the form is invalid, render the invalid form."""
+        return self.render_to_response(
+            self.get_context_data(form=form, contact_formset=contact_formset)
+        )
 
     def handle_no_permission(self):
         messages.add_message(
@@ -214,6 +249,21 @@ class PublicBodyChangeProposalView(LoginRequiredMixin, UpdateView):
     form_class = PublicBodyChangeProposalForm
     queryset = PublicBody.objects.all()
 
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        self.object = self.get_object()
+        form = self.get_form()
+        contact_formset = get_publicbody_contact_formset(
+            self.object, user=self.request.user, data=request.POST, can_delete=True
+        )
+        if form.is_valid() and contact_formset.is_valid():
+            return self.form_valid(form, contact_formset)
+        else:
+            return self.form_invalid(form, contact_formset)
+
     def get_form_kwargs(self) -> Dict[str, Any]:
         """
         Use object to create initial data and reset instance
@@ -229,11 +279,23 @@ class PublicBodyChangeProposalView(LoginRequiredMixin, UpdateView):
         )
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if "contact_formset" not in context:
+            context["contact_formset"] = get_publicbody_contact_formset(
+                self.object, user=self.request.user, can_delete=True
+            )
+        context["breacrumb_item"] = _("Propose change")
+        return context
+
     def get_success_url(self):
         return self.object.get_absolute_url()
 
-    def form_valid(self, form):
+    def form_valid(self, form, contact_formset):
         form.save(self.object, self.request.user)
+        save_publicbody_contact_formset(
+            self.object, contact_formset, self.request.user, confirmed=False
+        )
         messages.add_message(
             self.request,
             messages.INFO,
@@ -242,6 +304,12 @@ class PublicBodyChangeProposalView(LoginRequiredMixin, UpdateView):
             ),
         )
         return redirect(self.object)
+
+    def form_invalid(self, form, contact_formset):
+        """If the form is invalid, render the invalid form."""
+        return self.render_to_response(
+            self.get_context_data(form=form, contact_formset=contact_formset)
+        )
 
 
 class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
@@ -256,16 +324,34 @@ class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
             raise Http404
         return obj
 
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        self.object = self.get_object()
+        form = self.get_form()
+        contact_formset = get_publicbody_contact_formset(
+            self.object, data=request.POST, can_delete=True, extra=0
+        )
+        if form.is_valid() and contact_formset.is_valid():
+            return self.form_valid(form, contact_formset)
+        else:
+            return self.form_invalid(form, contact_formset)
+
     def get_success_url(self):
         return self.object.get_absolute_url()
 
-    def form_valid(self, form):
+    def form_valid(self, form, contact_formset):
         self.object = form.save(
             self.request.user,
             delete_unconfirmed=self.request.POST.get("delete", "0") == "1",
             delete_reason=self.request.POST.get("delete_reason", ""),
             proposal_id=self.request.POST.get("proposal_id"),
             delete_proposals=self.request.POST.getlist("proposal_delete"),
+        )
+        save_publicbody_contact_formset(
+            self.object, contact_formset, self.request.user, confirmed=True
         )
         if self.object is None:
             messages.add_message(
@@ -277,7 +363,18 @@ class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
         )
         return redirect(self.object)
 
+    def form_invalid(self, form, contact_formset):
+        """If the form is invalid, render the invalid form."""
+        return self.render_to_response(
+            self.get_context_data(form=form, contact_formset=contact_formset)
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["proposals"] = context["form"].get_proposals()
+        if "contact_formset" not in context:
+            context["contact_formset"] = get_publicbody_contact_formset(
+                self.object, can_delete=True, extra=0
+            )
+        context["breacrumb_item"] = _("Accept change proposal")
         return context

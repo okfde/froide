@@ -225,7 +225,10 @@ class PublicBody(models.Model):
 
     @property
     def change_proposal_count(self):
-        return self.change_proposals.count()
+        return (
+            self.change_proposals.count()
+            + self.contacts.filter(confirmed=False).count()
+        )
 
     @property
     def reason(self):

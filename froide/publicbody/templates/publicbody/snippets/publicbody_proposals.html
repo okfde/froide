@@ -46,7 +46,7 @@
                             {% with proposal_count=proposals|length %}
                                 {% if proposal_count == 1 %}
                                     <button type="submit"
-                                            class="btn btn-primary"
+                                            class="btn btn-outline-danger"
                                             formnovalidate
                                             name="proposal_delete"
                                             value="{{ proposal.obj.id }}">{% translate "Delete proposal" %}</button>
@@ -67,7 +67,7 @@
                 <tr>
                     <td>
                         <div class="form-check float-end">
-                            <input class="form-check-input proposal"
+                            <input class="form-check-input"
                                    type="radio"
                                    id="proposal_id"
                                    name="proposal_id"
