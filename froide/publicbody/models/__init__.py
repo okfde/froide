@@ -3,6 +3,7 @@ from .changeproposal import (
     PublicBodyChangeProposal,
 )
 from .classification import Classification
+from .contact import ProposedPublicBodyContact, PublicBodyContact
 from .foilaw import FoiLaw
 from .jurisdiction import Jurisdiction
 from .publicbody import (
@@ -20,8 +21,10 @@ __all__ = [
     "FoiLaw",
     "Jurisdiction",
     "ProposedPublicBody",
+    "ProposedPublicBodyContact",
     "ProposedPublicBodyManager",
     "PublicBody",
-    "PublicBodyManager",
     "PublicBodyChangeProposal",
+    "PublicBodyContact",
+    "PublicBodyManager",
 ]
