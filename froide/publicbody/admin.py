@@ -32,6 +32,7 @@ from froide.helper.admin_utils import (
 from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
 from froide.helper.search.utils import trigger_search_index_update_qs
 from froide.helper.widgets import AutocompleteMultiWidget, TagAutocompleteWidget
+from froide.publicbody.models.contact import ProposedPublicBodyContact
 
 from .csv_import import CSVImporter
 from .models import (
@@ -43,6 +44,7 @@ from .models import (
     ProposedPublicBody,
     PublicBody,
     PublicBodyChangeProposal,
+    PublicBodyContact,
 )
 
 CATEGORY_AUTOCOMPLETE_URL = reverse_lazy("api:category-autocomplete")
@@ -413,7 +415,14 @@ class PublicBodyBaseAdminMixin:
         return export_csv_response(csv_stream, name="validation.csv")
 
 
+class PublicBodyContactInline(admin.TabularInline):
+    model = PublicBodyContact
+    raw_id_fields = ("user", "category")
+
+
 class PublicBodyAdminMixin(PublicBodyBaseAdminMixin):
+    inlines = [PublicBodyContactInline]
+
     def get_queryset(self, request):
         qs = super(PublicBodyAdminMixin, self).get_queryset(request)
         qs = qs.filter(confirmed=True)
@@ -426,7 +435,13 @@ class PublicBodyAdmin(PublicBodyAdminMixin, admin.ModelAdmin):
     pass
 
 
+class ProposedPublicBodyContactInline(admin.TabularInline):
+    model = ProposedPublicBodyContact
+    raw_id_fields = ("user", "category")
+
+
 class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
+    inlines = [ProposedPublicBodyContactInline]
     list_display = (
         "name",
         "email",
