@@ -29,7 +29,9 @@
                         </a>
                     {% endif %}
                     {% with hide_label=object|can_write_foirequest:request %}
-                        <a href="#" class="btn btn-outline-secondary btn-sm js-trigger-expand-all-messages ms-auto" title="{% trans "Expand/collapse all" %}">
+                        <a href="#"
+                           class="btn btn-outline-secondary btn-sm js-trigger-expand-all-messages ms-auto"
+                           title="{% trans "Expand/collapse all" %}">
                             <i class="fa fa-expand" aria-hidden="true"></i>
                             <i class="fa fa-compress d-none-important" aria-hidden="true"></i>
                             <span class="d-none-important {% if hide_label %}d-none d-md-inline{% endif %}">{% trans "Collapse all" %}</span>
