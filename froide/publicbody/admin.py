@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
@@ -130,7 +130,6 @@ class PublicBodyBaseAdminMixin:
                     "classification",
                     "url",
                     "email",
-                    "alternative_emails",
                     "fax",
                     "contact",
                     "address",
@@ -375,6 +374,17 @@ class PublicBodyBaseAdminMixin:
 
     @admin.action(description=_("Export to CSV"))
     def export_csv(self, request, queryset):
+        queryset = queryset.select_related(
+            "classification",
+            "jurisdiction",
+        ).prefetch_related(
+            Prefetch("regions", GeoRegion.objects.all().only("id")),
+            Prefetch(
+                "contacts",
+                queryset=PublicBodyContact.objects.get_alternative_emails(),
+                to_attr="alternative_email_values",
+            ),
+        )
         return export_csv_response(PublicBody.export_csv(queryset))
 
     @admin.action(description=_("Remove from search index"))
@@ -743,3 +753,22 @@ class PublicBodyChangeProposalAdmin(admin.ModelAdmin):
         self.message_user(
             request, _("{} change proposals were accepted.").format(count)
         )
+
+
+@admin.register(PublicBodyContact)
+class PublicBodyContactAdmin(admin.ModelAdmin):
+    raw_id_fields = ("publicbody", "user", "category")
+    list_display = (
+        "publicbody",
+        "category",
+        "email",
+        "confirmed",
+    )
+    list_filter = (
+        "confirmed",
+        ("publicbody", ForeignKeyFilter),
+        ("category", ForeignKeyFilter),
+    )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("publicbody", "category")

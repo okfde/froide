@@ -17,7 +17,14 @@ from froide.helper.search.api_views import ESQueryMixin
 from froide.publicbody.filters import PublicBodyAPIFilterSet
 
 from .documents import PublicBodyDocument
-from .models import Category, Classification, FoiLaw, Jurisdiction, PublicBody
+from .models import (
+    Category,
+    Classification,
+    FoiLaw,
+    Jurisdiction,
+    PublicBody,
+    PublicBodyContact,
+)
 from .serializers import (
     CategorySerializer,
     ClassificationSerializer,
@@ -286,6 +293,11 @@ class PublicBodyViewSet(
             "categories",
             "laws",
             Prefetch("regions", GeoRegion.objects.all().only("id")),
+            Prefetch(
+                "contacts",
+                queryset=PublicBodyContact.objects.get_alternative_emails(),
+                to_attr="alternative_email_values",
+            ),
         )
 
     @action(detail=False, methods=["get"])

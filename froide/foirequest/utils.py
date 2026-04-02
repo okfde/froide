@@ -393,12 +393,12 @@ def get_publicbody_emails(publicbody: PublicBody, include_mediator=True):
             publicbody=publicbody,
         )
     if publicbody.alternative_emails:
-        for law_type, email in publicbody.alternative_emails.items():
+        for responsibility, email in publicbody.alternative_emails.items():
             yield PublicBodyEmailInfo(
                 email=email,
                 name=publicbody.name,
-                label=_("Default {law_type} address of {publicbody}").format(
-                    law_type=law_type, publicbody=publicbody.name
+                label=_("Contact address for {responsibility} of {publicbody}").format(
+                    responsibility=responsibility, publicbody=publicbody.name
                 ),
                 publicbody=publicbody,
             )

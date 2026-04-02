@@ -16,6 +16,7 @@ from froide.helper.date_utils import (
 )
 from froide.helper.templatetags.markup import markdown
 
+from .category import Category
 from .jurisdiction import Jurisdiction
 
 DEFAULT_LAW = settings.FROIDE_CONFIG.get("default_law", 1)
@@ -62,6 +63,9 @@ class FoiLaw(TranslatableModel):
 
     meta = models.BooleanField(_("Meta Law"), default=False)
     law_type = models.CharField(_("law type"), max_length=255, blank=True)
+    category = models.ForeignKey(
+        Category, null=True, blank=True, on_delete=models.SET_NULL
+    )
     combined = models.ManyToManyField(
         "FoiLaw", verbose_name=_("Combined Laws"), blank=True
     )
