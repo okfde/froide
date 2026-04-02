@@ -482,9 +482,11 @@ class Base(Configuration):
 
     ELASTICSEARCH_INDEX_PREFIX = "froide"
     ELASTICSEARCH_HOSTS = values.ListValue(["http://localhost:9200"])
-    ELASTICSEARCH_DSL = {
-        "default": {"hosts": ELASTICSEARCH_HOSTS},
-    }
+
+    @property
+    def ELASTICSEARCH_DSL(self):
+        return {"default": {"hosts": self.ELASTICSEARCH_HOSTS}}
+
     ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = (
         "django_elasticsearch_dsl.signals.RealTimeSignalProcessor"
     )
