@@ -54,7 +54,7 @@ jobs:
           coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         env:
           DATABASE_URL: postgis://postgres:postgres@postgres/froide
-          DJANGO_ELASTICSEARCH_HOSTS: elasticsearch
+          DJANGO_ELASTICSEARCH_HOSTS: http://elasticsearch:9200
 
     services:
       postgres:
