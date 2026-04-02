@@ -10,6 +10,17 @@ class PublicBodyContactManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(confirmed=True)
 
+    def get_alternative_emails(self):
+        return (
+            self.get_queryset()
+            .exclude(email="")
+            .exclude(category__isnull=True)
+            .only(
+                "email",
+            )
+            .annotate(category_name=models.F("category__name"))
+        )
+
 
 class PublicBodyContact(models.Model):
     publicbody = models.ForeignKey(

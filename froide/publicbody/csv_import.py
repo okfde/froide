@@ -13,7 +13,14 @@ import requests
 from froide.georegion.models import GeoRegion
 from froide.helper.search.utils import trigger_search_index_update_qs
 from froide.helper.text_utils import slugify
-from froide.publicbody.models import Category, Classification, Jurisdiction, PublicBody
+
+from .models import (
+    Category,
+    Classification,
+    Jurisdiction,
+    PublicBody,
+    PublicBodyContact,
+)
 
 User = get_user_model()
 
@@ -111,8 +118,6 @@ class CSVImporter(object):
             row["extra_data"] = json.loads(extra_data)
 
         alternative_emails = row.pop("alternative_emails", None)
-        if alternative_emails:
-            row["alternative_emails"] = json.loads(alternative_emails)
 
         # get optional values
         for n in (
@@ -178,6 +183,16 @@ class CSVImporter(object):
             pb.regions.set(regions)
         if categories:
             pb.categories.set(categories)
+        if alternative_emails:
+            cat_emails = json.loads(alternative_emails)
+            for category, email in zip(
+                self.get_categories(cat_emails.keys()), cat_emails.values(), strict=True
+            ):
+                PublicBodyContact.objects.update_or_create(
+                    publicbody=pb,
+                    category=category,
+                    defaults={"email": email, "confirmed": True},
+                )
         return pb
 
     def get_jurisdiction(self, slug):

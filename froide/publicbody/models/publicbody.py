@@ -95,7 +95,6 @@ class PublicBody(models.Model):
     source_reference = models.CharField(
         _("source reference"), max_length=255, blank=True
     )
-    alternative_emails = models.JSONField(null=True, blank=True)
     extra_data = models.JSONField(default=dict, blank=True)
 
     change_history = models.JSONField(default=list, blank=True)
@@ -219,6 +218,22 @@ class PublicBody(models.Model):
         return [c.name for c in self.categories.all()]
 
     @property
+    def alternative_emails(self):
+        from .contact import PublicBodyContact
+
+        if hasattr(self, "alternative_email_values"):
+            # Use prefetched data if available
+            return {c.category_name: c.email for c in self.alternative_email_values}
+
+        if not hasattr(self, "_alternative_emails_cache"):
+            self._alternative_emails_cache = dict(
+                PublicBodyContact.objects.get_alternative_emails()
+                .filter(publicbody=self)
+                .values_list("category_name", "email")
+            )
+        return self._alternative_emails_cache
+
+    @property
     def default_law(self):
         # FIXME: Materialize this?
         return self.get_applicable_law()
@@ -257,12 +272,19 @@ class PublicBody(models.Model):
     ):
         if not law_type and not responsibility:
             return self.email
-        if self.alternative_emails:
-            if responsibility:
-                email = self.alternative_emails.get(responsibility.name)
-            if email is None and law_type:
-                email = self.alternative_emails.get(law_type, self.email)
-            return email
+        qs = self.contacts.filter(confirmed=True).exclude(email="")
+        if responsibility:
+            # TODO: do we need to query with the responsibility's descendants as well?
+            qs = qs.filter(category=responsibility)
+        elif law_type:
+            law_categories = FoiLaw.objects.filter(
+                law_type=law_type, category__isnull=False
+            ).values_list("category", flat=True)
+            qs = qs.filter(category__isin=law_categories)
+
+        contact = qs.first()
+        if contact:
+            return contact.email
         return self.email
 
     def get_mediator(self):
