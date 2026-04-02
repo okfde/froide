@@ -450,7 +450,7 @@ class PublicBodyContactForm(forms.ModelForm):
     )
     fax = forms.CharField(
         label=_("Fax number"),
-        help_text=_("Optionally a fax number for this this responsibility."),
+        help_text=_("Optionally a fax number for this responsibility."),
         required=False,
         widget=forms.TextInput(
             attrs={
