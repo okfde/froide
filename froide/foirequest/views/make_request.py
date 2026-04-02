@@ -364,7 +364,7 @@ class MakeRequestView(FormView):
                     _("Ensure this value has at most {count} character.").format(
                         count="${count}"
                     ),
-                    _("Ensure this value has at most {count} characters).").format(
+                    _("Ensure this value has at most {count} characters.").format(
                         count="${count}"
                     ),
                 ],
