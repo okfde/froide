@@ -49,12 +49,12 @@ class DocumentSearchFeed(Feed):
     def description(self, obj):
         by = self.get_filter_string()
         if by:
-            return _("This feed contains documents %(by)s" " on %(sitename)s.") % {
+            return _("This feed contains documents %(by)s on %(sitename)s.") % {
                 "sitename": settings.SITE_NAME,
                 "by": by,
             }
         return _(
-            "This feed contains the latest documents" " that appear on %(sitename)s."
+            "This feed contains the latest documents that appear on %(sitename)s."
         ) % {"sitename": settings.SITE_NAME}
 
     def link(self):

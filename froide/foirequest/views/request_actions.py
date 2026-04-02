@@ -295,10 +295,7 @@ def make_same_request(request, slug):
         messages.add_message(
             request,
             messages.INFO,
-            _(
-                "Please check your inbox for mail from us to "
-                "confirm your mail address."
-            ),
+            _("Please check your inbox for mail from us to confirm your mail address."),
         )
         # user cannot access the request yet!
         return redirect(get_new_account_url(new_foirequest))

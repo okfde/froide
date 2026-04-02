@@ -61,10 +61,12 @@ class FoiRequestFactory(DjangoModelFactory):
     due_date = timezone.now() + timedelta(days=14)
 
     secret_address = factory.LazyAttribute(
-        lambda o: "%s.%s@fragdenstaat.de"
-        % (
-            o.user.username,
-            "".join([random.choice(string.hexdigits) for x in range(8)]),
+        lambda o: (
+            "%s.%s@fragdenstaat.de"
+            % (
+                o.user.username,
+                "".join([random.choice(string.hexdigits) for x in range(8)]),
+            )
         )
     )
     secret = ""

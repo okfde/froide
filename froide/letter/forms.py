@@ -11,7 +11,7 @@ class LetterForm(forms.Form):
         required=True,
         label=_("Your name and address"),
         help_text=_(
-            "Please enter your complete name and " "address with postcode and city."
+            "Please enter your complete name and address with postcode and city."
         ),
         widget=forms.Textarea(
             attrs={

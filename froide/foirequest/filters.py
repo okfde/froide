@@ -95,8 +95,10 @@ FOIREQUEST_FILTERS = [
         pgettext_lazy("slug", "overdue"),
         pgettext_lazy("URL part", "^(?P<status>overdue)/"),
         (
-            lambda x: Q("range", due_date={"lt": timezone.now()})
-            & Q("term", status="awaiting_response")
+            lambda x: (
+                Q("range", due_date={"lt": timezone.now()})
+                & Q("term", status="awaiting_response")
+            )
         ),
         FoiRequest.FILTER_STATUS.OVERDUE,
     ),
