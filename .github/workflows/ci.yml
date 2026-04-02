@@ -53,7 +53,8 @@ jobs:
           coverage run --branch -m pytest froide/
           coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         env:
-          DATABASE_URL: postgis://postgres:postgres@localhost/froide
+          DATABASE_URL: postgis://postgres:postgres@postgres/froide
+          DJANGO_ELASTICSEARCH_HOSTS: elasticsearch
 
     services:
       postgres:
