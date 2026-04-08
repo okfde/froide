@@ -131,7 +131,14 @@ froide_urlpatterns += [
     ),
     path(pgettext_lazy("url part", "letter/"), include("froide.letter.urls")),
     path("guide/", include("froide.guide.urls")),
-    path("500/", lambda request: TemplateResponse(request, "500.html")),
+    path(
+        "500/",
+        lambda request: (
+            0 / 0
+            if "test" in request.get_host()
+            else TemplateResponse(request, "500.html")
+        ),
+    ),
     path(
         pgettext_lazy("url part", "organization/"), include("froide.organization.urls")
     ),
