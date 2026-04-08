@@ -332,7 +332,7 @@ class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
         self.object = self.get_object()
         form = self.get_form()
         contact_formset = get_publicbody_contact_formset(
-            self.object, data=request.POST, can_delete=True, extra=0
+            self.object, data=request.POST, can_delete=True, extra=1
         )
         if form.is_valid() and contact_formset.is_valid():
             return self.form_valid(form, contact_formset)
@@ -374,7 +374,7 @@ class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
         context["proposals"] = context["form"].get_proposals()
         if "contact_formset" not in context:
             context["contact_formset"] = get_publicbody_contact_formset(
-                self.object, can_delete=True, extra=0
+                self.object, can_delete=True, extra=1
             )
         context["breacrumb_item"] = _("Accept change proposal")
         return context
