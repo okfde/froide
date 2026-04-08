@@ -280,7 +280,7 @@ class PublicBody(models.Model):
             law_categories = FoiLaw.objects.filter(
                 law_type=law_type, category__isnull=False
             ).values_list("category", flat=True)
-            qs = qs.filter(category__isin=law_categories)
+            qs = qs.filter(category__in=law_categories)
 
         contact = qs.first()
         if contact:
