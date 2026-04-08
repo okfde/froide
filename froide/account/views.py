@@ -15,7 +15,7 @@ from django.db import models
 from django.http import Http404, HttpRequest
 from django.http.request import QueryDict
 from django.http.response import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import formats, timezone, translation
@@ -119,8 +119,11 @@ def confirm(
                 _("You are logged in and cannot use a confirmation link."),
             )
         return redirect("account-show")
-    user = get_object_or_404(User, pk=int(user_id))
-    if user.is_active or (not user.is_active and user.email is None):
+    try:
+        user = User.objects.get(pk=int(user_id))
+    except User.DoesNotExist:
+        return redirect("account-login")
+    if user.is_active or (not user.is_active and not user.email):
         return redirect("account-login")
     account_service = AccountService(user)
     # Todo: remove request_id from confirm_account
