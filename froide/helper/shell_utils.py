@@ -8,7 +8,6 @@ def shell_call(arguments, outpath, output_file=None, timeout=50):
     env.update({"HOME": outpath})
 
     logging.info("Running: %s", arguments)
-    logging.info("Env: %s", env)
     out, err = "", ""
     p = None
     try:
