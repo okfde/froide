@@ -103,6 +103,21 @@
                             <a href="{{ object.org_chart }}">{{ object.org_chart|urlizetrunc:40 }}</a>
                         </dd>
                     {% endif %}
+                    {% with contacts=object.contacts.all %}
+                        {% for contact in contacts %}
+                            <dt>{% blocktrans with name=contact.category.name %}Contact for {{ name }}{% endblocktrans %}</dt>
+                            <dd>
+                                {% if contact.email %}
+                                    {% translate "Email: " %}{{ contact.email }}
+                                    <br />
+                                {% endif %}
+                                {% if contact.fax %}
+                                    {% translate "Fax: " %}{{ contact.fax }}
+                                    <br />
+                                {% endif %}
+                            </dd>
+                        {% endfor %}
+                    {% endwith %}
                 </dl>
                 {% if request.user.is_authenticated %}
                     {% if object|can_moderate:request %}
