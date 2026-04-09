@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-02 16:34+0200\n"
-"PO-Revision-Date: 2026-04-02 16:37+0200\n"
+"POT-Creation-Date: 2026-04-09 09:51+0200\n"
+"PO-Revision-Date: 2026-04-09 10:19+0200\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/froide/de/>\n"
 "Language: de\n"
@@ -1684,6 +1684,11 @@ msgstr "Kontakt"
 msgid "Contact address for {responsibility} of {publicbody}"
 msgstr "Kontaktadresse für {responsibility} von {publicbody}"
 
+#: froide/publicbody/templates/publicbody/show.html
+#, python-format
+msgid "Contact for %(name)s"
+msgstr "Kontakt für %(name)s"
+
 #: froide/publicbody/templates/publicbody/_contact_formset.html
 #: froide/publicbody/templates/publicbody/accept_proposals.html
 #: froide/publicbody/templates/publicbody/add_proposal.html
@@ -2592,6 +2597,10 @@ msgstr "E-Mail-Adresse und Passwort passen nicht zusammen."
 msgid "Email:"
 msgstr "E-Mail:"
 
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Email: "
+msgstr "E-Mail: "
+
 #: froide/templates/snippets/homepage_hero.html
 msgid "Employment"
 msgstr "Arbeit"
@@ -2826,6 +2835,10 @@ msgstr "Fax-Nummer ist nicht gültig!"
 #: froide/publicbody/templates/publicbody/show.html
 msgid "Fax:"
 msgstr "Fax:"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Fax: "
+msgstr "Fax: "
 
 #: froide/frontpage/apps.py froide/frontpage/models.py
 #: froide/templates/snippets/homepage_hero.html
