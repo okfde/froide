@@ -21,6 +21,11 @@ class PublicBodyContactManager(models.Manager):
             .annotate(category_name=models.F("category__name"))
         )
 
+    def get_prefetch(self):
+        return models.Prefetch(
+            "contacts", queryset=self.get_queryset().select_related("category")
+        )
+
 
 class PublicBodyContact(models.Model):
     publicbody = models.ForeignKey(

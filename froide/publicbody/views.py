@@ -28,7 +28,13 @@ from .forms import (
     get_publicbody_contact_formset,
     save_publicbody_contact_formset,
 )
-from .models import FoiLaw, Jurisdiction, PublicBody, PublicBodyChangeProposal
+from .models import (
+    FoiLaw,
+    Jurisdiction,
+    PublicBody,
+    PublicBodyChangeProposal,
+    PublicBodyContact,
+)
 from .utils import LawExtension
 
 
@@ -39,6 +45,7 @@ class PublicBodySearch(BaseSearchView):
     document = PublicBodyDocument
     filterset = PublicBodyFilterSet
     search_url_name = "publicbody-list"
+    select_related = ["jurisdiction"]
 
     show_filters = {"jurisdiction", "category", "classification"}
     advanced_filters = {"jurisdiction", "category", "classification"}
@@ -96,7 +103,11 @@ class PublicBodyView(DetailView):
     template_name = "publicbody/show.html"
 
     def get_queryset(self):
-        return PublicBody._default_manager.all()
+        return (
+            PublicBody._default_manager.all()
+            .select_related("jurisdiction", "classification")
+            .prefetch_related("categories", PublicBodyContact.objects.get_prefetch())
+        )
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
