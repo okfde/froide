@@ -44,6 +44,7 @@ class DummyObj:
         self.query_highlight = None
 
 
+@pytest.mark.xdist_group(name="sequential")
 class TestBaseSearchFilterSetQueryPreprocessing:
     def test_auto_query_without_query_value(self):
         qs = DummyQS()

@@ -6,6 +6,8 @@ from django.contrib.gis.geos import MultiPolygon
 from django.test import TestCase
 from django.urls import reverse
 
+import pytest
+
 from froide.account.factories import UserFactory
 from froide.foirequest.tests.factories import make_world, rebuild_index
 from froide.georegion.models import GeoRegion
@@ -29,6 +31,7 @@ class PublicBodyTest(TestCase):
     def setUp(self):
         self.site = make_world()
 
+    @pytest.mark.xdist_group(name="sequential")
     def test_web_page(self):
         pb = PublicBody.objects.all()[0]
         category = CategoryFactory.create(is_topic=True)

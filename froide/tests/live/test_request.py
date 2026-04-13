@@ -21,6 +21,7 @@ req_body = "Documents describing & something..."
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_not_logged_in_request(
     page: Page, live_server, public_body_with_index
@@ -79,6 +80,7 @@ async def test_make_not_logged_in_request(
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_not_logged_in_request_to_public_body(
     page: Page, live_server, world
@@ -124,6 +126,7 @@ async def test_make_not_logged_in_request_to_public_body(
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_logged_in_request(
     page, live_server, public_body_with_index, dummy_user
@@ -160,6 +163,7 @@ async def test_make_logged_in_request(
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_logged_in_request_too_many(
     page: Page,
@@ -195,6 +199,7 @@ async def test_make_logged_in_request_too_many(
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_request_logged_out_with_existing_account(
     page: Page, live_server, world
@@ -238,6 +243,7 @@ async def test_make_request_logged_out_with_existing_account(
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_edit_request_boilerplate(
     page: Page, live_server, public_body_with_index, dummy_user
@@ -283,6 +289,7 @@ async def test_edit_request_boilerplate(
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_skip_search_similar(
     page: Page, live_server, world, public_body_with_index
@@ -322,6 +329,7 @@ async def test_skip_search_similar(
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
     "from_resolution, to_resolution",

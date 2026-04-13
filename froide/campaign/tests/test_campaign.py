@@ -60,6 +60,7 @@ def test_campaign_request_match(world, client):
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_campaign_request_match_live(
     page: Page, live_server, public_body_with_index, dummy_user

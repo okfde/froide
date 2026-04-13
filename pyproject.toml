@@ -92,6 +92,7 @@ dev = [
   "types-python-dateutil",
   "types-requests",
   "prek>=0.3.5",
+  "pytest-xdist>=3.8.0",
 ]
 
 [build-system]
@@ -150,7 +151,7 @@ exclude_lines = ["pragma: no cover"]
 DJANGO_CONFIGURATION = "Test"
 DJANGO_SETTINGS_MODULE = "froide.settings"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
-addopts = ["--reuse-db"]
+addopts = ["--reuse-db", "-n", "2", "--dist", "loadgroup"]
 markers = ["no_delivery_mock"]
 filterwarnings = [
   "ignore::DeprecationWarning:(?!froide).*",

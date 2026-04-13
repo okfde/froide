@@ -76,6 +76,7 @@ def publicbody_data(db):
     }
 
 
+@pytest.mark.xdist_group(name="sequential")
 class TestPublicBodyView:
     """Tests for the publicbody list view and its search/filter functionality."""
 
@@ -160,6 +161,7 @@ class TestPublicBodyView:
         assert result_names == set(expected_names)
 
 
+@pytest.mark.xdist_group(name="sequential")
 class TestPublicBodySearchAPI:
     """Tests for the publicbody search API.
 
