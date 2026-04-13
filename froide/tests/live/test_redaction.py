@@ -40,6 +40,7 @@ def get_colors_from_image(image: Image) -> set:
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 @override_settings(SERVE_MEDIA=True)
 async def test_redaction(world, live_server, settings, page: Page):

@@ -1561,6 +1561,7 @@ def test_resolution(world, client):
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
 def test_search(world, client, pb):
     pb = PublicBody.objects.all()[0]
     factories.rebuild_index()
