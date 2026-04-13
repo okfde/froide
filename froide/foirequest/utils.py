@@ -16,7 +16,7 @@ from django.core.mail import mail_managers
 from django.core.validators import validate_email
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 
@@ -142,11 +142,21 @@ def get_secret_url_replacements():
     if SECRET_URL_REPLACEMENTS:
         return SECRET_URL_REPLACEMENTS
 
-    url_regexes = [build_secret_url_regexes(url_name) for url_name in SECRET_URL_NAMES]
-    replacement_url = reverse("foirequest-shortlink", kwargs={"obj_id": "0"})
-    replacement_url = replacement_url.replace("0", r"\1")
+    replacements_by_lang = {}
+    replacements = {}
 
-    replacements = dict.fromkeys(url_regexes, replacement_url)
+    for lang, _name in settings.LANGUAGES:
+        with translation.override(lang):
+            replacement_url = reverse("foirequest-shortlink", kwargs={"obj_id": "0"})
+            replacement_url = replacement_url.replace("0", r"\1")
+            replacements_by_lang[lang] = replacement_url
+
+    for lang, _name in settings.LANGUAGES:
+        with translation.override(lang):
+            for url_name in SECRET_URL_NAMES:
+                url_regex = build_secret_url_regexes(url_name)
+                replacements[url_regex] = replacements_by_lang[lang]
+
     SECRET_URL_REPLACEMENTS.update(replacements)
     return SECRET_URL_REPLACEMENTS
 

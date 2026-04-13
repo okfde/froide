@@ -17,7 +17,7 @@ from django.core import mail
 from django.http import QueryDict
 from django.test.utils import override_settings
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import timezone, translation
 
 import pytest
 import time_machine
@@ -1648,19 +1648,30 @@ def test_redaction_urls(world):
     url1 = "https://example.org/request/1231/upload/abcdef0123456789"
     url2 = "https://example.org/r/1231/auth/abcdef0123456789"
     url3 = "https://example.org/request/1231/auth/abcdef0123456789"
+    url4 = "https://example.org/anfrage/1231/upload/abcdef0123456789"
     plaintext = """Testing
         Really{url1}
         !!{url2}
         {url3}#also
-    """.format(url1=url1, url2=url2, url3=url3)
+        {url4}
+    """.format(url1=url1, url2=url2, url3=url3, url4=url4)
     assert url1 in plaintext
     assert url2 in plaintext
     assert url3 in plaintext
+    assert url4 in plaintext
 
     redacted = redact_plaintext_with_request(plaintext, req)
     assert url1 not in redacted
     assert url2 not in redacted
     assert url3 not in redacted
+    assert url4 not in redacted
+
+    with translation.override("de"):
+        redacted = redact_plaintext_with_request(plaintext, req)
+        assert url1 not in redacted
+        assert url2 not in redacted
+        assert url3 not in redacted
+        assert url4 not in redacted
 
 
 @pytest.mark.django_db
