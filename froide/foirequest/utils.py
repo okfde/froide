@@ -4,6 +4,7 @@ import re
 import zipfile
 from dataclasses import dataclass
 from datetime import timedelta
+from functools import lru_cache
 from io import BytesIO
 from pathlib import PurePath
 from typing import TYPE_CHECKING, Iterator, List, Optional, Tuple, Union
@@ -135,13 +136,10 @@ SECRET_URL_NAMES = [
     "foirequest-longerauth",
     "foirequest-publicbody_upload",
 ]
-SECRET_URL_REPLACEMENTS = {}
 
 
+@lru_cache
 def get_secret_url_replacements():
-    if SECRET_URL_REPLACEMENTS:
-        return SECRET_URL_REPLACEMENTS
-
     replacements_by_lang = {}
     replacements = {}
 
@@ -157,8 +155,7 @@ def get_secret_url_replacements():
                 url_regex = build_secret_url_regexes(url_name)
                 replacements[url_regex] = replacements_by_lang[lang]
 
-    SECRET_URL_REPLACEMENTS.update(replacements)
-    return SECRET_URL_REPLACEMENTS
+    return replacements
 
 
 def short_request_url(name, foirequest, message=None):
