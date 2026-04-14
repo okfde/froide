@@ -247,7 +247,6 @@ def test_logfile_rotation():
 
         check_delivery_from_log([logfile_path, logfile_1_path], offset_file_path)
         assert len(invocations) == 1
-        print(invocations[0])
         assert invocations[0]["message_id"] == MAIL_1_ID
         assert invocations[0]["log"] == MAIL_1_LOG
 
