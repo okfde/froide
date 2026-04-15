@@ -398,7 +398,6 @@ msgid "<a href=\"%(url)s\">Please check the list of public bodies</a> if it real
 msgstr "<a href=\"%(url)s\">Bitte prüfen Sie unsere Liste der Behörden</a>, ob die gewünschte Behörde nicht doch schon existiert."
 
 #: froide/account/forms.py
-#, python-brace-format
 msgid "<a target=\"_blank\" href=\"{}\">You may use a pseudonym if you don't need to receive postal messages</a>."
 msgstr "<a target=\"_blank\" href=\"{}\">Sie können ein Pseudonym verwenden, wenn Sie keine Post erhalten müssen</a>."
 
@@ -1351,7 +1350,6 @@ msgid "Change, without accepting"
 msgstr "Ändern ohne Übernehmen"
 
 #: froide/publicbody/forms.py
-#, python-brace-format
 msgid "Changes to public body “{}” have been applied"
 msgstr "Änderungen an Behörde „{}“ wurden vorgenommen"
 
@@ -2733,7 +2731,6 @@ msgid "Expires"
 msgstr "Läuft ab am"
 
 #: froide/account/admin.py
-#, python-brace-format
 msgid "Export of user '{}' started."
 msgstr "Export von Nutzer:in '{}' gestartet."
 
@@ -4671,7 +4668,6 @@ msgid "Message Drafts"
 msgstr "Nachrichtenentwürfe"
 
 #: froide/foirequest/forms/request.py
-#, python-brace-format
 msgid "Message exceeds {} character limit."
 msgstr "Nachrichtentext überschreitet die Begrenzung von {} Zeichen."
 
@@ -4914,7 +4910,6 @@ msgid "New document with {count} pages"
 msgstr "Neues Dokument mit {count} Seiten"
 
 #: froide/guide/utils.py
-#, python-brace-format
 msgid "New guidance for your request [#{}]"
 msgstr "Neuer Hinweis zu Ihrer Anfrage [#{}]"
 
@@ -5653,7 +5648,6 @@ msgid "Please remove hand-written signatures."
 msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften."
 
 #: froide/foirequest/validators.py froide/foirequest/views/make_request.py
-#, python-brace-format
 msgid "Please replace all placeholder values marked by “{}”."
 msgstr "Bitte ersetzen Sie alle Platzhalter-Werte, die mit „{}“ markiert sind."
 
@@ -6450,7 +6444,6 @@ msgid "Request drafts"
 msgstr "Anfrageentwürfe"
 
 #: froide/foirequest/moderation.py
-#, python-brace-format
 msgid "Request got tag “{}”."
 msgstr "Anfrage hat nun Tag „{}“"
 
@@ -8271,7 +8264,6 @@ msgid "URL: %(url)s"
 msgstr "URL: %(url)s"
 
 #: froide/upload/api_views.py
-#, python-brace-format
 msgid "Unable to terminate upload while in state \"{}\"."
 msgstr "Upload konnte nicht abgebrochen werden während Zustand \"{}\"."
 
@@ -8599,7 +8591,6 @@ msgid "User exceeded request limit"
 msgstr "Nutzer:in hat Anfragenbeschränkung überschritten"
 
 #: froide/foirequest/moderation.py
-#, python-brace-format
 msgid "User got tag “{}”."
 msgstr "User hat nun Tag „{}“."
 
@@ -11381,12 +11372,10 @@ msgid "{title} (page {page})"
 msgstr "{title} (Seite {page})"
 
 #: froide/publicbody/admin.py
-#, python-brace-format
 msgid "{} change proposals were accepted."
 msgstr "{} Bearbeitungsvorschläge wurden angenommen."
 
 #: froide/publicbody/admin.py
-#, python-brace-format
 msgid "{} public bodies were confirmed."
 msgstr "{} Behörden wurden bestätigt."
 
