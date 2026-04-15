@@ -22,6 +22,7 @@ from taggit.models import TaggedItemBase
 
 from froide.campaign.models import Campaign
 from froide.helper.email_utils import make_address
+from froide.helper.language import get_default_language, get_language_choices
 from froide.helper.text_diff import CONTENT_CACHE_THRESHOLD, get_differences
 from froide.helper.text_utils import redact_plaintext
 from froide.publicbody.models import FoiLaw, Jurisdiction, PublicBody
@@ -413,8 +414,8 @@ class FoiRequest(models.Model):
     language = models.CharField(
         max_length=10,
         blank=True,
-        default=settings.LANGUAGE_CODE,
-        choices=settings.LANGUAGES,
+        default=get_default_language,
+        choices=get_language_choices,
     )
 
     site = models.ForeignKey(

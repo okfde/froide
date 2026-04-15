@@ -25,6 +25,7 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 
 from froide.helper.csv_utils import export_csv, get_dict
+from froide.helper.language import get_default_language, get_language_choices
 from froide.helper.storage import HashedFilenameStorage, delete_file_if_last_reference
 
 
@@ -180,8 +181,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     language = models.CharField(
         verbose_name=_("Language"),
         max_length=10,
-        default=settings.LANGUAGE_CODE,
-        choices=settings.LANGUAGES,
+        default=get_default_language,
+        choices=get_language_choices,
         help_text=_("Determines the default language of communication with you."),
     )
 

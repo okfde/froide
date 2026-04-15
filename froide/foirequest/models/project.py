@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
+from froide.helper.language import get_default_language, get_language_choices
 from froide.helper.text_utils import redact_plaintext
 from froide.publicbody.models import PublicBody
 from froide.team.models import Team
@@ -77,8 +78,8 @@ class FoiProject(models.Model):
     language = models.CharField(
         max_length=10,
         blank=True,
-        default=settings.LANGUAGE_CODE,
-        choices=settings.LANGUAGES,
+        default=get_default_language,
+        choices=get_language_choices,
     )
 
     site = models.ForeignKey(
