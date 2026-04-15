@@ -15,7 +15,7 @@ htmlcov:
 	coverage html
 
 messagesde:
-	python manage.py extendedmakemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov --add-location file --no-wrap --sort-output
+	python manage.py extendedmakemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov --add-location file --no-wrap --sort-output --keep-header
 
 openapi:
 	python manage.py spectacular --file froide/openapi-schema.yaml --validate
