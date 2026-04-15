@@ -7,3 +7,7 @@ def get_default_language():
 
 def get_language_choices():
     return settings.LANGUAGES
+
+
+def get_user_language_choices():
+    return getattr(settings, "USER_LANGUAGES", settings.LANGUAGES)

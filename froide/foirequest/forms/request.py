@@ -18,6 +18,7 @@ from froide.campaign.validators import validate_not_campaign
 from froide.helper.auth import get_read_queryset
 from froide.helper.form_utils import JSONMixin
 from froide.helper.forms import TagObjectForm
+from froide.helper.language import get_user_language_choices
 from froide.helper.text_utils import apply_user_redaction, redact_plaintext, slugify
 from froide.helper.widgets import BootstrapRadioSelect, BootstrapSelect, PriceInput
 from froide.publicbody.models import Category, PublicBody
@@ -114,7 +115,7 @@ class RequestForm(JSONMixin, forms.Form):
     )
     tags = TagField(required=False, widget=forms.HiddenInput)
     language = forms.ChoiceField(
-        choices=settings.LANGUAGES,
+        choices=get_user_language_choices,
         initial=settings.LANGUAGE_CODE,
         label=_("Language"),
         widget=forms.HiddenInput,

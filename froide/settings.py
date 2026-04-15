@@ -299,6 +299,10 @@ class Base(Configuration):
         ("zh-hk", _("Chinese (Traditional, Hong Kong)")),
     )
 
+    # Languages available for user-facing selection (e.g. account settings, language picker).
+    # Override in downstream projects to exclude content-only languages like de-ls.
+    USER_LANGUAGES = LANGUAGES
+
     # If you set this to False, Django will make some optimizations so as not
     # to load the internationalization machinery.
     USE_I18N = values.BooleanValue(True)
