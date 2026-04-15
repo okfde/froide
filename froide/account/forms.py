@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.helper.content_urls import get_content_url
 from froide.helper.form_utils import JSONMixin
+from froide.helper.language import get_user_language_choices
 from froide.helper.spam import SpamProtectionMixin
 from froide.helper.widgets import (
     BootstrapCheckboxInput,
@@ -625,7 +626,11 @@ class ProfileForm(forms.ModelForm):
 
 
 class AccountSettingsForm(forms.ModelForm):
+    language = forms.ChoiceField(
+        choices=get_user_language_choices,
+        widget=BootstrapSelect,
+    )
+
     class Meta:
         model = User
         fields = ["language"]
-        widgets = {"language": BootstrapSelect}

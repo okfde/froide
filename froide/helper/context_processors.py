@@ -17,6 +17,7 @@ def site_settings(request):
             request, "LANGUAGE_CODE", settings.LANGUAGE_CODE
         ),
         "DEFAULT_LANGUAGE_CODE": settings.LANGUAGE_CODE,
+        "USER_LANGUAGES": getattr(settings, "USER_LANGUAGES", settings.LANGUAGES),
     }
 
 
