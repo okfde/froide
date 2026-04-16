@@ -67,7 +67,6 @@ dependencies = [
 [dependency-groups]
 dev = [
   "beautifulsoup4",
-  "coverage[toml]",
   "django-coverage-plugin",
   "django-extended-makemessages>=1.7.1",
   "django-stubs",
@@ -93,6 +92,7 @@ dev = [
   "types-requests",
   "prek>=0.3.5",
   "pytest-xdist>=3.8.0",
+  "pytest-cov>=7.1.0",
 ]
 
 [build-system]
