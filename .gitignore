@@ -7,7 +7,7 @@ local_*.py
 data/
 files/
 froide/tests/testdata/*/
-.coverage
+.coverage*
 */_build/
 .idea
 htmlcov/

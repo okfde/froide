@@ -53,7 +53,7 @@ jobs:
           python manage.py compilemessages -i node_modules -l de
       - name: Run tests
         run: |
-          coverage run --branch -m pytest froide/
+          pytest -n auto --cov --cov-report= froide/
           coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         env:
           DATABASE_URL: postgis://postgres:postgres@localhost/froide

@@ -4,11 +4,7 @@ export PYTHONWARNINGS=default
 
 test:
 	ruff check
-	coverage run --branch -m pytest froide/
-	coverage report
-
-testui:
-	coverage run --branch -m pytest --browser chromium froide/tests/live/
+	pytest --cov froide/
 
 .PHONY: htmlcov
 htmlcov:
