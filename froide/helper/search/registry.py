@@ -1,15 +1,16 @@
-from typing import Callable, NotRequired, Optional, TypedDict
+from typing import TYPE_CHECKING, Callable, NotRequired, Optional, TypedDict
 
 from django.http import HttpRequest
 
-from django_stubs_ext import StrOrPromise
+if TYPE_CHECKING:
+    from django_stubs_ext import StrOrPromise
 
 
 class SearchItem(TypedDict):
     name: str
-    title: StrOrPromise
-    url: StrOrPromise
-    menu_title: NotRequired[StrOrPromise]
+    title: "StrOrPromise"
+    url: "StrOrPromise"
+    menu_title: NotRequired["StrOrPromise"]
     order: NotRequired[int]
 
 
