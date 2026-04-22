@@ -11,7 +11,7 @@ from ..tasks import search_instance_delete, search_instance_save
 
 
 @contextmanager
-def realtime_search(testcase, test=True):
+def realtime_search():
     signal_processor = CelerySignalProcessor(connections)
     signal_processor.setup()
     yield
