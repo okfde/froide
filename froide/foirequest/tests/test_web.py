@@ -203,7 +203,7 @@ def test_list_no_identical(world, client):
     assert response.status_code == 200
     assertContains(response, req1.title)
     assertContains(response, req2.title)
-    with realtime_search(world, client):
+    with realtime_search():
         req1.same_as = req2
         req1.save()
         req2.same_as_count = 1
