@@ -3954,6 +3954,10 @@ msgstr "Hier können Sie eine weitere Nachricht an die Behörde senden."
 msgid "Hidden"
 msgstr "Versteckt"
 
+#: froide/foirequest/filters.py
+msgid "Hide duplicate requests"
+msgstr "Mehrfachanfragen ausblenden"
+
 #: froide/account/forms.py
 msgid "Hide my name from public view"
 msgstr "Zeige meinen Namen nicht öffentlich an"
@@ -8987,6 +8991,10 @@ msgstr "Welches Recht?"
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
 msgid "What you need to redact"
 msgstr "Was Sie schwärzen sollten"
+
+#: froide/foirequest/filters.py
+msgid "When the same request is sent to many public bodies at once, only the first is shown."
+msgstr "Wenn dieselbe Anfrage gleichzeitig an mehrere Behörden gestellt wird, wird nur die erste angezeigt."
 
 #: froide/foirequest/views/message.py
 msgid "When was the letter sent?"
