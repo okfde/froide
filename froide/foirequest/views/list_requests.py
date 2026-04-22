@@ -19,7 +19,14 @@ NUM_RE = re.compile(r"^\[?\#?(\d+)\]?$")
 class BaseListRequestView(BaseSearchView):
     search_name = "foirequest"
     template_name = "foirequest/list.html"
-    show_filters = {"jurisdiction", "status", "category", "campaign", "sort"}
+    show_filters = {
+        "jurisdiction",
+        "status",
+        "category",
+        "campaign",
+        "sort",
+        "hide_project_duplicates",
+    }
     advanced_filters = {"jurisdiction", "category", "campaign"}
     has_facets = True
     facet_config = {

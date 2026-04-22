@@ -45,8 +45,8 @@
         {{ form.user }}
         {{ form.organization }}
     </div>
-    {% if 'first' in show_filters or 'sort' in show_filters %}
-        <details {% if form.first.value.0 or form.first.value.1 or form.sort.value %}open{% endif %}>
+    {% if 'first' in show_filters or 'sort' in show_filters or 'hide_project_duplicates' in show_filters %}
+        <details {% if form.first.value.0 or form.first.value.1 or form.sort.value or form.hide_project_duplicates.value %}open{% endif %}>
             <summary>{% translate "More search options" %}</summary>
             <div class="row mt-2">
                 <div class="col-md-8">
@@ -66,6 +66,22 @@
                     {{ form.sort }}
                 {% endif %}
             </div>
+            {% if "hide_project_duplicates" in show_filters %}
+                <div class="row mt-2">
+                    <div class="col-md-8">
+                        <div class="form-check form-switch">
+                            {{ form.hide_project_duplicates }}
+                            <label class="form-check-label"
+                                   for="{{ form.hide_project_duplicates.id_for_label }}">
+                                {{ form.hide_project_duplicates.label }}
+                            </label>
+                            {% if form.hide_project_duplicates.help_text %}
+                                <div class="form-text">{{ form.hide_project_duplicates.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         </details>
     {% endif %}
 </form>
