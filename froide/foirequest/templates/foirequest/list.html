@@ -3,6 +3,7 @@
 {% load humanize %}
 {% load searchtags %}
 {% load search_helper %}
+{% load searchalert_tags %}
 {% block extra_head %}
     <link href="./rss/"
           rel="alternate nofollow"
@@ -38,6 +39,12 @@
 {% block search_form %}
     {% include "foirequest/_request_search.html" with search_url=search_url %}
 {% endblock %}
+{% block search_results_label %}
+    <div class="row">
+        <div class="col-6">{% search_alert_form query=form.q.value %}</div>
+        <div class="col-6">{{ block.super }}</div>
+    </div>
+{% endblock search_results_label %}
 {% block search_results %}
     <ul class="list-unstyled">
         {% for object in object_list %}
