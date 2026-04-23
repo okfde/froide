@@ -111,6 +111,10 @@ froide_urlpatterns += [
         pgettext_lazy("url part", "follow/"),
         include("froide.follow.urls", namespace="follow"),
     ),
+    path(
+        pgettext_lazy("url part", "search-alert/"),
+        include("froide.searchalert.urls", namespace="searchalert"),
+    ),
     path("", include("froide.publicbody.urls")),
     path(pgettext_lazy("url part", "law/"), include("froide.publicbody.law_urls")),
     path(pgettext_lazy("url part", "documents/"), include("froide.document.urls")),
