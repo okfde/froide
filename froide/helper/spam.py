@@ -230,7 +230,7 @@ class SpamProtectionMixin:
     def clean_test(self) -> str:
         t = self.cleaned_data["test"]
         if t.lower().strip() not in ("7", str(_("seven"))):
-            raise forms.ValidationError(_("Failed."))
+            raise forms.ValidationError(_("Your math needs improvement."))
         return t
 
     def clean_time(self) -> str:
