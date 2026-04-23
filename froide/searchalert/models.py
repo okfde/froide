@@ -25,7 +25,7 @@ AlertIdent = User | str
 
 alert_confirm_subscribe_email = mail_registry.register(
     "searchalert/emails/confirm_subscribe",
-    ("action_url", "confirm_subscribe_message", "content_object", "user"),
+    ("action_url", "alert", "user"),
 )
 
 

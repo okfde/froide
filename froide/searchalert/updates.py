@@ -9,7 +9,8 @@ from .configuration import AlertSection, alert_registry
 from .models import Alert
 
 alert_update_email = mail_registry.register(
-    "searchalert/emails/alert_update", ("user", "alert", "total_count", "sections")
+    "searchalert/emails/alert_update",
+    ("user", "alert", "total_count", "sections", "since_date"),
 )
 
 
@@ -24,16 +25,19 @@ def send_update(alert: Alert, preview=False):
 
     total_count = sum([section.result_count for section in updates])
 
+    date_str = formats.date_format(start_date, "SHORT_DATE_FORMAT")
+
     alert_update_email.send(
         email=alert.get_email(),
         subject=_("New search results for “{query}” since {date}").format(
-            query=alert.query, date=formats.date_format(start_date, "SHORT_DATE_FORMAT")
+            query=alert.query, date=date_str
         ),
         context={
             "user": alert.user,
             "alert": alert,
             "total_count": total_count,
             "sections": updates,
+            "since_date": date_str,
         },
         priority=True,
     )
