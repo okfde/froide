@@ -28,6 +28,11 @@ alert_confirm_subscribe_email = mail_registry.register(
     ("action_url", "alert", "user"),
 )
 
+alert_update_email = mail_registry.register(
+    "searchalert/emails/alert_update",
+    ("user", "alert", "total_count", "sections", "since_date"),
+)
+
 
 class AlertManager(models.Manager):
     def filter_active(self):

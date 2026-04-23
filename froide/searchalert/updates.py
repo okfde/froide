@@ -3,15 +3,8 @@ from datetime import datetime
 from django.utils import formats, timezone
 from django.utils.translation import gettext as _
 
-from froide.helper.email_sending import mail_registry
-
 from .configuration import AlertSection, alert_registry
-from .models import Alert
-
-alert_update_email = mail_registry.register(
-    "searchalert/emails/alert_update",
-    ("user", "alert", "total_count", "sections", "since_date"),
-)
+from .models import Alert, alert_update_email
 
 
 def send_update(alert: Alert, preview=False):
