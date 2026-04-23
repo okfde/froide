@@ -1,0 +1,19 @@
+{% load i18n %}{% autoescape off %}{% if user %}{% blocktranslate with name=user.get_full_name %}Hello {{ name }},{% endblocktranslate %}{% else %}{% translate "Hello," %}{% endif %}
+{# translators: line after greeting #}
+{% blocktranslate with query=alert.query count count=total_count %}There is one search result for your query "{{ query }}".{% plural %}There are {{ count }} search results for your query "{{ query }}".{% endblocktranslate %}
+
+{% for section in sections %}{{ section.as_text }}{% endfor %}
+
+-----
+
+{% translate "Edit your alert or unsubscribe here:" %}
+{{ alert.get_change_link }}
+{% with other_alerts=get_other_alerts %}{% if other %}
+{% translate "You also have these other search alerts:" %}{% for other_alert in other_alerts %}
+- {{ other_alert.description }} <{{ other_alert.get_change_link }}>
+{% endfor %}{% endif %}{% endwith %}
+
+{% blocktranslate with site_name=site_name %}Cheers,
+{{ site_name }}{% endblocktranslate %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}

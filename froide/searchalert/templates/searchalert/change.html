@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load form_helper %}
+{% block title %}{{ alert.query }}{% endblock %}
+{% block body %}
+    <div class="container mb-5 mt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2>{% translate "Change your search alert" %}</h2>
+                <form method="post" action="{{ alert.get_change_url }}">
+                    {% csrf_token %}
+                    {% render_form form %}
+                    <p class="text-end">
+                        <button type="submit" class="btn btn-primary">{% translate "Save changes" %}</button>
+                    </p>
+                </form>
+                <hr />
+                <div class="alert alert-danger mt-5">
+                    <p>{% translate "If you don't want to receive any more alerts, unsubscribe here:" %}</p>
+                    <form method="post" action="{{ alert.get_unsubscribe_url }}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">{% translate "Delete this search alert" %}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
