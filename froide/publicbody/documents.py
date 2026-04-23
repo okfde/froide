@@ -55,6 +55,9 @@ class PublicBodyDocument(Document):
             .prefetch_related("classification", "categories", "regions")
         )
 
+    def should_index_object(self, obj: PublicBody) -> bool:
+        return obj.confirmed
+
     def prepare_content(self, obj):
         content = [
             obj.name,
