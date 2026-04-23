@@ -1,0 +1,42 @@
+{% load i18n %}
+{% load form_helper %}
+<button id="searchalert-form-modal-trigger"
+        data-bs-toggle="modal"
+        data-bs-target="#searchalert-form-modal"
+        class="btn btn-sm btn-outline-primary">
+    <i class="fa fa-bell-o" aria-hidden="true"></i>
+    {% translate "Search alert" %}
+</button>
+<div id="searchalert-form-modal"
+     class="modal fade"
+     role="dialog"
+     aria-labelledby="searchalert-form-modal-label"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form class="modal-content"
+              method="post"
+              action="{% url "searchalert:subscribe" %}"
+              id="searchalert-form">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchalert-form-modal-label">
+                    {% trans "Get updates for new search results via email" %}
+                </h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="{% translate 'Close' %}"></button>
+            </div>
+            <div class="modal-body">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                {% render_form form %}
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="fa fa-bell" aria-hidden="true"></i>
+                    {% translate "Setup search alert" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

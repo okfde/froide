@@ -1,0 +1,11 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+{% block content %}
+    {{ block.super }}
+    {% if original.pk %}
+        <h2>{% translate "Preview of updates" %}</h2>
+        {% with updates=original.get_preview_updates %}
+            {% for update in updates %}{{ update.as_html }}{% endfor %}
+        {% endwith %}
+    {% endif %}
+{% endblock %}
