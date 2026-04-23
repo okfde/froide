@@ -4,6 +4,7 @@ import pytest
 
 from froide.foirequest.tests.factories import rebuild_index
 from froide.georegion.factories import GeoRegionFactory
+from froide.helper.search.signal_processor import realtime_search
 
 from ..factories import (
     CategoryFactory,
@@ -370,3 +371,33 @@ class TestPublicBodySearchAPI:
         view_names = {obj.name for obj in view_response.context["object_list"]}
 
         assert api_names == view_names
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.xdist_group(name="sequential")
+def test_proposals_not_in_search(world, client):
+    rebuild_index()
+
+    api_url = reverse("api:publicbody-search")
+
+    # make sure proposed public bodies are not indexed and returned in search api
+    with realtime_search():
+        pb_proposal = PublicBodyFactory.create(name="Indextest-1", confirmed=False)
+        pb_confirmed = PublicBodyFactory.create(name="Indextest-2", confirmed=True)
+
+    api_response = client.get(api_url, {"q": "Indextest"})
+    assert api_response.status_code == 200
+    data = api_response.json()
+    assert len(data["objects"]) == 1
+    assert data["objects"][0]["id"] == pb_confirmed.id
+
+    # confirming a proposal should make it appear in the index via the save signal
+    with realtime_search():
+        pb_proposal.confirmed = True
+        pb_proposal.save()
+
+    api_response = client.get(api_url, {"q": "Indextest"})
+    assert api_response.status_code == 200
+    data = api_response.json()
+    result_ids = {obj["id"] for obj in data["objects"]}
+    assert result_ids == {pb_proposal.id, pb_confirmed.id}
