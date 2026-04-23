@@ -57,6 +57,6 @@ class FoiRequestAlertConfiguration(AlertConfiguration):
             {
                 "q": query,
                 "first_after": start_date.date().strftime("%Y-%m-%d"),
-                "sort": "-first_message",
+                "sort": "-first",
             },
         )
