@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-09 09:51+0200\n"
-"PO-Revision-Date: 2026-04-09 10:19+0200\n"
+"PO-Revision-Date: 2026-04-23 14:54+0200\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/froide/de/>\n"
 "Language: de\n"
@@ -149,6 +149,11 @@ msgstr "%(site_name)s: Bitte bestätigen Sie Ihre neue E-Mail-Adresse"
 #, python-format
 msgid "%(time)s ago"
 msgstr "%(time)s her"
+
+#: froide/searchalert/models.py
+#, python-format
+msgid "%(user)s alert %(query)s"
+msgstr "Such-Abo von %(user)s für %(query)s"
 
 #: froide/follow/models.py
 #, python-format
@@ -398,6 +403,7 @@ msgid "<a href=\"%(url)s\">Please check the list of public bodies</a> if it real
 msgstr "<a href=\"%(url)s\">Bitte prüfen Sie unsere Liste der Behörden</a>, ob die gewünschte Behörde nicht doch schon existiert."
 
 #: froide/account/forms.py
+#, python-brace-format
 msgid "<a target=\"_blank\" href=\"{}\">You may use a pseudonym if you don't need to receive postal messages</a>."
 msgstr "<a target=\"_blank\" href=\"{}\">Sie können ein Pseudonym verwenden, wenn Sie keine Post erhalten müssen</a>."
 
@@ -1345,11 +1351,16 @@ msgstr "Passwort ändern"
 msgid "Change request text redaction"
 msgstr "Schwärzungen ändern"
 
+#: froide/searchalert/templates/searchalert/change.html
+msgid "Change your search alert"
+msgstr "Ändern Sie Ihr Such-Abo"
+
 #: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
 msgid "Change, without accepting"
 msgstr "Ändern ohne Übernehmen"
 
 #: froide/publicbody/forms.py
+#, python-brace-format
 msgid "Changes to public body “{}” have been applied"
 msgstr "Änderungen an Behörde „{}“ wurden vorgenommen"
 
@@ -1396,6 +1407,10 @@ msgstr "Rufen Sie Ihre E-Mails ab und klicken Sie auf den Bestätigungs-Link um 
 msgid "Check your emails and click the confirmation link in order to follow."
 msgstr "Rufen Sie Ihre E-Mails ab und klicken Sie auf den Bestätigungs-Link um Benachrichtigungen zu erhalten."
 
+#: froide/searchalert/views.py
+msgid "Check your emails and click the confirmation link in order to get alerts."
+msgstr "Rufen Sie Ihre E-Mails ab und klicken Sie auf den Bestätigungs-Link um das Such-Abo zu aktivieren."
+
 #: froide/account/templates/account/new.html
 msgid "Check your emails for your account"
 msgstr "Rufen Sie Ihre E-Mails für diese Adresse ab:"
@@ -1417,6 +1432,8 @@ msgstr "Schauen Sie in Ihre E-Mails, wir haben Ihnen einen Passwort-Zurücksetze
 #: froide/guide/templates/guide/emails/new_guidance.txt
 #: froide/organization/templates/organization/emails/organization_invite.txt
 #: froide/problem/templates/problem/email_problem_resolved.txt
+#: froide/searchalert/templates/searchalert/emails/alert_update.txt
+#: froide/searchalert/templates/searchalert/emails/confirm_subscribe.txt
 #: froide/team/templates/team/emails/team_invite.txt
 #, python-format
 msgid ""
@@ -1557,6 +1574,7 @@ msgstr "Client-Typ"
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
 #: froide/follow/templates/follow/_email_follow_form.html
 #: froide/problem/templates/problem/message_toolbar_item.html
+#: froide/searchalert/templates/searchalert/_alert_form.html
 #: froide/team/templates/team/team_detail.html
 #: froide/templates/snippets/messages.html
 #: froide/templates/snippets/share_buttons.html
@@ -1721,7 +1739,7 @@ msgstr "Kontext"
 msgid "Context JSON"
 msgstr "Kontext JSON"
 
-#: froide/account/templates/account/go.html
+#: froide/helper/templates/helper/auto_submit.html
 #: froide/letter/templates/letter/default.html
 msgid "Continue"
 msgstr "Weiter"
@@ -2159,6 +2177,10 @@ msgstr "Team „%(name)s“ löschen"
 msgid "Delete this proof"
 msgstr "Nachweis löschen"
 
+#: froide/searchalert/templates/searchalert/change.html
+msgid "Delete this search alert"
+msgstr "Such-Abo löschen"
+
 #: froide/account/templates/account/settings.html
 msgid "Delete your account"
 msgstr "Löschen Sie Ihren Account"
@@ -2312,7 +2334,7 @@ msgstr "Dokumentensuche"
 msgid "Document title"
 msgstr "Dokumententitel"
 
-#: froide/document/apps.py
+#: froide/document/alert.py froide/document/apps.py
 #: froide/document/templates/admin/document/documentcollection/change_form.html
 #: froide/document/templates/document/search.html
 #: froide/foirequest/templates/foirequest/body/documents.html
@@ -2555,6 +2577,10 @@ msgstr "Schlagwörter bearbeiten"
 msgid "Edit title"
 msgstr "Titel bearbeiten"
 
+#: froide/searchalert/templates/searchalert/emails/alert_update.txt
+msgid "Edit your alert or unsubscribe here:"
+msgstr "Bearbeiten oder löschen Sie Ihr Such-Abo hier:"
+
 #: froide/upload/forms.py
 #, python-brace-format
 msgid "Editing %{file}"
@@ -2731,6 +2757,7 @@ msgid "Expires"
 msgstr "Läuft ab am"
 
 #: froide/account/admin.py
+#, python-brace-format
 msgid "Export of user '{}' started."
 msgstr "Export von Nutzer:in '{}' gestartet."
 
@@ -2791,6 +2818,10 @@ msgstr "IFG-Seite"
 msgid "FOI Sites"
 msgstr "IFG-Seiten"
 
+#: froide/foirequest/alert.py
+msgid "FOI requests"
+msgstr "Informationsfreiheitsanfragen"
+
 #: froide/publicbody/templates/publicbody/jurisdiction.html
 #, python-format
 msgid "Facts about %(name)s"
@@ -2804,10 +2835,6 @@ msgstr "Konnte URL nicht zurücksetzen."
 #, python-brace-format
 msgid "Failed to upload %{file}"
 msgstr "Upload von %{file} fehlgeschlagen"
-
-#: froide/helper/spam.py
-msgid "Failed."
-msgstr "Fehlgeschlagen."
 
 #: froide/publicbody/models/contact.py
 msgid "Fax"
@@ -3161,6 +3188,10 @@ msgstr "Erhalten Sie Neuigkeiten per Email."
 msgid "Get to know your right!"
 msgstr "Lernen Sie Ihr Recht kennen."
 
+#: froide/searchalert/templates/searchalert/_alert_form.html
+msgid "Get updates for new search results via email"
+msgstr "Erhalten Sie Benachrichtigungen zu neuen Ergebnissen per E-Mail"
+
 #: froide/follow/templates/follow/_email_follow_form.html
 msgid "Get updates for this request via email"
 msgstr "Erhalten Sie Benachrichtigungen per E-Mail"
@@ -3338,6 +3369,8 @@ msgstr "Hallo %(name)s"
 #: froide/follow/templates/follow/emails/update_follower.txt
 #: froide/guide/templates/guide/emails/new_guidance.txt
 #: froide/problem/templates/problem/email_problem_resolved.txt
+#: froide/searchalert/templates/searchalert/emails/alert_update.txt
+#: froide/searchalert/templates/searchalert/emails/confirm_subscribe.txt
 #, python-format
 msgid "Hello %(name)s,"
 msgstr "Hallo %(name)s,"
@@ -3760,6 +3793,8 @@ msgstr ""
 #: froide/follow/templates/follow/emails/batch_update_follower.txt
 #: froide/follow/templates/follow/emails/confirm_follow.txt
 #: froide/follow/templates/follow/emails/update_follower.txt
+#: froide/searchalert/templates/searchalert/emails/alert_update.txt
+#: froide/searchalert/templates/searchalert/emails/confirm_subscribe.txt
 msgid "Hello,"
 msgstr "Hallo,"
 
@@ -3953,6 +3988,10 @@ msgstr "Startseite"
 msgid "How much compensation does the public body demand?"
 msgstr "Welchen Betrag hat die Behörde verlangt?"
 
+#: froide/searchalert/forms.py
+msgid "How often do you want to receive new results?"
+msgstr "Wie oft möchten Sie von neuen Ergebnissen erfahren?"
+
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
 msgid "How to redact"
 msgstr "So schwärzen Sie das Dokument"
@@ -4053,6 +4092,10 @@ msgstr "Ihr Name wird an die Behörde gesendet, aber wir werden ihn nach Möglic
 #: froide/account/templates/account/new.html
 msgid "If you do not confirm your email address, we cannot send your request."
 msgstr "Wenn Sie Ihre E-Mail-Adresse nicht bestätigen, können wir Ihre Anfrage nicht versenden."
+
+#: froide/searchalert/templates/searchalert/change.html
+msgid "If you don't want to receive any more alerts, unsubscribe here:"
+msgstr "Falls Sie keine weiteren Benachrichtigungen erhalten wollen, können Sie das Such-Abo hier löschen:"
 
 #: froide/helper/spam.py
 msgid "If you enter anything in this field your action will be blocked."
@@ -4372,10 +4415,10 @@ msgstr "Link ist ungültig oder abgelaufen!"
 msgid "Loading PDF..."
 msgstr "Lade PDF..."
 
-#: froide/account/templates/account/go.html
 #: froide/foirequest/templates/foirequest/attachment/manage.html
 #: froide/foirequest/templates/foirequest/redact.html
 #: froide/foirequest/views/message.py
+#: froide/helper/templates/helper/auto_submit.html
 #: froide/publicbody/templates/publicbody/admin/match_georegions.html
 #: froide/upload/forms.py
 msgid "Loading..."
@@ -4668,6 +4711,7 @@ msgid "Message Drafts"
 msgstr "Nachrichtenentwürfe"
 
 #: froide/foirequest/forms/request.py
+#, python-brace-format
 msgid "Message exceeds {} character limit."
 msgstr "Nachrichtentext überschreitet die Begrenzung von {} Zeichen."
 
@@ -4736,7 +4780,7 @@ msgstr "Bundesministerium für Arbeit"
 msgid "Ministry of..."
 msgstr "Bundesministerium für..."
 
-#: froide/follow/forms.py
+#: froide/follow/forms.py froide/searchalert/forms.py
 msgid "Missing email address!"
 msgstr "Fehlende E-Mail-Adresse!"
 
@@ -4910,6 +4954,7 @@ msgid "New document with {count} pages"
 msgstr "Neues Dokument mit {count} Seiten"
 
 #: froide/guide/utils.py
+#, python-brace-format
 msgid "New guidance for your request [#{}]"
 msgstr "Neuer Hinweis zu Ihrer Anfrage [#{}]"
 
@@ -4925,6 +4970,11 @@ msgstr "Neues Problem: {label} [#{reqid}]"
 #: froide/foirequest/signals.py
 msgid "New reply to your request"
 msgstr "💬 Neue Antwort auf Ihre Anfrage"
+
+#: froide/searchalert/updates.py
+#, python-brace-format
+msgid "New search results for “{query}” since {date}"
+msgstr "Neue Suchergebnisse für „{query}“ seit {date}"
 
 #: froide/foirequest/signals.py
 msgid "New suggestion for a Public Body"
@@ -5481,6 +5531,15 @@ msgstr "Bitte wählen Sie das Gesetz, auf das sich die Behörde in ihrer Antwort
 msgid "Please classify the reply to your request"
 msgstr "🔔 Bitte klassifizieren Sie Ihre Anfrage"
 
+#: froide/searchalert/templates/searchalert/emails/confirm_subscribe.txt
+msgid "Please click the link below to confirm:"
+msgstr "Zum Bestätigen klicken Sie bitte den Link:"
+
+#: froide/searchalert/models.py
+#, python-brace-format
+msgid "Please confirm alerts for “{query}”"
+msgstr "Bitte bestätigen Sie das Such-Abo für „{query}“"
+
 #: froide/follow/models.py
 #, python-brace-format
 msgid "Please confirm notifications for “{title}”"
@@ -5648,6 +5707,7 @@ msgid "Please remove hand-written signatures."
 msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften."
 
 #: froide/foirequest/validators.py froide/foirequest/views/make_request.py
+#, python-brace-format
 msgid "Please replace all placeholder values marked by “{}”."
 msgstr "Bitte ersetzen Sie alle Platzhalter-Werte, die mit „{}“ markiert sind."
 
@@ -5746,6 +5806,10 @@ msgstr "Vorschau"
 #: froide/foirequest/views/make_request.py
 msgid "Preview & submit"
 msgstr "Vorschau & abschicken"
+
+#: froide/searchalert/templates/admin/searchalert/alert/change_form.html
+msgid "Preview of updates"
+msgstr "Vorschau der Benachrichtigung"
 
 #: froide/foirequest/views/request.py
 msgid "Previous"
@@ -6444,6 +6508,7 @@ msgid "Request drafts"
 msgstr "Anfrageentwürfe"
 
 #: froide/foirequest/moderation.py
+#, python-brace-format
 msgid "Request got tag “{}”."
 msgstr "Anfrage hat nun Tag „{}“"
 
@@ -6511,6 +6576,7 @@ msgstr "Anfragesteller:in"
 #: froide/foirequest/templates/foirequest/header/breadcrumb.html
 #: froide/foirequest/templates/foirequest/list.html
 #: froide/foirequestfollower/configuration.py
+#: froide/helper/search/tests/test_search_registry.py
 #: froide/problem/templates/problem/user_moderation.html
 #: froide/team/templates/team/team_detail.html froide/templates/header.html
 msgid "Requests"
@@ -6728,7 +6794,8 @@ msgstr "Speichern"
 msgid "Save as draft"
 msgstr "Als Entwurf speichern"
 
-#: froide/account/templates/account/settings.html froide/upload/forms.py
+#: froide/account/templates/account/settings.html
+#: froide/searchalert/templates/searchalert/change.html froide/upload/forms.py
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
@@ -6778,6 +6845,10 @@ msgstr "Suchen"
 msgid "Search %(foicount)s requests and %(pbcount)s public bodies:"
 msgstr "Suchen Sie in %(foicount)s Anfragen und %(pbcount)s Behörden:"
 
+#: froide/searchalert/apps.py
+msgid "Search Alert App"
+msgstr "Such-Abo-App"
+
 #: froide/templates/snippets/homepage_hero.html
 msgid "Search For Information"
 msgstr "Suchen!"
@@ -6785,6 +6856,10 @@ msgstr "Suchen!"
 #: froide/foirequest/filters.py froide/helper/search/filters.py
 msgid "Search Term"
 msgstr "Suchbegriff"
+
+#: froide/searchalert/templates/searchalert/_alert_form.html
+msgid "Search alert"
+msgstr "Such-Abo"
 
 #: froide/publicbody/forms.py
 msgid "Search for a topic or a public body:"
@@ -6805,6 +6880,10 @@ msgstr "Durchsuchen Sie unser Archiv:"
 #: froide/publicbody/filters.py
 msgid "Search public bodies"
 msgstr "Suchen Sie nach Behörden"
+
+#: froide/searchalert/forms.py
+msgid "Search query"
+msgstr "Suchbegriff"
 
 #: froide/foirequest/filters.py froide/foirequest/views/make_request.py
 msgid "Search requests"
@@ -6901,6 +6980,10 @@ msgstr "Keine auswählen"
 #: froide/foirequest/views/make_request.py
 msgid "Select public bodies"
 msgstr "Behörden auswählen"
+
+#: froide/searchalert/forms.py
+msgid "Select the types of search results you would like alerts for."
+msgstr "Wählen Sie die Arten von Suchergebnissen, über die Sie gerne informiert werden würden."
 
 #: froide/foirequest/views/make_request.py
 msgid "Select this public body"
@@ -7112,6 +7195,10 @@ msgstr "Hardware-Sicherheitsschlüssel einrichten"
 #: froide/templates/mfa/mfakey_list.html
 msgid "Setup recovery code"
 msgstr "Wiederherstellungs-Code einrichten"
+
+#: froide/searchalert/templates/searchalert/_alert_form.html
+msgid "Setup search alert"
+msgstr "Such-Abo anlegen"
 
 #: froide/account/templates/account/settings.html
 #: froide/account/templates/account/settings_base.html
@@ -7777,6 +7864,20 @@ msgstr "Es gibt noch keine Anfragen an diese Behörde."
 msgid "There are unprocessed FOI Mails, inform system administrators!"
 msgstr "Es gibt unverarbeitete IF-Mails, System-Administrator*innen informieren!"
 
+#: froide/searchalert/configuration.py
+#, python-format
+msgid "There is one more result."
+msgid_plural "There are %(count)s more results."
+msgstr[0] "Es gibt noch ein weiteres Ergebnis."
+msgstr[1] "Es gibt noch %(count)s weitere Ergebnisse."
+
+#: froide/searchalert/templates/searchalert/emails/alert_update.txt
+#, python-format
+msgid "There is one search result for your query \"%(query)s\"."
+msgid_plural "There are %(count)s search results for your query \"%(query)s\"."
+msgstr[0] "es gibt ein Ergebnis für Ihre Suche nach „%(query)s“."
+msgstr[1] "es gibt %(count)s Ergebnisse für Ihre Suche nach „%(query)s“."
+
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
 msgid "There was a problem with your redaction. Please contact moderators."
 msgstr "Es gab ein Problem bei der Schwärzung des Dokuments. Bitte kontaktieren Sie Moderator:innen."
@@ -7785,7 +7886,7 @@ msgstr "Es gab ein Problem bei der Schwärzung des Dokuments. Bitte kontaktieren
 msgid "There was a problem."
 msgstr "Es gab ein Problem."
 
-#: froide/follow/views.py
+#: froide/follow/views.py froide/searchalert/views.py
 msgid "There was something wrong with your link. Perhaps try again."
 msgstr "Der Link war fehlerhaft, probieren Sie es noch mal."
 
@@ -8122,6 +8223,14 @@ msgstr "Zeitstempel des Abos"
 msgid "Timestamp of Suggestion"
 msgstr "Zeitstempel des Vorschlags"
 
+#: froide/searchalert/models.py
+msgid "Timestamp of creation"
+msgstr "Zeitstempel der Erstellung"
+
+#: froide/searchalert/models.py
+msgid "Timestamp of last alert"
+msgstr "Zeitstempel der letzten Benachrichtigung"
+
 #: froide/account/templates/account/show.html
 #: froide/foirequest/models/project.py froide/foirequest/models/request.py
 #: froide/foirequest/templates/foirequest/account/list_drafts.html
@@ -8223,6 +8332,10 @@ msgstr "Art der Verwaltungseinheit"
 msgid "Type the phrase above exactly as displayed."
 msgstr "Geben Sie das obrige Wort genau so ein wie angezeigt."
 
+#: froide/searchalert/forms.py
+msgid "Types of results"
+msgstr "Ergebnisarten"
+
 #: froide/foirequest/templates/foirequest/pdf/_foimessage.html
 #: froide/foisite/models.py froide/frontpage/models.py
 #: froide/publicbody/models/changeproposal.py
@@ -8264,6 +8377,7 @@ msgid "URL: %(url)s"
 msgstr "URL: %(url)s"
 
 #: froide/upload/api_views.py
+#, python-brace-format
 msgid "Unable to terminate upload while in state \"{}\"."
 msgstr "Upload konnte nicht abgebrochen werden während Zustand \"{}\"."
 
@@ -8367,6 +8481,10 @@ msgstr "Abgelehnte Anfragen"
 #: froide/foirequest/views/make_request.py froide/helper/admin_utils.py
 msgid "Until"
 msgstr "Bis"
+
+#: froide/searchalert/forms.py
+msgid "Update frequency"
+msgstr "Häufigkeit"
 
 #: froide/foirequest/views/make_request.py
 msgid "Update my postal address"
@@ -8575,6 +8693,7 @@ msgstr "Verwenden Sie Ihr Passwort"
 #: froide/foirequest/models/event.py froide/foirequest/models/project.py
 #: froide/foirequest/models/request.py froide/foirequest/models/suggestion.py
 #: froide/follow/models.py froide/frontpage/models.py
+#: froide/searchalert/models.py
 msgid "User"
 msgstr "Nutzer"
 
@@ -8591,6 +8710,7 @@ msgid "User exceeded request limit"
 msgstr "Nutzer:in hat Anfragenbeschränkung überschritten"
 
 #: froide/foirequest/moderation.py
+#, python-brace-format
 msgid "User got tag “{}”."
 msgstr "User hat nun Tag „{}“."
 
@@ -8989,6 +9109,10 @@ msgstr "Sie stimmen den <a href=\"{url_terms}\" target=\"_blank\">Nutzungsbeding
 msgid "You already made an identical request"
 msgstr "Sie haben schon eine identische Anfrage gestellt"
 
+#: froide/searchalert/templates/searchalert/emails/alert_update.txt
+msgid "You also have these other search alerts:"
+msgstr "Sie haben auch noch folgende Such-Abos:"
+
 #: froide/team/views.py
 msgid "You are already a team member."
 msgstr "Sie sind schon Team-Mitglied."
@@ -9028,6 +9152,11 @@ msgstr "Sie erhalten nun Benachrichtigungen für diese Anfrage."
 #: froide/follow/configuration.py
 msgid "You are now following."
 msgstr "Sie folgen jetzt."
+
+#: froide/searchalert/views.py
+#, python-brace-format
+msgid "You are now getting alerts for “{query}”."
+msgstr "Sie erhalten jetzt Benachrichtigungen zur Suche nach „{query}“."
 
 #: froide/account/apps.py
 msgid "You are now logged in."
@@ -9340,6 +9469,11 @@ msgstr "Sie haben Teile des Dokumentes geschwärzt, aber ausgewählt, dass keine
 msgid "You request has been refused."
 msgstr "Ihre Anfrage wurde abgelehnt."
 
+#: froide/searchalert/templates/searchalert/emails/confirm_subscribe.txt
+#, python-format
+msgid "You requested a %(interval)s email update for the search term \"%(query)s\"."
+msgstr "Sie haben ein Such-Abo (%(interval)s) für die Suche nach „%(query)s“ angelegt."
+
 #: froide/foirequest/views/request_actions.py
 msgid "You successfully requested this document! Your request is displayed below."
 msgstr "Sie haben das Dokument nun angefragt. Ihre Anfrage finden Sie auf dieser Seite."
@@ -9363,6 +9497,10 @@ msgstr "Sie erhalten per E-Mail Benachrichtigungen, sobald etwas bei dieser Anfr
 #: froide/follow/configuration.py
 msgid "You will get notifications via email when something new happens. You can unsubscribe anytime."
 msgstr "Sie erhalten per E-Mail Benachrichtigungen, sobald etwas passiert. Sie können die Benachrichtigungen jederzeit abbestellen."
+
+#: froide/searchalert/views.py
+msgid "You will not receive any more alerts."
+msgstr "Sie erhalten keine Benachrichtigungen mehr."
 
 #: froide/account/forms.py
 #, python-brace-format
@@ -9484,7 +9622,7 @@ msgid "Your draft requests"
 msgstr "Ihre Anfrageentwürfe"
 
 #: froide/account/forms.py froide/foirequest/views/make_request.py
-#: froide/follow/forms.py
+#: froide/follow/forms.py froide/searchalert/forms.py
 msgid "Your email address"
 msgstr "Ihre E-Mail-Adresse"
 
@@ -9519,6 +9657,10 @@ msgstr "Ihr Brief"
 #: froide/account/forms.py
 msgid "Your mailing address"
 msgstr "Ihre Postadresse"
+
+#: froide/helper/spam.py
+msgid "Your math needs improvement."
+msgstr "Sie müssen Ihre Mathematikfähigkeiten verbessern. "
 
 #: froide/foirequest/forms/message.py
 msgid "Your message"
@@ -10092,6 +10234,16 @@ msgstr "Kategorie"
 msgid "change"
 msgstr "ändern"
 
+#: froide/searchalert/urls.py
+msgctxt "url part"
+msgid "change/<int:alert_id>/"
+msgstr "aendern/<int:alert_id>/"
+
+#: froide/searchalert/urls.py
+msgctxt "url part"
+msgid "change/<int:alert_id>/<str:check>/"
+msgstr "aendern/<int:alert_id>/<str:check>/"
+
 #: froide/publicbody/urls.py
 msgctxt "url part"
 msgid "change/<int:pk>/"
@@ -10131,6 +10283,11 @@ msgstr "comments/"
 msgid "complete"
 msgstr "abgeschlossen"
 
+#: froide/searchalert/urls.py
+msgctxt "url part"
+msgid "confirm/<int:alert_id>/<str:check>/"
+msgstr "bestaetigen/<int:alert_id>/<str:check>/"
+
 #: froide/follow/urls.py
 msgctxt "url part"
 msgid "confirm/<int:follow_id>/<str:check>/"
@@ -10156,6 +10313,10 @@ msgstr "für die Anfrage wurden Kosten angegeben"
 #: froide/georegion/models.py
 msgid "country"
 msgstr "Land"
+
+#: froide/searchalert/models.py
+msgid "daily"
+msgstr "täglich"
 
 #: froide/account/admin.py froide/account/models.py
 msgid "date deactivated"
@@ -10221,7 +10382,7 @@ msgstr "E-Mail"
 
 #: froide/account/models.py
 #: froide/foirequest/templates/foirequest/publicbody_upload.html
-#: froide/follow/forms.py
+#: froide/follow/forms.py froide/searchalert/forms.py
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
@@ -10555,6 +10716,10 @@ msgstr "dd.mm.YYYY"
 msgctxt "url part"
 msgid "moderation/"
 msgstr "moderation/"
+
+#: froide/searchalert/models.py
+msgid "monthly"
+msgstr "monatlich"
 
 #: froide/georegion/models.py
 msgid "municipality"
@@ -10925,6 +11090,11 @@ msgstr "Vorschlag prüfen"
 msgid "search for \"%s\""
 msgstr "Suchergebnisse für „%s“"
 
+#: froide/urls.py
+msgctxt "url part"
+msgid "search-alert/"
+msgstr "such-abo/"
+
 #. Translators: request URL
 #: froide/document/urls.py froide/foirequest/urls/__init__.py
 msgctxt "url part"
@@ -11208,6 +11378,16 @@ msgstr "keine-benachrichtigungen-erhalten/<str:conf_slug>-<int:follow_id>/<str:c
 msgid "unknown"
 msgstr "unbekannt"
 
+#: froide/searchalert/urls.py
+msgctxt "url part"
+msgid "unsubscribe/<int:alert_id>/"
+msgstr "abbestellen/<int:alert_id>/"
+
+#: froide/searchalert/urls.py
+msgctxt "url part"
+msgid "unsubscribe/<int:alert_id>/<str:check>/"
+msgstr "abbestellen/<int:alert_id>/<str:check>/"
+
 #: froide/helper/templates/helper/forms/widgets/daterange.html
 msgid "until"
 msgstr "bis"
@@ -11257,6 +11437,10 @@ msgstr "Betrachter:in"
 msgid "visit in person"
 msgstr "Besuch in Person"
 
+#: froide/searchalert/models.py
+msgid "weekly"
+msgstr "wöchtenlich"
+
 #: froide/foirequest/templates/foirequest/list.html
 #, python-format
 msgid "with tag “%(name)s”"
@@ -11305,6 +11489,11 @@ msgstr "{count} Ergebnisse"
 #, python-brace-format
 msgid "{current} of {total}"
 msgstr "{current} von {total}"
+
+#: froide/searchalert/models.py
+#, python-brace-format
+msgid "{interval} search alert for “{query}” in {sections}"
+msgstr "Such-Abo ({interval}) nach „{query}“ für {sections}"
 
 #: froide/proof/models.py
 #, python-brace-format
@@ -11372,10 +11561,12 @@ msgid "{title} (page {page})"
 msgstr "{title} (Seite {page})"
 
 #: froide/publicbody/admin.py
+#, python-brace-format
 msgid "{} change proposals were accepted."
 msgstr "{} Bearbeitungsvorschläge wurden angenommen."
 
 #: froide/publicbody/admin.py
+#, python-brace-format
 msgid "{} public bodies were confirmed."
 msgstr "{} Behörden wurden bestätigt."
 
@@ -11739,12 +11930,6 @@ msgstr "👋 Viel Erfolg!"
 
 #~ msgid "%(user)s suggested %(public_body)s for the request '%(request)s'"
 #~ msgstr "%(user)s schlug %(public_body)s für die Anfrage '%(request)s' vor."
-
-#, fuzzy
-#~ msgid "%d month"
-#~ msgid_plural "%d months"
-#~ msgstr[0] "%d E-Mails gesendet."
-#~ msgstr[1] "%d E-Mails gesendet."
 
 #~ msgid "%s documents were uploaded successfully."
 #~ msgstr "%s Dokumente wurden erfolgreich hochgeladen."
@@ -12220,6 +12405,9 @@ msgstr "👋 Viel Erfolg!"
 #~ msgid "Facebook"
 #~ msgstr "Facebook"
 
+#~ msgid "Failed."
+#~ msgstr "Fehlgeschlagen."
+
 #~ msgid "Feeds"
 #~ msgstr "Feeds"
 
@@ -12232,10 +12420,6 @@ msgstr "👋 Viel Erfolg!"
 
 #~ msgid "Filtered by requests to Public Bodies in %(name)s."
 #~ msgstr "Nur Anfragen an Behörden von %(name)s."
-
-#, fuzzy
-#~ msgid "FoI requests"
-#~ msgstr "Informationsfreiheitsanfragen"
 
 #~ msgid "For FoI Officers"
 #~ msgstr "For FoI Officers"
@@ -12867,9 +13051,6 @@ msgstr "👋 Viel Erfolg!"
 #~ msgid "Search Public Body Website"
 #~ msgstr "Durchsuchen Sie die Webseite der Behörde"
 
-#~ msgid "Search Results for \"%(query)s\""
-#~ msgstr "Suchergebnisse für „%(query)s“"
-
 #~ msgid "Search Results for &quot;%(query)s&quot; in Public Bodies"
 #~ msgstr "Search Results for &quot;%(query)s&quot; in Public Bodies"
 
@@ -13062,11 +13243,9 @@ msgstr "👋 Viel Erfolg!"
 #~ msgid "The text can be left empty, instead you can upload scanned documents."
 #~ msgstr "Der Text kann leer bleiben, wenn Sie stattdessen den gescannten Brief hochladen."
 
-#, fuzzy
-#~ msgid "There are no authorized tokens yet."
-#~ msgstr "Es gibt noch keine Vorschläge"
-
-#~ msgid "There are no suggestions yet"
+#, fuzzy, python-brace-format
+#~| msgid "There are no suggestions yet"
+#~ msgid "There are {} more results"
 #~ msgstr "Es gibt noch keine Vorschläge"
 
 #~ msgid "There was an error redacting this PDF."
@@ -13313,6 +13492,9 @@ msgstr "👋 Viel Erfolg!"
 #~ msgid "You are not currently logged in, you cannot delete your account."
 #~ msgstr "Sie sind gerade nicht eingeloggt, daher können Sie Ihren Account nicht löschen."
 
+#~ msgid "You are now getting alerts."
+#~ msgstr "Sie erhalten jetzt "
+
 #~ msgid "You can attach more documents to this reply later."
 #~ msgstr "Sie können später weitere Dokumente zu dieser Antwort hinzufügen."
 
@@ -13399,9 +13581,6 @@ msgstr "👋 Viel Erfolg!"
 
 #~ msgid "You will get an email to your new address and need to click a link in there."
 #~ msgstr "You will get an email to your new address and need to click a link in there."
-
-#~ msgid "You will not get notified anymore."
-#~ msgstr "Sie erhalten keine Benachrichtigungen mehr."
 
 #~ msgid "You will now receive email notifications for this request!"
 #~ msgstr "Sie erhalten ab jetzt Benachrichtigungen für diese Anfrage!"
