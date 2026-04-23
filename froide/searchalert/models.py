@@ -107,9 +107,9 @@ class Alert(models.Model):
 
     @property
     def description(self):
-        sections = ", ".join(s.title for s in self.get_sections())
+        sections = ", ".join(str(s.title) for s in self.get_sections())
         return _("{interval} search alert for “{query}” in {sections}").format(
-            interval=self.get_inverval_description(),
+            interval=self.get_interval_display(),
             query=self.query,
             sections=sections,
         )

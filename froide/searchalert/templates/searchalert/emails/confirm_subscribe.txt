@@ -1,7 +1,7 @@
 {% load i18n %}{% autoescape off %}{% if user %}{% blocktranslate with name=user.get_full_name %}Hello {{ name }},{% endblocktranslate %}{% else %}{% translate "Hello," %}{% endif %}
 
 {# translators: line after greeting #}
-{% blocktranslate with query=alert.query interval=alert.get_interval_description %}You requested a {{ interval }} email update for the search term "{{ query }}".{% endblocktranslate %}
+{% blocktranslate with query=alert.query interval=alert.get_interval_display %}You requested a {{ interval }} email update for the search term "{{ query }}".{% endblocktranslate %}
 
 {% translate "Please click the link below to confirm:" %}
 

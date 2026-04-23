@@ -8,7 +8,7 @@
 
 {% translate "Edit your alert or unsubscribe here:" %}
 {{ alert.get_change_link }}
-{% with other_alerts=get_other_alerts %}{% if other %}
+{% with other_alerts=alert.get_other_alerts %}{% if other_alerts %}
 {% translate "You also have these other search alerts:" %}{% for other_alert in other_alerts %}
 - {{ other_alert.description }} <{{ other_alert.get_change_link }}>
 {% endfor %}{% endif %}{% endwith %}

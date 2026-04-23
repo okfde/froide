@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from django.utils.html import format_html, mark_safe
+from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 
 
@@ -18,10 +19,11 @@ class AlertEvent:
 
     def as_html(self):
         return format_html(
-            """<h4><a href="{}">{}</a></h4>
+            """<h4>{} (<a href="{}">{}</a>)</h4>
 <p>{}</p>""",
             self.url,
             self.title,
+            _("search results"),
             self.content,
         )
 
