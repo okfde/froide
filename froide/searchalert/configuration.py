@@ -19,11 +19,10 @@ class AlertEvent:
 
     def as_html(self):
         return format_html(
-            """<h4>{} (<a href="{}">{}</a>)</h4>
+            """<h4><a href="{}">{}</a></h4>
 <p>{}</p>""",
             self.url,
             self.title,
-            _("search results"),
             self.content,
         )
 
@@ -71,11 +70,12 @@ class AlertSection:
                 % {"count": more_count},
             )
         return format_html(
-            """<h3><a href="{}">{}</a></h3>
+            """<h3>{} (<a href="{}">{}</a>)</h3>
 {}
 {}""",
-            self.url,
             self.title,
+            self.url,
+            _("search results"),
             mark_safe("\n".join(e.as_html() for e in self.results)),
             more_html,
         )
