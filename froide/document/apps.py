@@ -17,7 +17,9 @@ class DocumentConfig(AppConfig):
         import froide.document.signals  # noqa
         from froide.api import api_router
         from froide.helper.search import search_registry
+        from froide.searchalert import alert_registry
 
+        from .alert import DocumentAlertConfiguration
         from .api_views import (
             DocumentCollectionViewSet,
             DocumentViewSet,
@@ -26,6 +28,7 @@ class DocumentConfig(AppConfig):
         )
 
         search_registry.register(add_search)
+        alert_registry.register(DocumentAlertConfiguration())
 
         api_router.register(r"document", DocumentViewSet, basename="document")
         api_router.register(

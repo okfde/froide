@@ -1,5 +1,6 @@
 {% extends "helper/search/search_base.html" %}
 {% load i18n %}
+{% load searchalert_tags %}
 {% block title %}
     {% if has_query %}
         {% blocktranslate with query=form.cleaned_data.q %}{{ query }} document search{% endblocktranslate %}
@@ -28,6 +29,12 @@
         {{ form.tag }}
     </div>
 {% endblock search_form_filters %}
+{% block search_results_label %}
+    <div class="row">
+        <div class="col-6">{% search_alert_form query=form.q.value %}</div>
+        <div class="col-6">{{ block.super }}</div>
+    </div>
+{% endblock search_results_label %}
 {% block sidebar_bottom %}
     <div class="card mb-3">
         <div class="card-body">
