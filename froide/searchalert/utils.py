@@ -5,11 +5,11 @@ from django.utils import timezone
 from .models import CONFIRM_EMAIL_TIME, REFERENCE_PREFIX, Alert
 
 
-def cleanup_unconfirmed_email_alerts(self):
+def cleanup_unconfirmed_email_alerts():
     time_ago = timezone.now() - CONFIRM_EMAIL_TIME
-    Alert.objects.exclude(email_confirmed__isnull=True).exclude(
-        user__isnull=False
-    ).filter(created_at__lt=time_ago).delete()
+    Alert.objects.exclude(
+        email_confirmed__isnull=True, user__isnull=True, created_at__lt=time_ago
+    ).delete()
 
 
 def cancel_user(sender, user=None, **kwargs):
