@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-09 09:51+0200\n"
-"PO-Revision-Date: 2026-04-23 16:52+0200\n"
+"PO-Revision-Date: 2026-04-24 11:04+0200\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/froide/de/>\n"
 "Language: de\n"
@@ -3980,6 +3980,7 @@ msgstr "Start"
 #: froide/organization/templates/organization/organization_list_own.html
 #: froide/organization/templates/organization/organization_update_form.html
 #: froide/publicbody/templates/publicbody/base.html
+#: froide/searchalert/templates/searchalert/base.html
 #: froide/templates/snippets/breadcrumbs.html
 msgid "Home Page"
 msgstr "Startseite"
@@ -6861,6 +6862,11 @@ msgstr "Suchbegriff"
 msgid "Search alert"
 msgstr "Such-Abo"
 
+#: froide/searchalert/templates/searchalert/base.html
+#: froide/searchalert/templates/searchalert/list.html
+msgid "Search alerts"
+msgstr "Such-Abos"
+
 #: froide/publicbody/forms.py
 msgid "Search for a topic or a public body:"
 msgstr "Suchen Sie nach einem Thema oder nach einer Behörde:"
@@ -6882,6 +6888,7 @@ msgid "Search public bodies"
 msgstr "Suchen Sie nach Behörden"
 
 #: froide/searchalert/forms.py
+#: froide/searchalert/templates/searchalert/list.html
 msgid "Search query"
 msgstr "Suchbegriff"
 
@@ -7197,6 +7204,7 @@ msgid "Setup recovery code"
 msgstr "Wiederherstellungs-Code einrichten"
 
 #: froide/searchalert/templates/searchalert/_alert_form.html
+#: froide/searchalert/templates/searchalert/list.html
 msgid "Setup search alert"
 msgstr "Such-Abo anlegen"
 
@@ -8333,6 +8341,7 @@ msgid "Type the phrase above exactly as displayed."
 msgstr "Geben Sie das obrige Wort genau so ein wie angezeigt."
 
 #: froide/searchalert/forms.py
+#: froide/searchalert/templates/searchalert/list.html
 msgid "Types of results"
 msgstr "Ergebnisarten"
 
@@ -8483,6 +8492,7 @@ msgid "Until"
 msgstr "Bis"
 
 #: froide/searchalert/forms.py
+#: froide/searchalert/templates/searchalert/list.html
 msgid "Update frequency"
 msgstr "Häufigkeit"
 
@@ -9296,6 +9306,10 @@ msgstr "Sie haben den folgenden Anwendungen Zugriff auf Ihr Konto gewährt."
 msgid "You have no files or folders here"
 msgstr "Sie haben keine Dateien oder Ordner hier"
 
+#: froide/searchalert/templates/searchalert/list.html
+msgid "You have no search alerts yet."
+msgstr "Sie haben auch noch keine Such-Abos."
+
 #: froide/foirequest/views/request_actions.py
 msgid "You have not completed this process. Are you sure you want to cancel?"
 msgstr "Sie haben den Prozess noch nicht abgeschlossen. Sind Sie sicher, dass Sie den Vorgang abbrechen wollen?"
@@ -9660,7 +9674,7 @@ msgstr "Ihre Postadresse"
 
 #: froide/helper/spam.py
 msgid "Your math needs improvement."
-msgstr "Sie müssen Ihre Mathematikfähigkeiten verbessern. "
+msgstr "Sie müssen Ihre Mathematikfähigkeiten verbessern."
 
 #: froide/foirequest/forms/message.py
 msgid "Your message"
@@ -9827,6 +9841,10 @@ msgstr "Ihre Anfrage „<a href=\"%(url)s\">%(title)s</a>“ wurde versendet."
 #: froide/foirequest/templates/foirequest/account/list_requests.html
 msgid "Your requests"
 msgstr "Ihre Anfragen"
+
+#: froide/searchalert/templates/searchalert/list.html
+msgid "Your search alerts"
+msgstr "Ihre Such-Abos"
 
 #: froide/foirequest/templates/foirequest/account/list_drafts.html
 #: froide/foirequest/templates/foirequest/account/list_projects.html
