@@ -76,7 +76,7 @@ class Alert(models.Model):
         on_delete=models.CASCADE,
     )
     email = models.EmailField(max_length=255, blank=True)
-    email_confirmed = models.DateTimeField(null=True, default=None)
+    email_confirmed = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(_("Timestamp of creation"), default=timezone.now)
     last_alert = models.DateTimeField(
         _("Timestamp of last alert"), default=timezone.now

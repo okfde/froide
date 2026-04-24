@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('email', models.EmailField(blank=True, max_length=255)),
-                ('email_confirmed', models.DateTimeField(default=None, null=True)),
+                ('email_confirmed', models.DateTimeField(blank=True, default=None, null=True)),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Timestamp of creation')),
                 ('last_alert', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Timestamp of last alert')),
                 ('interval', models.CharField(choices=[('daily', 'daily'), ('weekly', 'weekly'), ('monthly', 'monthly')], max_length=10)),
