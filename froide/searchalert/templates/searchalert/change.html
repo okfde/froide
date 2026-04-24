@@ -1,8 +1,10 @@
-{% extends "base.html" %}
+{% extends "searchalert/base.html" %}
 {% load i18n %}
 {% load form_helper %}
-{% block title %}{{ alert.query }}{% endblock %}
-{% block body %}
+{% block title %}
+    {{ alert.query }}
+{% endblock title %}
+{% block app_body %}
     <div class="container mb-5 mt-3">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -25,4 +27,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock app_body %}

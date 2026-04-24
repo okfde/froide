@@ -9,10 +9,10 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def search_alert_form(context, query=None, verbose=True):
+def search_alert_form(context, query=None, label=None):
     request = context["request"]
     if not is_crew(request.user):
         return ""
     initial = {"query": query or ""}
-    context = {"form": AlertForm(request=request, initial=initial)}
+    context = {"form": AlertForm(request=request, initial=initial), "label": label}
     return render_to_string("searchalert/_alert_form.html", context, request)

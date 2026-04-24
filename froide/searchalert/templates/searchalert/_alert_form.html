@@ -5,7 +5,11 @@
         data-bs-target="#searchalert-form-modal"
         class="btn btn-sm btn-outline-primary">
     <i class="fa fa-bell-o" aria-hidden="true"></i>
-    {% translate "Search alert" %}
+    {% if label %}
+        {{ label }}
+    {% else %}
+        {% translate "Search alert" %}
+    {% endif %}
 </button>
 <div id="searchalert-form-modal"
      class="modal fade"

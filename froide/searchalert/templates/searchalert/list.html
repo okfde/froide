@@ -1,0 +1,48 @@
+{% extends "searchalert/base.html" %}
+{% load i18n %}
+{% load searchalert_tags %}
+{% block title %}
+    {% translate "Search alerts" %}
+{% endblock %}
+{% block app_body %}
+    <div class="container mb-5 mt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2>{% translate "Search alerts" %}</h2>
+                <p>
+                    {% translate "Setup search alert" as label %}
+                    {% search_alert_form label=label %}
+                </p>
+                {% if alerts %}
+                    <h3>{% translate "Your search alerts" %}</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{% translate "Search query" %}</th>
+                                <th>{% translate "Update frequency" %}</th>
+                                <th>{% translate "Types of results" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for alert in alerts %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ alert.get_change_url }}">{{ alert.query }}</a>
+                                    </td>
+                                    <td>{{ alert.get_interval_display }}</td>
+                                    <td>
+                                        <ul>
+                                            {% for section in alert.get_sections %}<li>{{ section.title }}</li>{% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>{% translate "You have no search alerts yet." %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock app_body %}

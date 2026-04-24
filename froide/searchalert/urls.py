@@ -4,12 +4,14 @@ from django.utils.translation import pgettext_lazy
 from .views import (
     change_alert,
     confirm_alert,
+    list_alerts,
     subscribe_alert,
     unsubscribe,
 )
 
 app_name = "searchalert"
 urlpatterns = [
+    path("", list_alerts, name="list"),
     path("subscribe-alert/", subscribe_alert, name="subscribe"),
     path(
         pgettext_lazy("url part", "confirm/<int:alert_id>/<str:check>/"),

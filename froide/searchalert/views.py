@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
@@ -8,6 +9,12 @@ from froide.helper.utils import get_redirect
 
 from .forms import AlertForm, ChangeAlertForm
 from .models import Alert
+
+
+@login_required
+def list_alerts(request: HttpRequest):
+    alerts = Alert.objects.filter(user=request.user)
+    return render(request, "searchalert/list.html", {"alerts": alerts})
 
 
 @require_POST
