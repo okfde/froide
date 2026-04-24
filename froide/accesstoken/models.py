@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 
 from django.conf import settings
 from django.db import models
@@ -18,6 +19,15 @@ class AccessTokenManager(models.Manager):
         )
         return new_token
 
+    def get_expiration(self):
+        return getattr(settings, "ACCESS_TOKEN_EXPIRATION", 60 * 60 * 24 * 14)
+
+    def is_expired(self, access_token):
+        expiration = self.get_expiration()
+        if expiration is None:
+            return False
+        return access_token.timestamp < timezone.now() - timedelta(seconds=expiration)
+
     def get_token_by_user(self, user, purpose):
         at = self.get_by_user(user, purpose=purpose)
         if at is not None:
@@ -32,9 +42,12 @@ class AccessTokenManager(models.Manager):
 
     def get_by_token(self, token, purpose):
         try:
-            return AccessToken.objects.get(token=token, purpose=purpose)
+            access_token = AccessToken.objects.get(token=token, purpose=purpose)
         except AccessToken.DoesNotExist:
             return None
+        if self.is_expired(access_token):
+            return None
+        return access_token
 
     def get_user_by_token(self, token, purpose):
         access_token = self.get_by_token(token, purpose=purpose)
