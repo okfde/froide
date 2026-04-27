@@ -7,7 +7,7 @@ from .models import CONFIRM_EMAIL_TIME, REFERENCE_PREFIX, Alert
 
 def cleanup_unconfirmed_email_alerts():
     time_ago = timezone.now() - CONFIRM_EMAIL_TIME
-    Alert.objects.exclude(
+    Alert.objects.filter(
         email_confirmed__isnull=True, user__isnull=True, created_at__lt=time_ago
     ).delete()
 
