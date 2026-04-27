@@ -49,7 +49,7 @@ class DocumentAlertConfiguration(AlertConfiguration):
             [
                 AlertEvent(
                     title=page.document.title,
-                    url=settings.SITE_URL + page.absolute_url(),
+                    url=settings.SITE_URL + page.get_absolute_url(),
                     content=page.query_highlight,
                 )
                 for page in queryset
