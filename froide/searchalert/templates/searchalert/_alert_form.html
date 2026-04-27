@@ -31,6 +31,9 @@
                         aria-label="{% translate 'Close' %}"></button>
             </div>
             <div class="modal-body">
+                <p>
+                    {% translate "Stay up-to-date on the topics you are interested in. Your search alert can be canceled anytime." %}
+                </p>
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ request.get_full_path }}" />
                 {% render_form form %}
