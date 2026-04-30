@@ -37,7 +37,7 @@
     "autoprefixer": "^10.4.27",
     "cli-real-favicon": "0.0.9",
     "eslint": "^9.39.2",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.10",
     "prettier": "^3.8.1",
     "prettier-config-standard": "^7.0.0",
     "sass": "^1.98.0",
