@@ -216,6 +216,48 @@ def test_list_no_identical(world, client):
 
 
 @pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
+def test_list_hide_project_duplicates_filter(world, client):
+    # Standalone request.
+    standalone_req = FoiRequest.published.first()
+
+    # Project with two requests.
+    project = factories.FoiProjectFactory.create(site=world)
+    project_req_a = factories.FoiRequestFactory.create(site=world)
+    project_req_b = factories.FoiRequestFactory.create(site=world)
+    project.add_requests(
+        FoiRequest.objects.filter(pk__in=[project_req_a.pk, project_req_b.pk])
+    )
+
+    # Make sure project requests are up-to-date and have the right order.
+    project_req_a.refresh_from_db()
+    project_req_b.refresh_from_db()
+    first_in_project, extra_in_project = sorted(
+        [project_req_a, project_req_b], key=lambda r: r.project_order
+    )
+    assert first_in_project.project_order == 0
+    assert extra_in_project.project_order == 1
+
+    factories.rebuild_index()
+
+    # Without the filter, every request shows up — including the project duplicate.
+    response = client.get(reverse("foirequest-list"))
+    assert response.status_code == 200
+    assertContains(response, standalone_req.title)
+    assertContains(response, first_in_project.title)
+    assertContains(response, extra_in_project.title)
+
+    # With the filter on, only the first request per project remains; standalone requests are unaffected.
+    response = client.get(
+        reverse("foirequest-list"), {"hide_project_duplicates": "true"}
+    )
+    assert response.status_code == 200
+    assertContains(response, standalone_req.title)
+    assertContains(response, first_in_project.title)
+    assertNotContains(response, extra_in_project.title)
+
+
+@pytest.mark.django_db
 def test_show_request(world, client):
     req = FoiRequest.objects.all()[0]
     response = client.get(

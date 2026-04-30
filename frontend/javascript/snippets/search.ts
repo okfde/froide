@@ -39,12 +39,14 @@ export function initSearch(additionalBases: [string, string][] = []) {
 
   // auto-submit form helper
   // form.froide-auto-submit will submit the form when the value of any of its
-  // select inputs changes
+  // select inputs or checkbox inputs changes
   document
     .querySelectorAll<HTMLFormElement>('form.froide-auto-submit')
     .forEach((form) => {
-      form.querySelectorAll('select').forEach((select) => {
-        select.addEventListener('change', () => form.submit())
-      })
+      form
+        .querySelectorAll<HTMLElement>('select, input[type="checkbox"]')
+        .forEach((field) => {
+          field.addEventListener('change', () => form.submit())
+        })
     })
 }
