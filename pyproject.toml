@@ -32,7 +32,7 @@ dependencies = [
   "django-parler",
   "django-storages",
   "django-taggit>=6.1.0",
-  "django-treebeard<5",
+  "django-treebeard>=5",
   "django>=5.2,<5.3",
   "djangorestframework>=3.16.0",
   "djangorestframework-csv",

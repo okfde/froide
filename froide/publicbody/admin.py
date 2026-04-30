@@ -641,8 +641,8 @@ class ClassificationAdmin(TreeAdmin):
     fields = (
         "name",
         "slug",
-        "_position",
-        "_ref_node_id",
+        "treebeard_position",
+        "treebeard_ref_node",
     )
     form = movenodeform_factory(Classification)
     prepopulated_fields = {"slug": ["name"]}
@@ -676,14 +676,6 @@ class ClassificationAdmin(TreeAdmin):
 @admin.register(Category)
 @admin.register(Category, site=pb_admin_site)
 class CategoryAdmin(TreeAdmin):
-    fields = (
-        "name",
-        "slug",
-        "is_topic",
-        "_position",
-        "_ref_node_id",
-    )
-
     form = movenodeform_factory(Category)
     prepopulated_fields = {"slug": ["name"]}
     search_fields = ["name"]
