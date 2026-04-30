@@ -756,7 +756,7 @@ wheels = [
 [[package]]
 name = "django-filingcabinet"
 version = "0.0.1"
-source = { git = "https://github.com/okfde/django-filingcabinet.git?rev=main#8ffb53086b0150a96778eb11adea95428184d8c8" }
+source = { git = "https://github.com/okfde/django-filingcabinet.git?rev=main#110c9b8ea8b6a2a97ba0961dfde87351877173ee" }
 dependencies = [
     { name = "celery" },
     { name = "django" },
