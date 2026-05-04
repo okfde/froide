@@ -166,11 +166,12 @@ def test_signup(world, client):
     # sign up with email that is confirmed
     message = mail.outbox[0]
     match = re.search(r"/%d/(\w+)/" % user.pk, message.body)
-    response = client.get(
-        reverse(
-            "account-confirm", kwargs={"user_id": user.pk, "secret": match.group(1)}
-        )
+    confirm_url = reverse(
+        "account-confirm", kwargs={"user_id": user.pk, "secret": match.group(1)}
     )
+    response = client.get(confirm_url)
+    assert response.status_code == 200
+    response = client.post(confirm_url)
     assert response.status_code == 302
     client.logout()
     user = User.objects.get(id=user.pk)
@@ -291,27 +292,32 @@ def test_confirmation_process(world, client):
     assert len(mail.outbox) == 1
     message = mail.outbox[0]
     match = re.search(r"/%d/(\w+)/" % user.pk, message.body)
-    response = client.get(
-        reverse(
-            "account-confirm", kwargs={"user_id": user.pk, "secret": match.group(1)}
-        )
+    confirm_url = reverse(
+        "account-confirm", kwargs={"user_id": user.pk, "secret": match.group(1)}
     )
+    response = client.get(confirm_url)
+    assert response.status_code == 200
+    response = client.post(confirm_url)
     assert response.status_code == 302
     assert reverse("account-show") in response.url
     response = client.get(response.url)
     assert response.status_code == 200
     response = client.get(reverse("account-requests"))
     assert response.status_code == 200
-    response = client.get(
-        reverse("account-confirm", kwargs={"user_id": user.pk, "secret": "a" * 32})
+    confirm_url = reverse(
+        "account-confirm", kwargs={"user_id": user.pk, "secret": "a" * 32}
     )
+    response = client.get(confirm_url)
+    assert response.status_code == 200
+    response = client.post(confirm_url)
     assert response.status_code == 302
     client.logout()
-    response = client.get(
-        reverse(
-            "account-confirm", kwargs={"user_id": user.pk, "secret": match.group(1)}
-        )
+    confirm_url = reverse(
+        "account-confirm", kwargs={"user_id": user.pk, "secret": match.group(1)}
     )
+    response = client.get(confirm_url)
+    assert response.status_code == 200
+    response = client.post(confirm_url)
     # user is already active, link does not exist
     assert response.status_code == 302
     assert response["Location"] == reverse("account-login")
@@ -322,11 +328,12 @@ def test_confirmation_process(world, client):
     # as in secret link
     user.last_login = user.last_login - timedelta(seconds=10)
     user.save()
-    response = client.get(
-        reverse(
-            "account-confirm", kwargs={"user_id": user.pk, "secret": match.group(1)}
-        )
+    confirm_url = reverse(
+        "account-confirm", kwargs={"user_id": user.pk, "secret": match.group(1)}
     )
+    response = client.get(confirm_url)
+    assert response.status_code == 200
+    response = client.post(confirm_url)
     # user is inactive, but link was already used
     assert response.status_code == 302
     assert reverse("account-login") in response.url
@@ -384,11 +391,12 @@ def test_next_link_signup(world, client):
     user = User.objects.get(email=post["user_email"])
     message = mail.outbox[0]
     match = re.search(r"/%d/(\w+)/" % user.pk, message.body)
-    response = client.get(
-        reverse(
-            "account-confirm", kwargs={"user_id": user.pk, "secret": match.group(1)}
-        )
+    confirm_url = reverse(
+        "account-confirm", kwargs={"user_id": user.pk, "secret": match.group(1)}
     )
+    response = client.get(confirm_url)
+    assert response.status_code == 200
+    response = client.post(confirm_url)
     assert response.status_code == 302
     assert response.url.endswith(url)
 

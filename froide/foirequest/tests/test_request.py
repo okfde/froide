@@ -149,7 +149,9 @@ def test_public_body_new_user_request(world, client, pb):
     )
     assert generated_url in url
     assert not user.is_active
-    response = client.get(url, follow=True)
+    response = client.get(url)
+    assert response.status_code == 200
+    response = client.post(url, follow=True)
     assert response.status_code == 200
 
     req = FoiRequest.objects.get(pk=req.pk)
@@ -514,6 +516,9 @@ def test_redirect_after_request_new_account(world, client, pb):
     assert match is not None
     url = match.group(1)
     response = client.get(url)
+    assert response.status_code == 200
+    response = client.post(url)
+    assert response.status_code == 302
     assert "/foo/?" in response["Location"]
     assert "blub=bla" in response["Location"]
     assert "ref=foo%3Abar" in response["Location"]
@@ -1489,12 +1494,13 @@ def test_make_same_request(world, client):
     new_user = User.objects.get(id=int(match.group(1)))
     assert not new_user.is_active
     secret = match.group(2)
-    response = client.get(
-        reverse(
-            "account-confirm",
-            kwargs={"user_id": new_user.pk, "secret": secret},
-        )
+    confirm_url = reverse(
+        "account-confirm",
+        kwargs={"user_id": new_user.pk, "secret": secret},
     )
+    response = client.get(confirm_url)
+    assert response.status_code == 200
+    response = client.post(confirm_url)
     assert response.status_code == 302
     new_user = User.objects.get(id=new_user.pk)
     assert new_user.is_active

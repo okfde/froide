@@ -111,6 +111,14 @@ class AccountConfirmedView(LoginRequiredMixin, TemplateView):
 def confirm(
     request: HttpRequest, user_id: int, secret: str, request_id: Optional[int] = None
 ) -> HttpResponseRedirect:
+    if request.method != "POST":
+        return render(
+            request,
+            "helper/auto_submit.html",
+            {
+                "form_action": request.get_full_path(),
+            },
+        )
     if request.user.is_authenticated:
         if request.user.id != user_id:
             messages.add_message(
