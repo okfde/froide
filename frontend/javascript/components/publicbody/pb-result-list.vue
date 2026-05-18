@@ -18,7 +18,10 @@
         </label>
       </div>
     </div>
-    <ul v-if="searchResults.length > 0" class="search-results list-unstyled">
+    <ul
+      v-if="searchResults.length > 0"
+      class="search-results list-unstyled p-3"
+    >
       <li
         v-for="result in searchResults"
         :key="result.id"
