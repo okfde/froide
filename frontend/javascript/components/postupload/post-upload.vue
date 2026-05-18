@@ -1251,7 +1251,7 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold form-label" for="id_subject">
-            <template v-if="values.is_response">
+            <template v-if="!values.is_response">
               {{ i18n.messagePublicbodyUpdateTo }}
             </template>
             <template v-else>
