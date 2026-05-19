@@ -39,6 +39,12 @@ def execute_set_team(admin, request, queryset, action_obj):
     queryset.update(team=action_obj)
 
 
+def execute_add_document_to_portal(admin, request, queryset, action_obj):
+    queryset.update(portal=action_obj)
+    for doc in queryset:
+        update_document_index(doc)
+
+
 class DocumentTagsFilter(TaggitListFilter):
     tag_class = TaggedDocument
 
@@ -59,7 +65,11 @@ class DocumentAdmin(DocumentBaseAdmin):
         ("document_documentcollection", ForeignKeyFilter),
         DocumentTagsFilter,
     )
-    actions = DocumentBaseAdmin.actions + ["add_document_to_collection", "set_team"]
+    actions = DocumentBaseAdmin.actions + [
+        "add_document_to_collection",
+        "set_team",
+        "add_document_to_portal",
+    ]
 
     add_document_to_collection = make_choose_object_action(
         DocumentCollection,
@@ -69,6 +79,12 @@ class DocumentAdmin(DocumentBaseAdmin):
 
     set_team = make_choose_object_action(
         Team, execute_set_team, _("Set team for documents...")
+    )
+
+    add_document_to_portal = make_choose_object_action(
+        DocumentPortal,
+        execute_add_document_to_portal,
+        _("Add documents to portal..."),
     )
 
     def save_model(self, request, obj, form, change):
