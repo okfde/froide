@@ -699,6 +699,10 @@ msgstr "Eigene hinzufügen"
 msgid "Add documents to collection..."
 msgstr "Füge Dokumente zu Sammlung hinzu..."
 
+#: froide/document/admin.py
+msgid "Add documents to portal..."
+msgstr "Füge Dokumente zu Portal hinzu..."
+
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
 #: froide/foirequest/views/message.py
 msgid "Add letter"
