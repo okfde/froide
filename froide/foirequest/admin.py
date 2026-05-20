@@ -1229,7 +1229,14 @@ class RequestDraftAdmin(admin.ModelAdmin):
     search_fields = ["subject", "user_email_deterministic"]
     ordering = ("-save_date",)
     date_hierarchy = "save_date"
-    raw_id_fields = ("user", "publicbodies", "request", "project", "proof")
+    raw_id_fields = (
+        "user",
+        "publicbodies",
+        "request",
+        "project",
+        "proof",
+        "responsibility",
+    )
 
     actions = ["send_draft"]
 

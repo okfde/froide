@@ -8,7 +8,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from froide.proof.models import Proof
-from froide.publicbody.models import PublicBody
+from froide.publicbody.models import Category, PublicBody
 
 from .request import FoiProject, FoiRequest
 
@@ -36,6 +36,9 @@ class RequestDraft(models.Model):
     public = models.BooleanField(default=True)
     reference = models.CharField(max_length=255, blank=True)
     law_type = models.CharField(max_length=255, blank=True)
+    responsibility = models.ForeignKey(
+        Category, null=True, blank=True, on_delete=models.SET_NULL
+    )
     proof = models.ForeignKey(Proof, null=True, blank=True, on_delete=models.SET_NULL)
     flags = models.JSONField(blank=True, default=dict)
 
@@ -89,6 +92,8 @@ class RequestDraft(models.Model):
         }
         if self.reference:
             context["reference"] = self.reference
+        if self.responsibility:
+            context["responsibility"] = self.responsibility.name
         if self.flags:
             context.update(self.flags)
         context["tags"] = ",".join(context.get("tags", []))
