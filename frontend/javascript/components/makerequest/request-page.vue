@@ -322,6 +322,7 @@
                       :confirm-required="confirmRequired"
                       :default-law="defaultLaw"
                       :law-type="lawType"
+                      :responsibility="responsibility"
                       v-model:initial-subject="subject"
                       v-model:initial-body="body"
                       v-model:initial-full-text="fullText"
@@ -433,10 +434,10 @@ import {
 } from '../../store/mutation_types'
 
 import I18nMixin from '../../lib/i18n-mixin'
-import RequestIntro from './request-intro.vue'
 import IntroSkipPreference from './intro-skip-preference.vue'
 import LetterMixin from './lib/letter-mixin'
 import StoreValueMixin from './lib/store-values-mixin'
+import RequestIntro from './request-intro.vue'
 import UserCreateAccount from './user-create-account.vue'
 
 export default {
@@ -771,6 +772,7 @@ export default {
       'stepWriteRequest',
       'step',
       'lawType',
+      'responsibility',
       'defaultLaw',
       'stepCanContinue'
     ])

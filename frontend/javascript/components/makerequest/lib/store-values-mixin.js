@@ -1,21 +1,22 @@
-import { mapMutations, mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import {
-  UPDATE_FIRST_NAME,
-  UPDATE_LAST_NAME,
-  SET_USER,
-  UPDATE_SUBJECT,
-  UPDATE_BODY,
-  UPDATE_FULL_TEXT,
-  UPDATE_ADDRESS,
-  UPDATE_EMAIL,
-  UPDATE_PRIVATE,
-  UPDATE_SIMILAR_REQUEST_SEARCH,
-  UPDATE_REQUEST_PUBLIC,
-  UPDATE_LAW_TYPE,
-  UPDATE_TERMS,
   SET_CONFIG,
+  SET_USER,
+  UPDATE_ADDRESS,
+  UPDATE_BODY,
+  UPDATE_CLAIMS_VIP,
   UPDATE_CONFIRM,
-  UPDATE_CLAIMS_VIP
+  UPDATE_EMAIL,
+  UPDATE_FIRST_NAME,
+  UPDATE_FULL_TEXT,
+  UPDATE_LAST_NAME,
+  UPDATE_LAW_TYPE,
+  UPDATE_PRIVATE,
+  UPDATE_REQUEST_PUBLIC,
+  UPDATE_RESPONSIBILITY,
+  UPDATE_SIMILAR_REQUEST_SEARCH,
+  UPDATE_SUBJECT,
+  UPDATE_TERMS
 } from '../../../store/mutation_types'
 
 // for TypedChoiceFields (essentialy BooleanFields, but radio),
@@ -72,7 +73,8 @@ const StoreValueMixin = {
         ignoreStorage: true,
         formFields: this.requestForm.fields,
         mutationMap: {
-          law_type: UPDATE_LAW_TYPE
+          law_type: UPDATE_LAW_TYPE,
+          responsibility: UPDATE_RESPONSIBILITY
         }
       })
 

@@ -112,6 +112,7 @@ class CreateRequestService(BaseService):
             "public": data["public"],
             "reference": data.get("reference", ""),
             "law_type": data.get("law_type", ""),
+            "responsibility": data.get("responsibility"),
         }
 
         flag_keys = set(MakeRequestView.FORM_CONFIG_PARAMS) | {"redirect_url"}
@@ -159,10 +160,13 @@ class CreateRequestService(BaseService):
         publicbody_ids = [pb.pk for pb in data["publicbodies"]]
         extra = {
             "law_type": data.get("law_type", ""),
+            "responsibility_id": data["responsibility"].id
+            if data.get("responsibility")
+            else None,
             "language": data.get("language", ""),
             "address": data.get("address"),
             "full_text": data.get("full_text", False),
-            "proof_id": data.get("proof").id if data.get("proof") else None,
+            "proof_id": data["proof"].id if data.get("proof") else None,
         }
         transaction.on_commit(
             partial(create_project_requests.delay, project.id, publicbody_ids, **extra)
@@ -327,6 +331,7 @@ class CreateFromRequestDratService(CreateRequestService):
         self.data["public"] = draft.public
         self.data["reference"] = draft.reference
         self.data["law_type"] = draft.law_type
+        self.data["responsibility"] = draft.responsibility
         self.data["full_text"] = draft.full_text
         self.data["proof"] = draft.proof
         pbs = draft.publicbodies.all()
@@ -364,6 +369,7 @@ class SaveDraftService(BaseService):
             "public": request_form.cleaned_data["public"],
             "reference": request_form.cleaned_data.get("reference", ""),
             "law_type": request_form.cleaned_data.get("law_type", ""),
+            "responsibility": request_form.cleaned_data.get("responsibility"),
             "proof": data.get("proof"),
         }
         already = set(additional_kwargs.keys()) | {

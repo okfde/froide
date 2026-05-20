@@ -48,7 +48,7 @@
                       ) in jurisdictionsByRegionKind"
                       :key="regionKind"
                     >
-                      {{ jurisdicitions }}
+                      {{ jurisdictions }}
                       <div class="form-check">
                         <input
                           type="radio"
@@ -298,18 +298,18 @@
 </template>
 
 <script setup>
-import { computed, inject, ref, reactive, watch } from 'vue'
-import { useStore } from 'vuex'
 import debounce from 'lodash.debounce'
+import { computed, inject, reactive, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import {
-  jurisdictionList,
   campaignList,
+  jurisdictionList,
   requestSearchRetrieve
 } from '../../api'
-import SimilarRequestSearchResult from './similar-request-search-result.vue'
-import ResultsPagination from './results-pagination.vue'
 import { UPDATE_SIMILAR_REQUEST_SEARCH } from '../../store/mutation_types'
 import PbFilterBadge from '../publicbody/pb-filter-badge.vue'
+import ResultsPagination from './results-pagination.vue'
+import SimilarRequestSearchResult from './similar-request-search-result.vue'
 
 const props = defineProps({
   config: {

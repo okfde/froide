@@ -89,6 +89,7 @@ class RequestForm(JSONMixin, forms.Form):
     responsibility = forms.ModelChoiceField(
         queryset=Category.objects.all(),
         widget=forms.HiddenInput,
+        to_field_name="name",
         required=False,
     )
     redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)

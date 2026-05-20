@@ -18,6 +18,7 @@ from froide.foirequest.models.event import FoiEvent
 from froide.foirequest.utils import find_attachment_name
 from froide.proof.models import Proof
 from froide.publicbody.models import PublicBody
+from froide.publicbody.models.category import Category
 from froide.upload.models import Upload
 
 from .foi_mail import _fetch_mail, _process_mail, get_foi_mail_client
@@ -96,6 +97,13 @@ def create_project_request(project_id, publicbody_id, sequence=0, **kwargs):
         except Proof.DoesNotExist:
             pass
 
+    responsibility = None
+    if responsibility_id := kwargs.get("responsibility_id"):
+        try:
+            responsibility = Category.objects.get(id=responsibility_id)
+        except Category.DoesNotExist:
+            pass
+
     kwargs.update(
         {
             "project": project,
@@ -108,6 +116,7 @@ def create_project_request(project_id, publicbody_id, sequence=0, **kwargs):
             "tags": [t.name for t in project.tags.all()],
             "project_order": sequence,
             "proof": proof,
+            "responsibility": responsibility,
         }
     )
     service = CreateRequestFromProjectService(kwargs)

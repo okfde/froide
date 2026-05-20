@@ -13,44 +13,45 @@ import {
   SET_PUBLICBODY_ID,
   SET_SEARCHRESULTS,
   SET_STEP,
+  SET_STEP_ACCOUNT,
   SET_STEP_NO_HISTORY,
   SET_STEP_REQUEST,
-  SET_STEP_ACCOUNT,
   SET_STEP_REVIEW_PUBLICBODY,
   SET_STEP_SELECT_PUBLICBODY,
   SET_USER,
   STEPS,
   UPDATE_ADDRESS,
-  UPDATE_ADDRESS_VALIDITY,
   UPDATE_ADDRESS_CHANGED,
+  UPDATE_ADDRESS_VALIDITY,
   UPDATE_BODY,
-  UPDATE_BODY_VALIDITY,
   UPDATE_BODY_CHANGED,
-  UPDATE_EMAIL,
-  UPDATE_EMAIL_VALIDITY,
-  UPDATE_EMAIL_CHANGED,
-  UPDATE_FIRST_NAME_VALIDITY,
-  UPDATE_FIRST_NAME_CHANGED,
-  UPDATE_FIRST_NAME,
-  UPDATE_FULL_TEXT,
-  UPDATE_LAST_NAME,
-  UPDATE_LAST_NAME_VALIDITY,
-  UPDATE_LAST_NAME_CHANGED,
-  UPDATE_LAW_TYPE,
-  UPDATE_PRIVATE,
-  UPDATE_TERMS,
-  UPDATE_TERMS_VALIDITY,
-  UPDATE_TERMS_CHANGED,
+  UPDATE_BODY_VALIDITY,
+  UPDATE_CLAIMS_VIP,
   UPDATE_CONFIRM,
   UPDATE_CONFIRM_VALIDITY,
-  UPDATE_SUBJECT,
-  UPDATE_SUBJECT_VALIDITY,
-  UPDATE_SUBJECT_CHANGED,
-  UPDATE_USER_ID,
+  UPDATE_EMAIL,
+  UPDATE_EMAIL_CHANGED,
+  UPDATE_EMAIL_VALIDITY,
+  UPDATE_FIRST_NAME,
+  UPDATE_FIRST_NAME_CHANGED,
+  UPDATE_FIRST_NAME_VALIDITY,
+  UPDATE_FULL_TEXT,
+  UPDATE_LAST_NAME,
+  UPDATE_LAST_NAME_CHANGED,
+  UPDATE_LAST_NAME_VALIDITY,
+  UPDATE_LAW_TYPE,
+  UPDATE_PRIVATE,
+  UPDATE_PROOF,
   UPDATE_REQUEST_PUBLIC,
+  UPDATE_RESPONSIBILITY,
   UPDATE_SIMILAR_REQUEST_SEARCH,
-  UPDATE_CLAIMS_VIP,
-  UPDATE_PROOF
+  UPDATE_SUBJECT,
+  UPDATE_SUBJECT_CHANGED,
+  UPDATE_SUBJECT_VALIDITY,
+  UPDATE_TERMS,
+  UPDATE_TERMS_CHANGED,
+  UPDATE_TERMS_VALIDITY,
+  UPDATE_USER_ID
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
@@ -72,6 +73,7 @@ export default createStore({
       lawCache: {},
       publicBodies: {},
       lawType: null,
+      responsibility: '',
       user: {},
       step: null,
       subject: '',
@@ -196,6 +198,7 @@ export default createStore({
     stepWriteRequestDone: (state) => state.step > STEPS.WRITE_REQUEST,
     step: (state) => state.step,
     lawType: (state) => state.lawType,
+    responsibility: (state) => state.responsibility,
     userValid: (state) => {
       if (state.user.id) return true
       return state.firstNameValid && state.lastNameValid && state.emailValid
@@ -476,6 +479,9 @@ export default createStore({
     [UPDATE_LAW_TYPE](state, val) {
       state.lawType = val
     },
+    [UPDATE_RESPONSIBILITY](state, val) {
+      state.responsibility = val
+    },
     [CACHE_LAWS](state, { laws }) {
       laws.forEach((law) => {
         state.lawCache[law.resource_uri] = law
@@ -489,6 +495,7 @@ export default createStore({
     writeToStorage({ state }, { scope }) {
       const reduced = {
         lawType: state.lawType,
+        responsibility: state.responsibility,
         step: state.step,
         subject: state.subject,
         body: state.body,

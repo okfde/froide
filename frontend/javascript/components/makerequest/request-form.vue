@@ -8,6 +8,7 @@
       :value="pb.id"
     />
     <input type="hidden" name="law_type" :value="lawType" />
+    <input type="hidden" name="responsibility" :value="responsibility" />
 
     <div class="border border-2 border-gray-300 p-3 mb-3">
       <div class="row mb-3" v-if="!hidePublicbodyChooser">
@@ -373,19 +374,19 @@
 </template>
 
 <script>
-import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
+import LetterMixin from './lib/letter-mixin'
 
 import { mapGetters, mapMutations } from 'vuex'
 
 import {
-  UPDATE_BODY_VALIDITY,
-  UPDATE_BODY_CHANGED,
-  UPDATE_SUBJECT_VALIDITY,
-  UPDATE_SUBJECT_CHANGED,
   SET_STEP,
   STEPS,
-  UPDATE_PROOF
+  UPDATE_BODY_CHANGED,
+  UPDATE_BODY_VALIDITY,
+  UPDATE_PROOF,
+  UPDATE_SUBJECT_CHANGED,
+  UPDATE_SUBJECT_VALIDITY
 } from '../../store/mutation_types'
 
 import ProofForm from '../proofupload/proof-form.vue'
@@ -444,6 +445,10 @@ export default {
       default: null
     },
     lawType: {
+      type: String,
+      default: ''
+    },
+    responsibility: {
       type: String,
       default: ''
     },

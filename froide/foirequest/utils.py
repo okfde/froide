@@ -821,6 +821,8 @@ def export_user_data(user):
                         "public": d.public,
                         "reference": d.reference,
                         "law_type": d.law_type,
+                        "responsibility": d.responsibility_id,
+                        "proof": d.proof_id,
                         "flags": d.flags,
                         "request": d.request_id,
                         "project": d.project_id,
