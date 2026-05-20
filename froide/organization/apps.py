@@ -19,13 +19,19 @@ class OrganizationConfig(AppConfig):
         from froide.account.export import registry
         from froide.account.menu import MenuItem, menu_registry
 
+        from .models import OrganizationMembership
+
         def get_organizations_menu_item(request):
-            return MenuItem(
-                section="before_settings",
-                order=0,
-                url=reverse("organization-list_own"),
-                label=_("My organizations"),
+            has_orgs = OrganizationMembership.objects.filter(
+                user=request.user, status=OrganizationMembership.STATUS.ACTIVE
             )
+            if has_orgs:
+                return MenuItem(
+                    section="before_settings",
+                    order=0,
+                    url=reverse("organization-list_own"),
+                    label=_("My organizations"),
+                )
 
         menu_registry.register(get_organizations_menu_item)
 
