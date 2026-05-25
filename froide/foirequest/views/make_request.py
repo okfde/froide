@@ -603,10 +603,12 @@ class MakeRequestView(FormView):
 
         request_form = self.get_form()
 
+        self.throttled = False
         if not request.POST.get("save_draft", ""):
             throttle_message = check_throttle(request.user, FoiRequest)
             if throttle_message:
                 request_form.add_error(None, throttle_message)
+                self.throttled = True
 
         if not request_form.is_valid():
             error = True
@@ -687,7 +689,11 @@ class MakeRequestView(FormView):
         return redirect("account-drafts")
 
     def form_invalid(self, **form_kwargs):
-        if not self.csrf_failed:
+        if self.csrf_failed:
+            messages.add_message(
+                self.request, messages.INFO, _("Please confirm your form submission.")
+            )
+        elif not self.throttled:
             messages.add_message(
                 self.request,
                 messages.ERROR,
@@ -695,10 +701,6 @@ class MakeRequestView(FormView):
                     "There were errors in your form submission. "
                     "Please review and submit again."
                 ),
-            )
-        else:
-            messages.add_message(
-                self.request, messages.INFO, _("Please confirm your form submission.")
             )
         return self.render_to_response(self.get_context_data(**form_kwargs), status=400)
 
