@@ -59,7 +59,7 @@
     "bootstrap": "^5.3.8",
     "choices.js": "^11.2.3",
     "driver.js": "^1.4.0",
-    "exifreader": "^4.38.1",
+    "exifreader": "^4.39.0",
     "font-awesome": "^4.7.0",
     "leaflet": "^1.5.1",
     "leaflet.icon.glyph": "^0.3.0",
