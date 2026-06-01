@@ -64,7 +64,7 @@ function submitFormsAjax(): void {
         }
 
         const responseData = request.responseText
-        if (responseData[0] === '/') {
+        if (responseData[0] === '/' || responseData.startsWith('https://')) {
           // starts with URL, redirect
           window.location.href = responseData
           if (responseData.includes('#')) {
