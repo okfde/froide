@@ -332,6 +332,11 @@ const scrollToAnchor = (messages: Message[]): void => {
       return
     }
     if (element != null) {
+      const tabInstance = Tab.getOrCreateInstance(
+        `a[href='${window.location.hash}'][data-bs-toggle='tab']`
+      )
+      tabInstance?.show()
+
       window.setTimeout(() => {
         element?.scrollIntoView({ behavior: 'smooth' })
       }, 300)
