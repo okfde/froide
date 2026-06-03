@@ -9,7 +9,7 @@ def update_alert_subscription(alert_id: int, preview=False):
     try:
         alert = Alert.objects.get(id=alert_id)
     except Alert.DoesNotExist:
-        pass
+        return
     if not alert.user and not alert.email_confirmed:
         return
     if alert.user and not alert.user.is_active:
