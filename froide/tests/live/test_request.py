@@ -7,6 +7,7 @@ from django.utils import timezone
 
 import pytest
 from playwright.async_api import Page, expect
+from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
 from froide.foirequest.models import FoiRequest, RequestDraft
 from froide.foirequest.tests import factories
@@ -240,6 +241,62 @@ async def test_make_request_logged_out_with_existing_account(
     assert req.title == req_title
     assert not req.public
     assert pb in req.publicbodies.all()
+
+
+@pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
+@pytest.mark.asyncio(loop_scope="session")
+async def test_make_request_submit_multiple_times(
+    page: Page, live_server, public_body_with_index, dummy_user
+):
+    count_before = FoiRequest.objects.filter(user=dummy_user).count()
+
+    await do_login(page, live_server)
+    assert dummy_user.is_authenticated
+    await go_to_make_request_url(page, live_server)
+    await page.locator("request-page .btn-primary >> nth=0").click()
+    pb = PublicBody.objects.all().first()
+    await page.locator(".search-public_bodies").fill(pb.name)
+    await page.locator(".search-public_bodies-submit").click()
+    buttons = page.locator(".search-results .search-result .btn")
+    await expect(buttons).to_have_count(1)
+    await page.locator(".search-results .search-result .btn >> nth=0").click()
+
+    await page.fill("[name=subject]", req_title)
+    await page.fill("[name=body]", req_body)
+    await page.locator("[name=confirm]").click()
+    await page.locator("#step_write_request .btn-primary").click()
+
+    await page.locator("#step_request_public .btn-primary").click()
+
+    # click submit multiple times
+    form = page.locator("form[name='make_request']")
+    submit_button = page.locator("#send-request-button")
+
+    await form.dispatch_event("submit")
+    await form.dispatch_event("submit")
+    await form.dispatch_event("submit")
+
+    try:
+        await submit_button.click(timeout=100)
+        await submit_button.click(timeout=100)
+        await submit_button.click(timeout=100)
+    except PlaywrightTimeoutError:
+        pass
+
+    await page.wait_for_url(f"**{reverse('foirequest-request_sent')}*")
+
+    req = FoiRequest.objects.filter(user=dummy_user).order_by("-id")[0]
+    assert req.title == req_title
+    assert req.description == req_body
+    assert req_body in req.messages[0].plaintext
+    assert req.public
+    assert req.public_body == pb
+    assert req.status == "awaiting_response"
+
+    count_after = FoiRequest.objects.filter(user=dummy_user).count()
+
+    assert count_before + 1 == count_after
 
 
 @pytest.mark.django_db
