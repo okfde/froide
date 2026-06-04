@@ -387,7 +387,6 @@
                   :hide-public="hidePublic"
                   :hide-publicbody-chooser="hidePublicbodyChooser"
                   :show-draft="showDraft"
-                  :submitting="submitting"
                   @submit="submit"
                   @savedraft="saveDraft"
                   @onlinehelp-click="onlineHelpShow($event)"
