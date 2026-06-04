@@ -284,6 +284,7 @@ class MakeRequestView(FormView):
                     "Are you sure you want to discard your current selection?"
                 ),
                 "loadMore": _("load more..."),
+                "loading": _("Loading..."),
                 "next": _("next"),
                 "previous": _("previous"),
                 "choosePublicBody": _("Choose public body"),
