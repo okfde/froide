@@ -18,7 +18,7 @@
       {{ this.stepperSteps[this.stepperStepCurrent]?.label }}
     </SimpleStepper>
 
-    <div class="container">
+    <div class="container position-relative">
       <div class="row">
         <div class="col">
           <!-- v-show="step === STEPS.PREVIEW_SUBMIT"
@@ -387,6 +387,7 @@
                   :hide-public="hidePublic"
                   :hide-publicbody-chooser="hidePublicbodyChooser"
                   :show-draft="showDraft"
+                  :submitting="submitting"
                   @submit="submit"
                   @savedraft="saveDraft"
                   @onlinehelp-click="onlineHelpShow($event)"
@@ -398,6 +399,18 @@
           </div>
         </div>
       </div>
+
+      <Transition name="fade">
+        <div
+          class="position-absolute top-0 bottom-0 start-0 end-0 d-flex align-items-center justify-content-center text-bg-body bg-opacity-90 fs-1"
+          aria-live="polite"
+          role="status"
+          v-if="submitting"
+        >
+          <i class="fa fa-spinner fa-pulse me-3" aria-hidden="true" />
+          {{ i18n.loading }}
+        </div>
+      </Transition>
     </div>
     <!-- /.container -->
     <OnlineHelp ref="onlineHelp" />
@@ -846,6 +859,8 @@ export default {
       this.submitting = true
     },
     submit() {
+      if (this.submitting) return
+
       this.fetchError = null
       this.submitting = true
       const form = document.forms.make_request
@@ -876,12 +891,11 @@ export default {
         .then((resp) => {
           // ...frontend will display/handle them
           this.fetchedForms = resp
+          this.submitting = false
         })
         .catch((e) => {
           console.error(e)
           this.fetchError = e.message || this.i18n.error
-        })
-        .finally(() => {
           this.submitting = false
         })
     },
@@ -1033,5 +1047,15 @@ legend {
     margin-left: auto;
     z-index: -1;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
