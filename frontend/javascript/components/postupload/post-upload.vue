@@ -946,7 +946,7 @@ addEventListener('hashchange', () => {
     <!--<span class="debug">documentsSelectedPdfRedaction={{ documentsSelectedPdfRedaction.map(d => d.id).join(',') }}</span>-->
   </details>
 
-  <div class="step-container">
+  <div class="step-container mb-3">
     <div v-show="step === STEP_INTRO" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-12 d-flex flex-column">
@@ -2000,12 +2000,6 @@ addEventListener('hashchange', () => {
 @use 'sass:map';
 @import 'bootstrap/scss/functions';
 @import '../../../styles/variables.scss';
-
-@include media-breakpoint-up(xl) {
-  .step-container {
-    min-height: 48rem; // so that buttons are always at the same position
-  }
-}
 
 .debug {
   opacity: 0.5 !important;
