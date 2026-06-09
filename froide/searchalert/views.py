@@ -81,7 +81,7 @@ def with_alert(func):
         if check is None and request.user.is_authenticated:
             alert = get_object_or_404(Alert, id=int(alert_id), user=request.user)
         else:
-            alert = get_object_or_404(Alert, id=alert_id)
+            alert = get_object_or_404(Alert, id=alert_id, user=None)
             if not alert.check_secret(check):
                 raise Http404
         return func(request, alert)
