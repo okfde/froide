@@ -196,6 +196,7 @@ class Alert(models.Model):
 
     def get_alert_secret(self):
         to_sign = [
+            "searchalert",
             self.email,
             str(self.id),
         ]
