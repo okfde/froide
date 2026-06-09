@@ -43,10 +43,11 @@ class GeoRegionMixin(object):
         "kind",
         "kind_detail",
         ("part_of", ForeignKeyFilter),
+        ("related", ForeignKeyFilter),
         "valid_on",
         "invalid_on",
     )
-    raw_id_fields = ("part_of",)
+    raw_id_fields = ("part_of", "related")
     readonly_fields = ("depth", "numchild", "path")
 
 

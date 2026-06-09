@@ -52,6 +52,11 @@ class GeoRegion(MP_Node):
     )
     data = models.JSONField(default=dict, blank=True)
     osm_tags = models.JSONField(default=dict, blank=True)
+    related = models.ManyToManyField(
+        "self",
+        verbose_name=_("Related Regions"),
+        blank=True,
+    )
 
     node_order_by = ("name",)
 
