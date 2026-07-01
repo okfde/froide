@@ -102,7 +102,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         widget=forms.HiddenInput(),
     )
     collection = django_filters.ModelChoiceFilter(
-        queryset=DocumentCollection.objects.filter(public=True),
+        queryset=None,
         to_field_name="pk",
         method="filter_collection",
         widget=forms.HiddenInput(),
@@ -161,6 +161,9 @@ class PageDocumentFilterset(BaseSearchFilterSet):
             request = self.view.request
         self.request = request
         self.filters["foirequest"].queryset = get_read_foirequest_queryset(request)
+        self.filters[
+            "collection"
+        ].queryset = DocumentCollection.objects.get_authenticated_queryset(request)
 
         self.filters["portal"].extra["choices"] = [
             (p.pk, str(p)) for p in get_portal_queryset(request)
