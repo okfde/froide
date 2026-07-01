@@ -125,9 +125,10 @@ class DocumentCollectionAdmin(DocumentCollectionBaseAdmin):
 
     @admin.action(description=_("Reindex collection"))
     def reindex_collection(self, request, queryset):
+        from .tasks import index_documentcollection
+
         for collection in queryset:
-            for doc in collection.documents.all():
-                update_document_index(doc)
+            index_documentcollection(collection.id)
 
     @admin.action(description=_("Collect documents from FOI requests"))
     def collect_documents_from_foirequests(self, request, queryset):

@@ -29,3 +29,29 @@ def store_document_upload(upload_urls, user_id, form_data, collection_id):
 
     for upload_url in upload_urls:
         storer.create_from_upload_url(upload_url)
+
+
+@celery_app.task(name="froide.document.tasks.index_document")
+def index_document(document_id):
+    from .models import Document
+    from .utils import update_document_index_internal
+
+    try:
+        document = Document.objects.get(id=document_id)
+    except Document.DoesNotExist:
+        return
+    update_document_index_internal(document)
+
+
+@celery_app.task(name="froide.document.tasks.index_documentcollection")
+def index_documentcollection(collection_id):
+    from .models import DocumentCollection
+    from .utils import update_document_index_internal
+
+    try:
+        collection = DocumentCollection.objects.get(id=collection_id)
+    except DocumentCollection.DoesNotExist:
+        return
+
+    for document in collection.documents.all():
+        update_document_index_internal(document)
