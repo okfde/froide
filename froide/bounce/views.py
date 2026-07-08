@@ -16,5 +16,7 @@ def unsubscribe_view(request, reference):
     if not status:
         return HttpResponseBadRequest("Invalid email address")
 
-    email_unsubscribed.send(sender=None, email=recipient, reference=reference)
+    email_unsubscribed.send(
+        sender=None, email=recipient, reference=reference, method="unsubscribe-post"
+    )
     return HttpResponse(content="OK")

@@ -223,7 +223,9 @@ def process_unsubscribe_mail(mail_bytes):
     if not subject.startswith(UNSUBSCRIBE_PREFIX):
         return
     _, reference = subject.split(UNSUBSCRIBE_PREFIX, 1)
-    email_unsubscribed.send(sender=None, email=recipient, reference=reference)
+    email_unsubscribed.send(
+        sender=None, email=recipient, reference=reference, method="unsubscribe-mail"
+    )
 
 
 def process_bounce_mail(mail_bytes):
