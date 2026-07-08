@@ -17,6 +17,7 @@ from django.core.mail import mail_managers
 from django.core.mail.message import sanitize_address
 from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
 from django.core.validators import validate_email
+from django.urls import reverse
 from django.utils.crypto import salted_hmac
 
 from froide.helper.email_parsing import (
@@ -104,11 +105,17 @@ def make_bounce_address(email_str: str) -> str:
 def make_unsubscribe_header(email_str: str, reference: str) -> str:
     email_address = parse_email_address(email_str)
     unsub_email = make_unsubscribe_address(email_address.email)
-    return "<mailto:{email}?subject={subject}>".format(
+    unsubscribe_url = (
+        settings.SITE_URL
+        + reverse("bounce:unsubscribe", kwargs={"reference": reference})
+        + "?email={email}".format(email=quote(unsub_email))
+    )
+    return "<mailto:{email}?subject={subject}>,<{url}>".format(
         email=unsub_email,
         subject=quote(
             "{prefix}{reference}".format(prefix=UNSUBSCRIBE_PREFIX, reference=reference)
         ),
+        url=unsubscribe_url,
     )
 
 

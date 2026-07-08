@@ -341,6 +341,7 @@ def send_mail(
         headers["List-Unsubscribe"] = make_unsubscribe_header(
             email_address, unsubscribe_reference
         )
+        headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
 
     if html is None:
         email_klass = EmailMessage
