@@ -135,6 +135,7 @@ froide_urlpatterns += [
     ),
     path(pgettext_lazy("url part", "letter/"), include("froide.letter.urls")),
     path("guide/", include("froide.guide.urls")),
+    path("list-unsubscribe/", include("froide.bounce.urls")),
     path(
         "500/",
         lambda request: (
