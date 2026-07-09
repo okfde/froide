@@ -93,7 +93,7 @@ dev = [
   "prek>=0.3.5",
   "pytest-xdist>=3.8.0",
   "pytest-cov>=7.1.0",
-  "django-stubs-ext<5.3",
+  "django-stubs-ext<6.1",
 ]
 
 [build-system]
