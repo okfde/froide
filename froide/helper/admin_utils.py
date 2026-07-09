@@ -11,6 +11,7 @@ from django.contrib.admin.widgets import AdminDateWidget
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models
 from django.db.models.fields.related import ForeignObjectRel, ManyToManyField
+from django.http import HttpRequest
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.encoding import smart_str
@@ -21,19 +22,31 @@ from taggit.models import TaggedItem
 
 from .forms import TagObjectForm, get_fake_fk_form_class
 
+type ObjectActionParam = models.Model | models.QuerySet | callable[[], models.QuerySet]
+type ObjectActionCallback = callable[
+    [admin.ModelAdmin, HttpRequest, models.QuerySet, models.Model], None
+]
 
-def make_choose_object_action(model_or_queryset, callback, label):
-    if isinstance(model_or_queryset, models.QuerySet):
-        model = model_or_queryset.model
-        filter_qs = model_or_queryset
-    else:
-        model = model_or_queryset
-        filter_qs = None
 
-    def action(model_admin, request, queryset):
+def make_choose_object_action(
+    model_or_queryset_or_callable: ObjectActionParam,
+    callback: ObjectActionCallback,
+    label: str,
+):
+    def action(model_admin, request: HttpRequest, queryset):
         # Check that the user has change permission for the actual model
         if not model_admin.has_change_permission(request):
             raise PermissionDenied
+
+        if isinstance(model_or_queryset_or_callable, models.QuerySet):
+            model = model_or_queryset_or_callable.model
+            filter_qs = model_or_queryset_or_callable
+        elif callable(model_or_queryset_or_callable):
+            filter_qs = model_or_queryset_or_callable()
+            model = filter_qs.model
+        else:
+            model = model_or_queryset_or_callable
+            filter_qs = None
 
         Form = get_fake_fk_form_class(model, model_admin.admin_site, queryset=filter_qs)
         # User has already chosen the other req
