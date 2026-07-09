@@ -38,15 +38,15 @@ def make_choose_object_action(
         if not model_admin.has_change_permission(request):
             raise PermissionDenied
 
-        if isinstance(model_or_queryset_or_callable, models.QuerySet):
+        if issubclass(model_or_queryset_or_callable, models.QuerySet):
             model = model_or_queryset_or_callable.model
             filter_qs = model_or_queryset_or_callable
-        elif callable(model_or_queryset_or_callable):
-            filter_qs = model_or_queryset_or_callable()
-            model = filter_qs.model
-        else:
+        elif issubclass(model_or_queryset_or_callable, models.Model):
             model = model_or_queryset_or_callable
             filter_qs = None
+        else:
+            filter_qs = model_or_queryset_or_callable()
+            model = filter_qs.model
 
         Form = get_fake_fk_form_class(model, model_admin.admin_site, queryset=filter_qs)
         # User has already chosen the other req
