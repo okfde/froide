@@ -39,7 +39,7 @@ class TestMakeChooseObjectAction:
         mock_form.is_valid.return_value = True
         mock_form.cleaned_data = {"obj": "mock_object"}
         mock_callback = Mock()
-        mock_queryset = Mock()
+        mock_queryset = MockModel.objects.all()
 
         with patch("froide.helper.admin_utils.get_fake_fk_form_class") as mock_get_form:
             mock_get_form.return_value = Mock(return_value=mock_form)

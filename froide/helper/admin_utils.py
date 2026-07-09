@@ -38,7 +38,7 @@ def make_choose_object_action(
         if not model_admin.has_change_permission(request):
             raise PermissionDenied
 
-        if issubclass(model_or_queryset_or_callable, models.QuerySet):
+        if isinstance(model_or_queryset_or_callable, models.QuerySet):
             model = model_or_queryset_or_callable.model
             filter_qs = model_or_queryset_or_callable
         elif issubclass(model_or_queryset_or_callable, models.Model):
