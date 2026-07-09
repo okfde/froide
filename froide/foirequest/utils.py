@@ -365,7 +365,7 @@ def send_request_user_email(
         headers["References"] = thread_id
         headers["In-Reply-To"] = thread_id
 
-    headers["List-ID"] = "foirequest/{id} <{id}.foirequest.{domain}>".format(
+    headers["List-Id"] = "foirequest/{id} <{id}.foirequest.{domain}>".format(
         id=foirequest.id, domain=domain
     )
     headers["List-Archive"] = foirequest.get_absolute_domain_short_url()
