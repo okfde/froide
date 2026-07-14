@@ -85,13 +85,15 @@ class TestMakeChooseObjectAction:
 
         assert isinstance(response, TemplateResponse)
         assert response.template_name == "helper/admin/apply_action.html"
-        assert len(response.context_data) == 8
+        assert len(response.context_data) == 10
         assert response.context_data["opts"] == mock_model_admin.model._meta
         assert response.context_data["queryset"] == mock_queryset
         assert response.context_data["media"] == "mock_media"
         assert response.context_data["action_checkbox_name"] == "_selected_action"
         assert response.context_data["form"] == mock_form
         assert response.context_data["headline"] == "Test Action"
+        assert response.context_data["select_across"] is False
+        assert response.context_data["preview_queryset"] is None
         assert response.context_data["actionname"] == "Test Action"
         assert response.context_data["applabel"] == "test_app"
         mock_callback.assert_not_called()
@@ -113,12 +115,14 @@ class TestMakeChooseObjectAction:
 
         assert isinstance(response, TemplateResponse)
         assert response.template_name == "helper/admin/apply_action.html"
-        assert len(response.context_data) == 8
+        assert len(response.context_data) == 10
         assert response.context_data["opts"] == mock_model_admin.model._meta
         assert response.context_data["queryset"] == mock_queryset
         assert response.context_data["media"] == "mock_media"
         assert response.context_data["action_checkbox_name"] == "_selected_action"
         assert response.context_data["form"] == mock_form
+        assert response.context_data["select_across"] is False
+        assert response.context_data["preview_queryset"] is None
         assert response.context_data["headline"] == "Test Action"
         assert response.context_data["actionname"] == "Test Action"
         assert response.context_data["applabel"] == "test_app"

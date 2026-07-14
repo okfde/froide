@@ -12,16 +12,26 @@
         <div>
             <p>{{ headline }}</p>
             {{ form.as_p }}
-            <ul>
-                {% for obj in queryset %}
-                    <li>
-                        {{ obj }}
-                        <input type="hidden"
-                               name="{{ action_checkbox_name }}"
-                               value="{{ obj.pk|unlocalize }}" />
-                    </li>
-                {% endfor %}
-            </ul>
+            {% if select_across %}
+                <input type="hidden" name="select_across" value="1" />
+                <p>
+                    {% blocktrans with count=queryset.count preview_count=preview_queryset.count %}You have selected {{ count }} objects, here is a preview of the first {{ preview_count }}:{% endblocktrans %}
+                </p>
+                <ul>
+                    {% for obj in preview_queryset %}<li>{{ obj }}</li>{% endfor %}
+                </ul>
+            {% else %}
+                <ul>
+                    {% for obj in queryset %}
+                        <li>
+                            {{ obj }}
+                            <input type="hidden"
+                                   name="{{ action_checkbox_name }}"
+                                   value="{{ obj.pk|unlocalize }}" />
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             <input type="hidden" name="action" value="{{ actionname }}" />
             <input type="submit" value="{% trans "Execute" %}" />
         </div>
