@@ -86,6 +86,8 @@ def get_fake_fk_form_class(
         queryset = model.objects.all()
 
     class ForeignKeyForm(forms.Form):
-        obj = forms.ModelChoiceField(queryset=queryset, widget=widget)
+        obj = forms.ModelChoiceField(
+            queryset=queryset, widget=widget, label=model._meta.verbose_name
+        )
 
     return ForeignKeyForm
