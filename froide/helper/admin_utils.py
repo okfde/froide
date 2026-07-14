@@ -67,16 +67,22 @@ def make_choose_object_action(
         else:
             form = Form()
 
+        select_across = request.POST.get("select_across", "0") == "1"
+        preview_queryset = None
+        if select_across:
+            preview_queryset = queryset[:50]
         opts = model_admin.model._meta
         context = {
             "opts": opts,
             "queryset": queryset,
+            "preview_queryset": preview_queryset,
             "media": model_admin.media,
             "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
             "form": form,
             "headline": label,
             "actionname": request.POST.get("action"),
             "applabel": opts.app_label,
+            "select_across": select_across,
         }
 
         # Display the confirmation page
