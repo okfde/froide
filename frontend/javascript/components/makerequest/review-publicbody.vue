@@ -9,6 +9,15 @@
           <ul class="list">
             <li v-for="pb in publicBodies" :key="pb.id">
               {{ pb.name }}
+              <a
+                v-if="pb"
+                class="info-link"
+                :href="pb.site_url"
+                target="_blank"
+              >
+                <span class="fa fa-info-circle" />
+              </a>
+
               <div
                 v-if="pb.request_note_html"
                 class="col-lg-8 alert alert-warning pb-0"
@@ -40,7 +49,12 @@
       <div class="col-lg-12 publicbody-summary">
         <p>
           {{ publicBody?.name }}
-          <a v-if="publicBody" :href="publicBody.site_url" target="_blank">
+          <a
+            v-if="publicBody"
+            class="info-link"
+            :href="publicBody.site_url"
+            target="_blank"
+          >
             <span class="fa fa-info-circle" />
           </a>
         </p>
@@ -127,9 +141,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../styles/variables';
+
 .list {
   list-style-type: none;
   margin: 0;
   padding: 0;
+}
+
+.info-link {
+  color: $gray-500;
+  &:hover {
+    color: $link-color;
+  }
 }
 </style>

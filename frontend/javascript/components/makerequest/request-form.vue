@@ -18,9 +18,18 @@
           <strong v-if="publicBodies.length === 0" class="text-danger">{{
             i18n.none
           }}</strong>
-          <strong v-else>{{
-            publicBodies.map((pb) => pb.name).join(', ')
-          }}</strong>
+          <strong v-else>
+            <template v-for="(pb, index) in publicBodies" :key="pb.id">
+              <template v-if="index > 0">, </template>{{ pb.name }}
+              <a
+                v-if="pb.site_url"
+                class="info-link"
+                :href="pb.site_url"
+                target="_blank"
+                ><span class="fa fa-info-circle"
+              /></a>
+            </template>
+          </strong>
           <!-- setStep won't work in froide-campaign, but hidePublicbodyChooser always applies there;
               and Pb choosing is handled by <CampaignChoosePublicbody> -->
           <button
@@ -892,5 +901,12 @@ legend {
 .show-full-letter {
   color: #999;
   text-decoration: underline;
+}
+
+.info-link {
+  color: $gray-500;
+  &:hover {
+    color: $link-color;
+  }
 }
 </style>
