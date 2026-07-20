@@ -8,14 +8,8 @@
         <template v-if="publicBodies.length < 20">
           <ul class="list">
             <li v-for="pb in publicBodies" :key="pb.id">
-              {{ pb.name }}
-              <a
-                v-if="pb"
-                class="info-link"
-                :href="pb.site_url"
-                target="_blank"
-              >
-                <span class="fa fa-info-circle" />
+              <a v-if="pb" :href="pb.site_url" target="_blank">
+                {{ pb.name }}
               </a>
 
               <div
@@ -47,15 +41,9 @@
   <div v-if="!multiRequest" class="publicbody-summary-container">
     <div class="row">
       <div class="col-lg-12 publicbody-summary">
-        <p>
-          {{ publicBody?.name }}
-          <a
-            v-if="publicBody"
-            class="info-link"
-            :href="publicBody.site_url"
-            target="_blank"
-          >
-            <span class="fa fa-info-circle" />
+        <p v-if="publicBody">
+          <a class="info-link" :href="publicBody.site_url" target="_blank">
+            {{ publicBody.name }}
           </a>
         </p>
       </div>
@@ -141,18 +129,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../styles/variables';
-
 .list {
   list-style-type: none;
   margin: 0;
   padding: 0;
-}
-
-.info-link {
-  color: $gray-500;
-  &:hover {
-    color: $link-color;
-  }
 }
 </style>
