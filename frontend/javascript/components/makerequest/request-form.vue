@@ -19,10 +19,17 @@
             i18n.none
           }}</strong>
           <strong v-else>
-            <template v-for="(pb, index) in publicBodies" :key="pb.id">
-              <template v-if="index > 0">, </template>
-              <a v-if="pb" :href="pb.site_url" target="_blank">{{ pb.name }}</a>
-            </template>
+            <PbTruncatedList :public-bodies="publicBodies" :i18n="i18n">
+              <template #default="{ pb, index }">
+                <template v-if="index > 0">, </template>
+                <a v-if="pb" :href="pb.site_url" target="_blank">{{
+                  pb.name
+                }}</a>
+              </template>
+              <template #truncation="{ count }">
+                , … ({{ i18n._('publicBodiesCount', { count }) }})
+              </template>
+            </PbTruncatedList>
           </strong>
           <!-- setStep won't work in froide-campaign, but hidePublicbodyChooser always applies there;
               and Pb choosing is handled by <CampaignChoosePublicbody> -->
@@ -394,6 +401,7 @@ import {
 import ProofForm from '../proofupload/proof-form.vue'
 import UserAddress from './user-address.vue'
 import UserConfirm from './user-confirm.vue'
+import PbTruncatedList from '../publicbody/pb-truncated-list.vue'
 
 function erx(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
@@ -413,7 +421,8 @@ export default {
   components: {
     ProofForm,
     UserAddress,
-    UserConfirm
+    UserConfirm,
+    PbTruncatedList
   },
   emits: [
     'stepNext',
