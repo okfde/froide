@@ -42,7 +42,7 @@
     <div class="row">
       <div class="col-lg-12 publicbody-summary">
         <p v-if="publicBody">
-          <a class="info-link" :href="publicBody.site_url" target="_blank">
+          <a :href="publicBody.site_url" target="_blank">
             {{ publicBody.name }}
           </a>
         </p>
