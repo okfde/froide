@@ -73,7 +73,14 @@
                 class="my-3 fs-5"
               >
                 {{ i18n.requestTo }}
-                {{ publicBodies.map((pb) => pb.name).join(', ') }}
+                <PbTruncatedList :public-bodies="publicBodies" :i18n="i18n">
+                  <template #default="{ pb, index }">
+                    <template v-if="index > 0">, </template>{{ pb.name }}
+                  </template>
+                  <template #truncation="{ count }">
+                    , … ({{ i18n._('publicBodiesCount', { count }) }})
+                  </template>
+                </PbTruncatedList>
               </h1>
 
               <!-- STEP: INTRO / CAMPAIGNS -->
@@ -160,7 +167,14 @@
 
                 <p v-if="publicBodies.length > 0">
                   {{ i18n.currentlyChosen }}
-                  {{ publicBodies.map((pb) => pb.name).join(', ') }}
+                  <PbTruncatedList :public-bodies="publicBodies" :i18n="i18n">
+                    <template #default="{ pb, index }">
+                      <template v-if="index > 0">, </template>{{ pb.name }}
+                    </template>
+                    <template #truncation="{ count }">
+                      , … ({{ i18n._('publicBodiesCount', { count }) }})
+                    </template>
+                  </PbTruncatedList>
                 </p>
 
                 <div v-if="multiRequest">
@@ -428,6 +442,7 @@ import PublicbodyMultiChooser from '../publicbody/publicbody-multichooser'
 import RequestForm from './request-form'
 import RequestPublic from './request-public'
 import ReviewRequest from './review-request'
+import PbTruncatedList from '../publicbody/pb-truncated-list.vue'
 
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 
@@ -466,7 +481,8 @@ export default {
     UserCreateAccount,
     DjangoSlot,
     SimpleStepper,
-    OnlineHelp
+    OnlineHelp,
+    PbTruncatedList
   },
   mixins: [I18nMixin, LetterMixin, StoreValueMixin],
   props: {

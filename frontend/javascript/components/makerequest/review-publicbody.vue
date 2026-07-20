@@ -4,10 +4,15 @@
     class="publicbody-summary-container"
   >
     <div class="publicbody-summary">
-      <p>
-        <template v-if="publicBodies.length < 20">
-          <ul class="list">
-            <li v-for="pb in publicBodies" :key="pb.id">
+      <ul class="list">
+        <PbTruncatedList
+          :public-bodies="publicBodies"
+          :i18n="i18n"
+          :threshold="20"
+          :show-count="20"
+        >
+          <template #default="{ pb }">
+            <li>
               <a v-if="pb" :href="pb.site_url" target="_blank">
                 {{ pb.name }}
               </a>
@@ -18,12 +23,12 @@
                 v-html="pb.request_note_html"
               />
             </li>
-          </ul>
-        </template>
-        <template v-else>
-          {{ i18n._('toMultiPublicBodies', { count: publicBodies.length }) }}
-        </template>
-      </p>
+          </template>
+          <template #truncation="{ count }">
+            <li>… ({{ i18n._('publicBodiesCount', { count }) }})</li>
+          </template>
+        </PbTruncatedList>
+      </ul>
     </div>
   </div>
   <div v-if="multiRequest && !canBatchRequest" class="mb-5 mt-5">
@@ -66,9 +71,14 @@ import I18nMixin from '../../lib/i18n-mixin'
 
 import { mapGetters } from 'vuex'
 
+import PbTruncatedList from '../publicbody/pb-truncated-list.vue'
+
 export default {
   name: 'ReviewPublicbody',
   mixins: [I18nMixin],
+  components: {
+    PbTruncatedList
+  },
   props: {
     config: {
       type: Object,
