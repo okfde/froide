@@ -1,5 +1,6 @@
 import contextlib
 import imaplib
+import logging
 import re
 from collections import defaultdict
 from dataclasses import dataclass
@@ -10,6 +11,8 @@ from typing import Iterator, NamedTuple, Optional, Tuple, Union
 
 from django.conf import settings
 from django.utils import timezone
+
+logger = logging.getLogger(__name__)
 
 AUTO_REPLY_SUBJECT_REGEX = settings.FROIDE_CONFIG.get("auto_reply_subject_regex", None)
 AUTO_REPLY_EMAIL_REGEX = settings.FROIDE_CONFIG.get("auto_reply_email_regex", None)
@@ -262,19 +265,22 @@ def delete_mails_by_recipient(
 def retrieve_mail_by_message_id(
     mailbox: Union[imaplib.IMAP4_SSL, imaplib.IMAP4],
     message_id: str,
-) -> bytes:
+) -> Optional[bytes]:
     status, count = mailbox.select("Inbox")
+    message_id = message_id.strip()
     # find message by message-id
     status, [msg_ids] = mailbox.search(
-        None, 'HEADER "Message-Id" "{message_id}"'.format(message_id=message_id.strip())
+        None, 'HEADER "Message-Id" "{message_id}"'.format(message_id=message_id)
     )
     messages = msg_ids.split()
-    assert len(messages) <= 1
+    if len(messages) > 1:
+        logger.warning("Message-Id {} has more than one email!", message_id)
     if not messages:
         return None
 
     status, data = mailbox.fetch(messages[0], "(BODY[] UID)")
-    assert status == "OK"
+    if status != "OK":
+        return None
     mailbox.close()
     return data[0][1]
 
