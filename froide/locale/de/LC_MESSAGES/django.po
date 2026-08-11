@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-09 09:51+0200\n"
-"PO-Revision-Date: 2026-04-27 16:45+0200\n"
+"PO-Revision-Date: 2026-08-10 17:46+0100\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/froide/de/>\n"
 "Language: de\n"
@@ -7692,7 +7692,7 @@ msgstr "Die Dokumente in Ihrer Anfrage „%(title)s“ können nicht veröffentl
 
 #: froide/foirequest/views/message.py
 msgid "The documents will not be published immediately."
-msgstr "Dieser Anhang kann nicht veröffentlicht werden."
+msgstr "Die Dokumente werden nicht sofort veröffentlicht."
 
 #: froide/foirequest/views/draft.py
 msgid "The draft has been deleted."
