@@ -128,7 +128,7 @@ class DocumentCollectionAdmin(DocumentCollectionBaseAdmin):
         from .tasks import index_documentcollection
 
         for collection in queryset:
-            index_documentcollection(collection.id)
+            index_documentcollection.delay(collection.id)
 
     @admin.action(description=_("Collect documents from FOI requests"))
     def collect_documents_from_foirequests(self, request, queryset):
