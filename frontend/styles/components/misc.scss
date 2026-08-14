@@ -174,3 +174,12 @@ svg.img-text {
 .skippy {
   z-index: 1070;
 }
+
+.sticky-top-offset {
+  top: $spacer;
+}
+
+/* Keep a gap above elements jumped to via URL fragment */
+[id] {
+  scroll-margin-top: $spacer;
+}

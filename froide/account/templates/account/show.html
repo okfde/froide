@@ -4,39 +4,20 @@
 {% block app_body %}
     <div class="container-fluid mt-2">
         <div class="row">
-            <nav class="col-lg-3 col-xl-2">
-                <ul class="nav nav-pills mt-3 flex-column flex-md-row flex-lg-column"
-                    role="tablist">
-                    <li class="nav-item">
-                        <a href="{% if menu != 'requests' %}{% url 'account-show' %}{% endif %}"
-                           class="nav-link{% if menu == 'requests' %} active{% endif %}">
-                            {% trans "Your requests" %}
-                        </a>
-                    </li>
+            <nav class="col-lg-3 col-xl-2" aria-label="{% trans "Your account" %}">
+                <ul class="nav nav-pills mt-3 flex-column flex-md-row flex-lg-column">
+                    {% trans "Your requests" as label %}
+                    {% include "account/includes/sidebar_menu_item.html" with item_key="requests" item_url="account-show" item_label=label %}
                     {% if request.user.trusted %}
-                        <li class="nav-item">
-                            <a href="{% if menu != 'projects' %}{% url 'account-projects' %}{% endif %}"
-                               class="nav-link{% if menu == 'projects' %} active{% endif %}">
-                                {% trans "Your projects" %}
-                            </a>
-                        </li>
+                        {% trans "Your projects" as label %}
+                        {% include "account/includes/sidebar_menu_item.html" with item_key="projects" item_url="account-projects" item_label=label %}
                     {% endif %}
-                    <li class="nav-item">
-                        <a href="{% if menu != 'drafts' %}{% url 'account-drafts' %}{% endif %}"
-                           class="nav-link{% if menu == 'drafts' %} active{% endif %}">{% trans "Request drafts" %}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% if menu != 'following' %}{% url 'account-following' %}{% endif %}"
-                           class="nav-link{% if menu == 'following' %} active{% endif %}">
-                            {% trans "Followed requests" %}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% if menu != 'subscriptions' %}{% url 'account-subscriptions' %}{% endif %}"
-                           class="nav-link{% if menu == 'subscriptions' %} active{% endif %}">
-                            {% trans "Subscriptions" %}
-                        </a>
-                    </li>
+                    {% trans "Request drafts" as label %}
+                    {% include "account/includes/sidebar_menu_item.html" with item_key="drafts" item_url="account-drafts" item_label=label %}
+                    {% trans "Followed requests" as label %}
+                    {% include "account/includes/sidebar_menu_item.html" with item_key="following" item_url="account-following" item_label=label %}
+                    {% trans "Subscriptions" as label %}
+                    {% include "account/includes/sidebar_menu_item.html" with item_key="subscriptions" item_url="account-subscriptions" item_label=label %}
                 </ul>
                 <a href="{% url 'account-settings' %}"
                    class="btn btn-outline-secondary mt-3 mb-lg-3 float-end">

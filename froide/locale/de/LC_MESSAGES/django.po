@@ -11629,6 +11629,10 @@ msgstr[1] "„%(subject)s” an %(count)s Behörden"
 msgid "👋 Goodbye!"
 msgstr "👋 Viel Erfolg!"
 
+#: froide/account/templates/account/show.html
+msgid "Your account"
+msgstr "Ihr Konto"
+
 #, python-format
 #~ msgid ""
 #~ "\n"
