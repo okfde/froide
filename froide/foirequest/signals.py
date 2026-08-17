@@ -497,9 +497,10 @@ def save_delivery_status(
 
 def send_foimessage_sent_confirmation(message: FoiMessage = None, **kwargs):
     request = message.request
-    if message.is_not_email:
-        # All non-email sent messages are not interesting to users.
-        # Don't inform them about it.
+
+    if message.is_response:
+        # responses are not relevant (and should not get DeliveryConfirmations)
+        # previous check here was for email, but this was too specific
         return
     if message.is_bulk:
         # Don't notify on bulk message sending
