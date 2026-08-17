@@ -479,7 +479,7 @@ def move_upload_to_attachment(att_id, upload_id):
 
     try:
         upload = Upload.objects.get(pk=upload_id)
-    except FoiAttachment.DoesNotExist:
+    except Upload.DoesNotExist:
         return
 
     file = upload.get_file()
