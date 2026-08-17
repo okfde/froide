@@ -37,9 +37,10 @@ class OrganizationConfig(AppConfig):
         account_merged.connect(merge_user)
 
 
-def connect_organization(sender, user, **kwargs):
+def connect_organization(sender, **kwargs):
     from .models import Organization
 
+    user = sender
     org = Organization.objects.get_by_email(user.email)
     if org is None:
         return
