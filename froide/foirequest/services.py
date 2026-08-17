@@ -23,12 +23,14 @@ from froide.problem.models import ProblemReport
 from froide.publicbody.models import PublicBody
 
 from .hooks import registry
+from .message_handlers import get_request_outgoing_message_kind
 from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest, RequestDraft
 from .models.message import (
     AUTO_REPLY_TAG,
     BOUNCE_RESENT_TAG,
     BOUNCE_TAG,
     HAS_BOUNCED_TAG,
+    MessageKind,
 )
 from .tasks import convert_attachment_task, create_project_requests
 from .utils import (
@@ -234,9 +236,14 @@ class CreateRequestService(BaseService):
             foirequest.tags.add(*[t[:100] for t in data["tags"]])
 
         subject = "%s [#%s]" % (foirequest.title, foirequest.pk)
+
+        # Allow MessageHandlers classmethod to set default MessageKind
+        kind = get_request_outgoing_message_kind(foirequest) or MessageKind.EMAIL
+
         message = FoiMessage(
             request=foirequest,
             sent=False,
+            kind=kind,
             is_response=False,
             sender_user=user,
             sender_email=foirequest.secret_address,

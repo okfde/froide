@@ -52,6 +52,12 @@ def resend_message(message, **kwargs):
     handler.resend(**kwargs)
 
 
+def get_request_outgoing_message_kind(request):
+    for k in settings.FROIDE_CONFIG["message_handlers"].keys():
+        if get_message_handler_class(k).handle_foirequest_outgoing_messages(request):
+            return k
+
+
 class MessageHandler(object):
     def __init__(self, message):
         self.message = message
@@ -90,6 +96,14 @@ class MessageHandler(object):
 
     def run_send(self, **kwargs):
         raise NotImplementedError
+
+    @classmethod
+    def handle_foirequest_outgoing_messages(cls, request):
+        """
+        This creates a mechanism for a MessageHandler to grab a request and indicate
+        that the requests outgoing messages should be handled by the … Handler
+        """
+        pass
 
 
 class DefaultMessageHandler(MessageHandler):

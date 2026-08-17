@@ -31,6 +31,7 @@ from froide.upload.models import Upload
 
 from ..message_handlers import (
     get_message_handler_class_methods,
+    get_request_outgoing_message_kind,
     run_all_message_handler_classes,
 )
 from ..models import FoiAttachment, FoiMessage, FoiRequest
@@ -362,7 +363,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         message = FoiMessage(
             request=foirequest,
             subject=subject,
-            kind=MessageKind.EMAIL,
+            kind=get_request_outgoing_message_kind(foirequest) or MessageKind.EMAIL,
             subject_redacted=subject_redacted,
             is_response=False,
             sender_user=user,
