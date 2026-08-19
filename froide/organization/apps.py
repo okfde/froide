@@ -44,7 +44,7 @@ def connect_organization(sender, **kwargs):
     org = Organization.objects.get_by_email(user.email)
     if org is None:
         return
-    Organization.objects.add_user(user)
+    org.add_user(user)
 
 
 def disconnect_organization(sender, old_email=None, **kwargs):
