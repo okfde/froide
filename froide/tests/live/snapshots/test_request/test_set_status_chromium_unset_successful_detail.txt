@@ -1,0 +1,10 @@
+incomplete:aria-prohibited-attr
+incomplete:aria-valid-attr-value
+incomplete:color-contrast
+incomplete:link-in-text-block
+violations:aria-required-children
+violations:aria-required-parent
+violations:color-contrast
+violations:heading-order
+violations:listitem
+violations:page-has-heading-one
