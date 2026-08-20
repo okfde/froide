@@ -1,0 +1,3 @@
+violations:color-contrast
+violations:link-in-text-block
+violations:page-has-heading-one
