@@ -25,7 +25,7 @@ req_body = "Documents describing & something..."
 @pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_not_logged_in_request(
-    page: Page, live_server, public_body_with_index
+    page: Page, live_server, public_body_with_index, check_a11y
 ):
     pb = PublicBody.objects.all().first()
     await go_to_make_request_url(page, live_server)
@@ -34,8 +34,10 @@ async def test_make_not_logged_in_request(
     await page.locator(".search-public_bodies-submit").click()
     buttons = page.locator(".search-results .search-result .btn")
     await expect(buttons).to_have_count(1)
+    await check_a11y(page, suffix="step_select_publicbody")
     await page.locator(".search-results .search-result .btn >> nth=0").click()
 
+    await check_a11y(page, suffix="step_login_create")
     await page.locator("#step_login_create .btn-primary >> nth=0").click()
 
     await page.fill("[name=first_name]", "Peter")
@@ -45,15 +47,19 @@ async def test_make_not_logged_in_request(
     user_email = "peter.parker@example.com"
     await page.fill("[name=user_email]", user_email)
     await page.locator("[name=terms]").click()
+    await check_a11y(page, suffix="step_create_account")
     await page.locator("#step_create_account .btn-primary").click()
 
     await page.fill("[name=subject]", req_title)
     await page.fill("[name=body]", req_body)
     await page.locator("[name=confirm]").click()
+    await check_a11y(page, suffix="step_write_request")
     await page.locator("#step_write_request .btn-primary").click()
 
+    await check_a11y(page, suffix="step_request_public")
     await page.locator("#step_request_public .btn-primary").click()
 
+    await check_a11y(page, suffix="step_preview_submit")
     await page.locator("#send-request-button").click()
 
     await page.wait_for_url(f"**{reverse('account-new')}*")
@@ -67,6 +73,7 @@ async def test_make_not_logged_in_request(
     assert req.status == FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
     assert req.description == req_body
     assert req_body in req.messages[0].plaintext
+    await check_a11y(page, suffix="account_new")
     message = mail.outbox[0]
     match = re.search(r"http://[^/]+(/.+)", message.body)
     activate_url = match.group(1)
@@ -78,17 +85,19 @@ async def test_make_not_logged_in_request(
     )
     req = FoiRequest.objects.get(user=new_user)
     assert req.status == "awaiting_response"
+    await check_a11y(page, suffix="account_confirmed")
 
 
 @pytest.mark.django_db
 @pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_not_logged_in_request_to_public_body(
-    page: Page, live_server, world
+    page: Page, live_server, world, check_a11y
 ):
     pb = PublicBody.objects.all().first()
     assert pb
     await go_to_make_request_url(page, live_server, pb=pb)
+    await check_a11y(page, suffix="step_write_request")
 
     await page.fill("[name=subject]", req_title)
     await page.fill("[name=body]", req_body)
@@ -130,7 +139,7 @@ async def test_make_not_logged_in_request_to_public_body(
 @pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_logged_in_request(
-    page, live_server, public_body_with_index, dummy_user
+    page, live_server, public_body_with_index, dummy_user, check_a11y
 ):
     await do_login(page, live_server)
     assert dummy_user.is_authenticated
@@ -162,6 +171,8 @@ async def test_make_logged_in_request(
     assert req.public_body == pb
     assert req.status == "awaiting_response"
 
+    await check_a11y(page)
+
 
 @pytest.mark.django_db
 @pytest.mark.xdist_group(name="sequential")
@@ -173,6 +184,7 @@ async def test_make_logged_in_request_too_many(
     foi_message_factory,
     world,
     request_throttle_settings,
+    check_a11y,
 ):
     dummy_user = User.objects.get(username="dummy")
     for _i in range(5):
@@ -197,6 +209,8 @@ async def test_make_logged_in_request_too_many(
 
     alert = page.locator(".alert-danger", has_text="exceeded your request limit")
     await expect(alert).to_be_visible()
+
+    await check_a11y(page, context=".alert-danger", suffix="alert")
 
 
 @pytest.mark.django_db
@@ -303,7 +317,7 @@ async def test_make_request_submit_multiple_times(
 @pytest.mark.xdist_group(name="sequential")
 @pytest.mark.asyncio(loop_scope="session")
 async def test_edit_request_boilerplate(
-    page: Page, live_server, public_body_with_index, dummy_user
+    page: Page, live_server, public_body_with_index, dummy_user, check_a11y
 ):
     pb = PublicBody.objects.all().first()
     await do_login(page, live_server)
@@ -318,6 +332,7 @@ async def test_edit_request_boilerplate(
     await page.get_by_role("textbox", name="Subject:").fill(req_title)
 
     await page.get_by_role("checkbox", name="Don't wrap in template").check()
+    await check_a11y(page, suffix="step_write_request_full_text")
 
     body = page.get_by_role("textbox", name="Request body:")
     initial_template = await body.input_value()
@@ -391,6 +406,7 @@ async def test_skip_search_similar(
 @pytest.mark.parametrize(
     "from_resolution, to_resolution",
     [("", "successful"), ("successful", "refused")],
+    ids=["unset_successful", "successful_refused"],
 )
 async def test_set_status(
     page,
@@ -400,6 +416,7 @@ async def test_set_status(
     foi_message_factory,
     from_resolution,
     to_resolution,
+    check_a11y,
 ):
     factories.rebuild_index()
     user = User.objects.get(username="dummy")
@@ -415,6 +432,12 @@ async def test_set_status(
     assert req.resolution == from_resolution
     await go_to_request_page(page, live_server, req)
     await expect(page.locator(".info-box__edit-panel > form")).not_to_be_visible()
+
+    # Both parameters render the same page and drive the panel below to the same
+    # state, so one of them is enough to snapshot.
+    if from_resolution == "":
+        await check_a11y(page, suffix="detail")
+
     await page.locator(".info-box__edit-button").click()
     await expect(page.locator(".info-box__edit-panel > form")).to_be_visible()
 
@@ -429,6 +452,9 @@ async def test_set_status(
 
     await page.locator('select[name="resolution"]').select_option("refused")
     await expect(page.locator("#id_refusal_reason")).to_be_visible()
+
+    if from_resolution == "":
+        await check_a11y(page, context=".info-box__edit-panel", suffix="edit_panel")
 
     await page.locator('select[name="resolution"]').select_option(to_resolution)
     await page.locator("#set-status-submit").click()
