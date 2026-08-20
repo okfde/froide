@@ -64,8 +64,16 @@ dependencies = [
   "dogtail @ git+https://github.com/okfde/dogtail.git@main",
 ]
 
+[project.optional-dependencies]
+a11y = [
+  "axe-playwright-python>=0.1.8",
+  "pytest-datadir>=1.8.0",
+  "pytest-regressions>=2.11.0",
+]
+
 [dependency-groups]
 dev = [
+  "froide[a11y]",
   "beautifulsoup4",
   "django-coverage-plugin",
   "django-extended-makemessages>=1.7.1",
@@ -95,6 +103,9 @@ dev = [
   "pytest-cov>=7.1.0",
   "django-stubs-ext<5.3",
 ]
+
+[project.entry-points.pytest11]
+froide_a11y = "froide_a11y"
 
 [build-system]
 requires = ["setuptools>=77.0.3", "wheel"]
