@@ -88,10 +88,19 @@ Make sure the services are running.
 ```shell
 # Run all tests
 make test
-# Run only unit/integration tests
-make testci
-# Run only end-to-end tests
-make testui
+# Run only the end-to-end tests, which include the accessibility checks
+pytest froide/tests/live
+```
+
+### Accessibility tests
+
+The end-to-end tests check the pages they visit with [axe-core](https://github.com/dequelabs/axe-core). Findings are compared against the snapshots in `froide/tests/live/snapshots/`, so a test fails when a page gains a problem it didn't have before — existing findings are accepted debt.
+
+```shell
+# Record the current findings as the new baseline, then review the diff and commit
+pytest froide/tests/live --force-regen
+# Show the full axe report for every finding, recorded or not
+pytest froide/tests/live --a11y-strict
 ```
 
 ### Development tooling
