@@ -1,0 +1,6 @@
+incomplete:aria-valid-attr-value
+incomplete:color-contrast
+violations:color-contrast
+violations:heading-order
+violations:page-has-heading-one
+violations:select-name
