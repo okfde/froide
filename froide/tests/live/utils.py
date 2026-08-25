@@ -27,9 +27,9 @@ async def go_to_request_page(page, live_server, foirequest):
 
 
 @pytest.mark.asyncio(loop_scope="session")
-async def do_login(page, live_server):
+async def do_login(page, live_server, username="dummy"):
     await page.goto(live_server.url + reverse("account-login"))
-    user = User.objects.get(username="dummy")
+    user = User.objects.get(username=username)
     await page.fill("[name=username]", user.email)
     await page.fill("[name=password]", "froide")
     await page.locator('button.btn.btn-primary[type="submit"]').click()

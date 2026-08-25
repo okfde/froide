@@ -64,6 +64,11 @@ def dummy_user():
     yield UserFactory(username="dummy")
 
 
+@pytest.fixture
+def dummy_staff_user():
+    yield UserFactory(username="dummy_staff", is_staff=True)
+
+
 @pytest.fixture()
 def request_throttle_settings(settings):
     froide_config = settings.FROIDE_CONFIG
