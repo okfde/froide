@@ -3,10 +3,7 @@
         <div class="mb-3{% if classes %} {{ classes }}{% endif %}">
             {% if label and show_label %}<p class="form-label">{{ label }}</p>{% endif %}
             {% for widget in field %}<div class="form-check form-check-inline">{{ widget }}</div>{% endfor %}
-            {% if help_text %}<small class="form-text">{{ help_text }}</small>{% endif %}
-            {% if field.errors %}
-                <small class="form-text">{% include "helper/forms/errors.html" with errors=field.errors %}</small>
-            {% endif %}
+            {% include "helper/forms/field_footer.html" with inline=True %}
         </div>
     {% elif field_type == "checkbox" %}
         <div class="mb-3{% if classes %} {{ classes }}{% endif %}">
@@ -14,18 +11,12 @@
                 {{ field }}
                 <label class="form-check-label">{{ label }}</label>
             </div>
-            {% if help_text %}<small class="form-text">{{ help_text }}</small>{% endif %}
-            {% if field.errors %}
-                <small class="form-text">{% include "helper/forms/errors.html" with errors=field.errors %}</small>
-            {% endif %}
+            {% include "helper/forms/field_footer.html" with inline=True %}
         </div>
     {% else %}
         <div class="mb-3{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
             {{ field }}
-            {% if help_text %}<small class="form-text">{{ help_text }}</small>{% endif %}
-            {% if field.errors %}
-                <small class="form-text">{% include "helper/forms/errors.html" with errors=field.errors %}</small>
-            {% endif %}
+            {% include "helper/forms/field_footer.html" with inline=True %}
         </div>
     {% endif %}
 {% endwith %}

@@ -4,10 +4,7 @@
             <legend class="fw-bold col-form-label col-md-4{% if required %} field-required{% endif %}">{{ label }}</legend>
             <div class="col-md-8">
                 {% for widget in field %}<div class="form-check">{{ widget }}</div>{% endfor %}
-                {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
-                {% if field.errors %}
-                    <div class="invalid-feedback">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
-                {% endif %}
+                {% include "helper/forms/field_footer.html" %}
             </div>
         </fieldset>
     {% elif field_type == "checkbox" %}
@@ -17,10 +14,7 @@
                     {{ field }}
                     <label class="form-check-label fw-bold {% if required %}field-required{% endif %}"
                            for="{{ field.id_for_label }}">{{ label }}</label>
-                    {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
-                    {% if field.errors %}
-                        <div class="invalid-feedback">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
-                    {% endif %}
+                    {% include "helper/forms/field_footer.html" %}
                 </div>
             </div>
         </div>
@@ -29,10 +23,7 @@
             <legend class="fw-bold col-md-4 col-form-label{% if required %} field-required{% endif %}">{{ label }}</legend>
             <div class="col-md-8">
                 {{ field }}
-                {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
-                {% if field.errors %}
-                    <div class="invalid-feedback">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
-                {% endif %}
+                {% include "helper/forms/field_footer.html" %}
             </div>
         </fieldset>
     {% else %}
@@ -47,10 +38,7 @@
             {% endif %}
             <div class="col-md-8">
                 {{ field }}
-                {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
-                {% if field.errors %}
-                    <div class="invalid-feedback">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
-                {% endif %}
+                {% include "helper/forms/field_footer.html" %}
             </div>
         </div>
     {% endif %}
