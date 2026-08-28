@@ -1,8 +1,6 @@
-{% with tag=inline|yesno:"small,div" error_class=inline|yesno:"form-text,invalid-feedback" %}
+{% with tag=inline|yesno:"small,div" %}
     {% if help_text %}<{{ tag }} class="form-text">{{ help_text }}</{{ tag }}>{% endif %}
-    {% if field.errors %}
-        <{{ tag }} class="{{ error_class }}">
-        {% include "helper/forms/errors.html" with errors=field.errors %}
-        </{{ tag }}>
-    {% endif %}
 {% endwith %}
+{% if field.errors %}
+    <div class="invalid-feedback d-block">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
+{% endif %}
