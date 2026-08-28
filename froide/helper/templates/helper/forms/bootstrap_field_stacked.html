@@ -22,9 +22,6 @@
             {% endif %}
             {{ field }}
         {% endif %}
-        {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
-        {% if field.errors %}
-            <div class="invalid-feedback">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
-        {% endif %}
+        {% include "helper/forms/field_footer.html" %}
     </div>
 {% endwith %}
