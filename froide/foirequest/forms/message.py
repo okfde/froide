@@ -363,7 +363,10 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         message = FoiMessage(
             request=foirequest,
             subject=subject,
-            kind=get_request_outgoing_message_kind(foirequest) or MessageKind.EMAIL,
+            kind=get_request_outgoing_message_kind(
+                foirequest, recipient_email=recipient_email.strip()
+            )
+            or MessageKind.EMAIL,
             subject_redacted=subject_redacted,
             is_response=False,
             sender_user=user,
