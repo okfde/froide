@@ -52,9 +52,11 @@ def resend_message(message, **kwargs):
     handler.resend(**kwargs)
 
 
-def get_request_outgoing_message_kind(request):
+def get_request_outgoing_message_kind(request, recipient_email=None):
     for k in settings.FROIDE_CONFIG["message_handlers"].keys():
-        if get_message_handler_class(k).handle_foirequest_outgoing_messages(request):
+        if get_message_handler_class(k).handle_foirequest_outgoing_messages(
+            request, recipient_email=recipient_email
+        ):
             return k
 
 
@@ -98,10 +100,12 @@ class MessageHandler(object):
         raise NotImplementedError
 
     @classmethod
-    def handle_foirequest_outgoing_messages(cls, request):
+    def handle_foirequest_outgoing_messages(cls, request, recipient_email=None):
         """
         This creates a mechanism for a MessageHandler to grab a request and indicate
         that the requests outgoing messages should be handled by the … Handler
+
+        recipient_email is the selected email address or None if initial message
         """
         pass
 

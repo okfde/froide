@@ -111,7 +111,7 @@ class HandlerForPublicBodyIds(MessageHandler):
         )
 
     @classmethod
-    def handle_foirequest_outgoing_messages(cls, foirequest):
+    def handle_foirequest_outgoing_messages(cls, foirequest, recipient_emails=None):
         if foirequest.public_body and foirequest.public_body.id in cls.public_body_ids:
             return True
         else:
