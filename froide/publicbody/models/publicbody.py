@@ -60,7 +60,7 @@ class PublicBodyManager(CurrentSiteManager):
 class PublicBody(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     other_names = models.TextField(_("Other names"), default="", blank=True)
-    slug = models.SlugField(_("Slug"), max_length=255)
+    slug = models.SlugField(_("Slug"), max_length=255, unique=True)
     description = models.TextField(_("Description"), blank=True)
     url = models.URLField(_("URL"), null=True, blank=True, max_length=500)
 

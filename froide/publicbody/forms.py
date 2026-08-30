@@ -11,6 +11,7 @@ import phonenumbers
 from taggit.forms import TagField
 
 from froide.georegion.models import GeoRegion
+from froide.helper.db_utils import save_obj_with_slug
 from froide.helper.form_utils import JSONMixin
 from froide.helper.text_utils import slugify
 from froide.helper.widgets import (
@@ -280,7 +281,6 @@ class PublicBodyProposalForm(forms.ModelForm):
 
     def save(self, user):
         pb = super().save(commit=False)
-        pb.slug = slugify(pb.name)
         pb.confirmed = False
         pb._created_by = user
         pb.updated_at = timezone.now()
@@ -292,7 +292,7 @@ class PublicBodyProposalForm(forms.ModelForm):
             }
         ]
 
-        pb.save()
+        save_obj_with_slug(pb, "name")
         self.save_m2m()
         pb.laws.set(pb.jurisdiction.get_all_laws())
         PublicBody.proposal_added.send(sender=pb, user=user)
