@@ -498,10 +498,12 @@ def save_delivery_status(
 def send_foimessage_sent_confirmation(message: FoiMessage = None, **kwargs):
     request = message.request
 
-    if message.is_response:
+    if message.is_response or (message.original is not None):
         # responses are not relevant (and should not get DeliveryConfirmations)
+        # same as messages that are not the original (fax/email copies)
         # previous check here was for email, but this was too specific
         return
+
     if message.is_bulk:
         # Don't notify on bulk message sending
         return
