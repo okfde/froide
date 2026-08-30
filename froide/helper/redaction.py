@@ -81,7 +81,11 @@ def try_redacting_file(pdf_file, outpath, instructions):
             if rewritten_pdf_file is None:
                 # Possibly encrypted with password, let's just try it anyway
                 rewritten_pdf_file = pdf_file
-            return _redact_file(rewritten_pdf_file, outpath, instructions)
+
+            output_filename = os.path.join(outpath, "final.pdf")
+            with open(output_filename, "wb") as output_file:
+                _redact_file(rewritten_pdf_file, output_file, instructions)
+            return output_filename
         except PDFException as e:
             tries += 1
             if tries > 2:
@@ -98,7 +102,7 @@ def try_redacting_file(pdf_file, outpath, instructions):
             pdf_file = next_pdf_file
 
 
-def _redact_file(pdf_file, outpath, instructions, tries=0):
+def _redact_file(pdf_file, output_file, instructions):
     dpi = 300
     load_invisible_font()
     output = PdfWriter()
@@ -149,11 +153,7 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
             raise PDFException(e, "rewrite") from None
 
         output.add_page(page)
-
-    output_filename = os.path.join(outpath, "final.pdf")
-    with open(output_filename, "wb") as f:
-        output.write(f)
-    return output_filename
+    output.write(output_file)
 
 
 def get_redacted_page(image_filename, instr, dpi):
