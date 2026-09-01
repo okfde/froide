@@ -31,7 +31,8 @@ BULK_TAG = "bulk"
 class FoiMessageManager(models.Manager):
     def get_throttle_filter(self, queryset, user, extra_filters=None):
         qs = queryset.filter(
-            ~models.Q(kind=MessageKind.UPLOAD), sender_user=user, is_response=False
+            sender_user=user, is_response=False
+          ).exclude(kind=MessageKind.UPLOAD)
         )
         if extra_filters is not None:
             qs = qs.filter(**extra_filters)
