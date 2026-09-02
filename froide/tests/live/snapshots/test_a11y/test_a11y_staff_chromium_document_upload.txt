@@ -1,6 +1,5 @@
 incomplete:aria-prohibited-attr
 incomplete:aria-required-children
-incomplete:aria-valid-attr-value
 incomplete:color-contrast
 violations:color-contrast
 violations:page-has-heading-one
