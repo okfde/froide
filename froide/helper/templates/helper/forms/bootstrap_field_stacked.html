@@ -1,7 +1,7 @@
 {% with classes=field.css_classes label=label|default:field.label help_text=help_text|default:field.help_text required=field.field.required %}
     <div class="mb-3{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
         {% if field_type == "radio" or is_checkboxmultiple %}
-            <fieldset>
+            <fieldset {% if field.aria_describedby %}aria-describedby="{{ field.aria_describedby }}"{% endif %}>
                 {% if label and show_label %}
                     <legend class="fw-bold form-label fs-6{% if required %} field-required{% endif %}">{{ label }}</legend>
                 {% endif %}

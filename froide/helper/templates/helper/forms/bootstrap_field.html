@@ -1,6 +1,7 @@
 {% with classes=field.css_classes label=label|default:field.label help_text=help_text|default:field.help_text required=field.field.required %}
     {% if field_type == "radio" or is_checkboxmultiple %}
-        <fieldset class="row mb-3">
+        <fieldset class="row mb-3"
+                  {% if field.aria_describedby %}aria-describedby="{{ field.aria_describedby }}"{% endif %}>
             <legend class="fw-bold col-form-label col-md-4{% if required %} field-required{% endif %}">{{ label }}</legend>
             <div class="col-md-8">
                 {% for widget in field %}<div class="form-check">{{ widget }}</div>{% endfor %}
@@ -19,7 +20,8 @@
             </div>
         </div>
     {% elif label and not field.id_for_label %}
-        <fieldset class="mb-3 row{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
+        <fieldset class="mb-3 row{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}"
+                  {% if field.aria_describedby %}aria-describedby="{{ field.aria_describedby }}"{% endif %}>
             <legend class="fw-bold col-md-4 col-form-label{% if required %} field-required{% endif %}">{{ label }}</legend>
             <div class="col-md-8">
                 {{ field }}
