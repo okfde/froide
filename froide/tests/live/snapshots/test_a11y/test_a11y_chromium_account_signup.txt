@@ -1,3 +1,2 @@
-incomplete:aria-valid-attr-value
 violations:color-contrast
 violations:page-has-heading-one

@@ -1,4 +1,3 @@
-incomplete:aria-valid-attr-value
 incomplete:color-contrast
 violations:color-contrast
 violations:heading-order

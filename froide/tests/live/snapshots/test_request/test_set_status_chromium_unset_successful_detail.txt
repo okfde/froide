@@ -1,5 +1,4 @@
 incomplete:aria-prohibited-attr
-incomplete:aria-valid-attr-value
 incomplete:color-contrast
 incomplete:link-in-text-block
 violations:aria-required-children
