@@ -76,7 +76,10 @@
                                 {{ form.hide_project_duplicates.label }}
                             </label>
                             {% if form.hide_project_duplicates.help_text %}
-                                <div class="form-text">{{ form.hide_project_duplicates.help_text }}</div>
+                                <div class="form-text"
+                                     {% if form.hide_project_duplicates.auto_id %}id="{{ form.hide_project_duplicates.auto_id }}_helptext"{% endif %}>
+                                    {{ form.hide_project_duplicates.help_text }}
+                                </div>
                             {% endif %}
                         </div>
                     </div>
