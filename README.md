@@ -98,6 +98,7 @@ The end-to-end tests check the pages they visit with [axe-core](https://github.c
 
 ```shell
 # Record the current findings as the new baseline, then review the diff and commit
+# (Recording stops at the first snapshot of a test, so repeat until the tests pass)
 pytest froide/tests/live --force-regen
 # Show the full axe report for every finding, recorded or not
 pytest froide/tests/live --a11y-strict
