@@ -1,6 +1,13 @@
 {% with tag=inline|yesno:"small,div" %}
-    {% if help_text %}<{{ tag }} class="form-text">{{ help_text }}</{{ tag }}>{% endif %}
+    {% if help_text %}
+        <{{ tag }} class="form-text"
+        {% if field.auto_id %}id="{{ field.auto_id }}_helptext"{% endif %}
+        >{{ help_text }}</{{ tag }}>
+    {% endif %}
 {% endwith %}
 {% if field.errors %}
-    <div class="invalid-feedback d-block">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
+    <div class="invalid-feedback d-block"
+         {% if field.auto_id %}id="{{ field.auto_id }}_error"{% endif %}>
+        {% include "helper/forms/errors.html" with errors=field.errors %}
+    </div>
 {% endif %}
