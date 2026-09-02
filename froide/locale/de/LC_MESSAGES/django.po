@@ -8299,6 +8299,10 @@ msgstr "An: {name}"
 msgid "Toggle collapse"
 msgstr "Ein-/Ausklappen"
 
+#: froide/foirequest/templates/foirequest/body/message/message.html
+msgid "Toggle message"
+msgstr "Nachricht ein-/ausklappen"
+
 #: froide/helper/spam.py
 msgid "Too many actions."
 msgstr "Zu viele Aktionen."

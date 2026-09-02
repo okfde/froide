@@ -6,6 +6,7 @@ export default class Message {
   id: string
   element: HTMLElement
   metaContainer: HTMLElement
+  expandToggle: HTMLElement | null
   expandedClassName = 'alpha-message--expanded'
   metaExpandedClassName = 'alpha-message__meta-container--visible'
 
@@ -15,6 +16,9 @@ export default class Message {
     this.metaContainer = this.element.querySelector(
       '.alpha-message__meta-container'
     ) as HTMLElement
+    this.expandToggle = this.element.querySelector(
+      '.alpha-message__expand-toggle'
+    )
 
     // event listeners
 
@@ -22,6 +26,7 @@ export default class Message {
     element
       .querySelector('.alpha-message__head')
       ?.addEventListener('click', this.onHeadClick.bind(this))
+    this.expandToggle?.addEventListener('click', this.onHeadClick.bind(this))
     element
       .querySelector('.alpha-message__meta-toggle')
       ?.addEventListener('click', this.toggleMetaContainer.bind(this))
@@ -86,8 +91,9 @@ export default class Message {
   }
 
   onHeadClick(e: Event): void {
-    this.toggleMessage()
     e.preventDefault()
+    e.stopPropagation()
+    this.toggleMessage()
   }
 
   toggleMessage(): void {
@@ -104,12 +110,14 @@ export default class Message {
   expandMessage(): void {
     this.updateStorageItem({ isExpanded: true })
     this.element.classList.add(this.expandedClassName)
+    this.expandToggle?.setAttribute('aria-expanded', 'true')
   }
 
   collapseMessage(): void {
     this.updateStorageItem({ isExpanded: false })
     this.element.classList.remove(this.expandedClassName)
     this.metaContainer.classList.remove(this.metaExpandedClassName)
+    this.expandToggle?.setAttribute('aria-expanded', 'false')
   }
 
   showMetaContainer(): void {
@@ -121,7 +129,18 @@ export default class Message {
   toggleMetaContainer(e?: Event): void {
     e?.preventDefault()
     e?.stopPropagation()
+    const wasVisible = this.metaContainer.classList.contains(
+      this.metaExpandedClassName
+    )
     this.metaContainer.classList.toggle(this.metaExpandedClassName)
+
+    const toggle = this.element.querySelector(
+      '.alpha-message__meta-toggle'
+    ) as HTMLElement
+    if (toggle) {
+      const expanded = !wasVisible
+      toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false')
+    }
   }
 
   showAllAttachments(e: Event): void {

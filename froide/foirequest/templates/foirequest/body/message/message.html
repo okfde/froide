@@ -14,6 +14,15 @@
     {# head #}
     <div {% if message.timestamp == object.last_message %}id="last"{% endif %}
          class="d-flex p-3 alpha-message__head">
+        {# expand/collapse message #}
+        <button type="button"
+                class="alpha-message__expand-toggle d-print-none"
+                aria-expanded="{% if message.timestamp == object.last_message %}true{% else %}false{% endif %}"
+                aria-controls="{{ message.get_html_id }}-body">
+            <i class="fa fa-angle-down alpha-message__expand-chevron"
+               aria-hidden="true"></i>
+            <span class="visually-hidden">{% trans "Toggle message" %}</span>
+        </button>
         {# avatar #}
         <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}{% if message.is_mediator %}shield{% else %}house{% endif %}{% else %}user{% endif %}">
             {% if not message.is_response and not message.sender_user.private and message.sender_user.profile_photo %}
@@ -99,17 +108,21 @@
                     </span>
                 {% endif %}
                 <!-- delivery details link-->
-                <a href="#" class="alpha-message__meta-toggle text-body">
+                <button type="button"
+                        class="alpha-message__meta-toggle text-body"
+                        aria-expanded="false"
+                        aria-controls="{{ message.get_html_id }}-meta">
                     {% trans "Details" %}
-                    <i class="fa fa-angle-down" aria-hidden="true"></i>
-                </a>
+                    <i class="fa fa-angle-down alpha-message__meta-chevron"
+                       aria-hidden="true"></i>
+                </button>
             </div>
         </div>
     </div>
     {# meta details container #}
     {% include "foirequest/body/message/meta_container.html" %}
     {# body #}
-    <div class="alpha-message__body">
+    <div id="{{ message.get_html_id }}-body" class="alpha-message__body">
         <div class="alpha-message__wrap alpha-message__bodyinner">
             {# guidance #}
             {% if not message.content_hidden or object|can_read_foirequest_authenticated:request %}
