@@ -1,8 +1,10 @@
 {% with classes=field.css_classes label=label|default:field.label help_text=help_text|default:field.help_text required=field.field.required %}
     {% if field_type == "radio" or is_checkboxmultiple %}
         <div class="mb-3{% if classes %} {{ classes }}{% endif %}">
-            {% if label and show_label %}<p class="form-label">{{ label }}</p>{% endif %}
-            {% for widget in field %}<div class="form-check form-check-inline">{{ widget }}</div>{% endfor %}
+            <fieldset>
+                {% if label and show_label %}<legend class="form-label fs-6">{{ label }}</legend>{% endif %}
+                {% for widget in field %}<div class="form-check form-check-inline">{{ widget }}</div>{% endfor %}
+            </fieldset>
             {% include "helper/forms/field_footer.html" with inline=True %}
         </div>
     {% elif field_type == "checkbox" %}
