@@ -635,10 +635,6 @@ msgstr "Konten-Zusammenführung angestoßen..."
 msgid "Account notes"
 msgstr "Kontonotizen"
 
-#: froide/account/templates/account/settings.html
-msgid "Account settings"
-msgstr "Kontoeinstellungen"
-
 #: froide/account/admin.py
 msgid "Accounts canceled."
 msgstr "Konten gekündigt."
@@ -11628,6 +11624,10 @@ msgstr[1] "„%(subject)s” an %(count)s Behörden"
 #: froide/foirequest/views/request.py
 msgid "👋 Goodbye!"
 msgstr "👋 Viel Erfolg!"
+
+#: froide/account/templates/account/show.html
+msgid "Your account"
+msgstr "Ihr Konto"
 
 #, python-format
 #~ msgid ""

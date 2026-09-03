@@ -1,0 +1,5 @@
+<li class="nav-item">
+    <a {% if menu != item_key %}href="{% url item_url %}"{% endif %}
+       class="nav-link{% if menu == item_key %} active{% endif %}"
+       {% if menu == item_key %}aria-current="page"{% endif %}>{{ item_label }}</a>
+</li>
