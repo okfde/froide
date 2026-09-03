@@ -188,7 +188,7 @@ class NewUserBaseForm(AddressBaseForm):
         super().__init__(*args, **kwargs)
         self.fields["address"].required = address_required
         if ALLOW_PSEUDONYM and not address_required:
-            self.fields["last_name"].help_text = format_html(
+            self.fields["first_name"].help_text = format_html(
                 _(
                     '<a target="_blank" href="{}">You may use a pseudonym if you don\'t need to receive postal messages</a>.'
                 ),
