@@ -30,9 +30,10 @@ BULK_TAG = "bulk"
 
 class FoiMessageManager(models.Manager):
     def get_throttle_filter(self, queryset, user, extra_filters=None):
-        qs = queryset.filter(
-            sender_user=user, is_response=False, kind=MessageKind.EMAIL
+        qs = queryset.filter(sender_user=user, is_response=False).exclude(
+            kind=MessageKind.UPLOAD
         )
+
         if extra_filters is not None:
             qs = qs.filter(**extra_filters)
         return qs, "timestamp"
@@ -68,6 +69,7 @@ class MessageKind(models.TextChoices):
     EMAIL = ("email", _("email"))
     POST = ("post", _("postal mail"))
     FAX = ("fax", _("fax"))
+    FORM = ("form", _("form"))
     # uploads by public bodies using link in foirequest
     UPLOAD = ("upload", _("upload"))
     PHONE = ("phone", _("phone call"))
@@ -87,6 +89,7 @@ MESSAGE_KIND_ICONS = {
     MessageKind.EMAIL: "mail",
     MessageKind.POST: "newspaper-o",
     MessageKind.FAX: "fax",
+    MessageKind.FORM: "file-text-o",
     # it's received, so the download icon seems more appropriate
     MessageKind.UPLOAD: "download",
     MessageKind.PHONE: "phone",
