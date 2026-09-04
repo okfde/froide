@@ -5,7 +5,11 @@
   $avatar_size_mobile: 2.25rem; // 36px
   $avatar_right_margin_mobile: $spacer * 0.5;
   $avatar_right_margin_desktop: $spacer;
-  $message_body_margin_left_desktop: $avatar_size_desktop +
+  $expand_toggle_width: $spacer * 1.25;
+  $expand_toggle_right_margin_mobile: $avatar_right_margin_mobile * 0.5;
+  $expand_toggle_right_margin_desktop: $avatar_right_margin_desktop * 0.5;
+  $message_body_margin_left_desktop: $expand_toggle_width +
+    $expand_toggle_right_margin_desktop + $avatar_size_desktop +
     $avatar_right_margin_desktop + $spacer;
 
   display: flex;
@@ -18,6 +22,7 @@
 
   &__head {
     cursor: pointer;
+    align-items: center;
   }
   &__avatar {
     flex: 0 0 $avatar_size_mobile;
@@ -89,6 +94,42 @@
   }
   &__meta-toggle {
     cursor: pointer;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+  &__meta-chevron,
+  &__expand-chevron {
+    display: inline-block;
+    transform: rotate(-90deg);
+    transition: transform 0.2s ease-in-out;
+  }
+  &__meta-toggle[aria-expanded='true'] &__meta-chevron,
+  &__expand-toggle[aria-expanded='true'] &__expand-chevron {
+    transform: rotate(0deg);
+  }
+  &__expand-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: $expand_toggle_width;
+    margin-right: $expand_toggle_right_margin_mobile;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--#{$prefix}tertiary-color);
+    cursor: pointer;
+    &:hover,
+    &:focus-visible {
+      color: var(--#{$prefix}body-color);
+    }
+    @include media-breakpoint-up(md) {
+      margin-right: $expand_toggle_right_margin_desktop;
+    }
+  }
+  &__expand-chevron {
+    font-size: 1.25em;
   }
   &__wrap {
     margin-left: $spacer;

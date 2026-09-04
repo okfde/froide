@@ -432,7 +432,7 @@ msgstr "<p>Suchen Sie in unserem Archiv nach ähnlichen Anfragen, bevor Sie eine
 
 #: froide/foirequest/templates/foirequest/request.html
 msgid "<p>Your name will be sent to public bodies. If you want to remain anonymous to the public, you can choose to not display your name on the website. Your name will then be redacted.</p>"
-msgstr "<p>Ihr Name wird als Teil Ihrer Anfrage an die Behörde gesendet. Falls Sie wünschen, dass Ihr Name nicht auf der Website veröffentlicht wrid, können Sie – nach außen hin – anonym bleiben. Ihr Name wrid dann automatisch geschwärzt.</p>"
+msgstr "<p>Ihr Name wird als Teil Ihrer Anfrage an die Behörde gesendet. Falls Sie wünschen, dass Ihr Name nicht auf der Website veröffentlicht wird, können Sie – nach außen hin – anonym bleiben. Ihr Name wird dann automatisch geschwärzt.</p>"
 
 #: froide/foirequest/templates/foirequest/request.html
 #, python-format
@@ -8299,6 +8299,10 @@ msgstr "An: {name}"
 msgid "Toggle collapse"
 msgstr "Ein-/Ausklappen"
 
+#: froide/foirequest/templates/foirequest/body/message/message.html
+msgid "Toggle message"
+msgstr "Nachricht ein-/ausklappen"
+
 #: froide/helper/spam.py
 msgid "Too many actions."
 msgstr "Zu viele Aktionen."
@@ -10885,6 +10889,10 @@ msgstr "Organisationen"
 #: froide/foirequest/templates/foirequest/body/timeline.html
 msgid "overdue"
 msgstr "verspätet"
+
+#: froide/foirequest/templates/foirequest/body/timeline.html
+msgid "Timeline of this request"
+msgstr "Verlauf dieser Anfrage"
 
 #: froide/foirequest/filters.py
 msgctxt "slug"

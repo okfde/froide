@@ -14,6 +14,16 @@
     {# head #}
     <div {% if message.timestamp == object.last_message %}id="last"{% endif %}
          class="d-flex p-3 alpha-message__head">
+        {# expand/collapse message #}
+        <button type="button"
+                class="alpha-message__expand-toggle d-print-none"
+                aria-expanded="{% if message.timestamp == object.last_message %}true{% else %}false{% endif %}"
+                aria-controls="{{ message.get_html_id }}-body"
+                title="{% trans "Toggle message" %}">
+            <i class="fa fa-angle-down alpha-message__expand-chevron"
+               aria-hidden="true"></i>
+            <span class="visually-hidden">{% trans "Toggle message" %}</span>
+        </button>
         {# avatar #}
         <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}{% if message.is_mediator %}shield{% else %}house{% endif %}{% else %}user{% endif %}">
             {% if not message.is_response and not message.sender_user.private and message.sender_user.profile_photo %}
@@ -34,18 +44,12 @@
                 {# icons & timestamp #}
                 <div class="d-flex flex-nowrap">
                     {% if message.all_attachments %}
-                        <span class="alpha-message__badge"
-                              data-bs-toggle="tooltip"
-                              title="{% trans 'Has attachments' %}">
-                            <span class="fa fa-paperclip"></span>
-                        </span>
+                        {% translate "Has attachments" as attachments_label %}
+                        {% include "foirequest/body/message/_badge.html" with icon_class="fa-paperclip" label=attachments_label %}
                     {% endif %}
                     {% if comment_list %}
-                        <span class="alpha-message__badge"
-                              data-bs-toggle="tooltip"
-                              title="{% trans 'Has comments' %}">
-                            <span class="fa fa-comment-o"></span>
-                        </span>
+                        {% translate "Has comments" as comments_label %}
+                        {% include "foirequest/body/message/_badge.html" with icon_class="fa-comment-o" label=comments_label %}
                     {% endif %}
                     {% if message.is_not_email %}
                         {% if message.is_response %}
@@ -53,40 +57,24 @@
                         {% else %}
                             {% blocktrans with kind=message.get_kind_display asvar kind_display %}sent via {{ kind }}{% endblocktrans %}
                         {% endif %}
-                        <span class="alpha-message__badge alpha-message__badge--kind"
-                              data-bs-toggle="tooltip"
-                              title="{{ kind_display }}">
-                            <span class="fa fa-{{ message.kind_icon }}"></span>
-                        </span>
+                        {% include "foirequest/body/message/_badge.html" with badge_class="alpha-message__badge--kind" icon_class="fa-"|add:message.kind_icon label=kind_display %}
                     {% endif %}
                     {% if message.request|can_read_foirequest_authenticated:request and message.is_response and message.is_email and message.fails_authenticity %}
-                        <span class="alpha-message__badge alpha-message__badge--error"
-                              data-bs-toggle="tooltip"
-                              title="{% translate 'Possible authenticity problems with this message have been detected.' %}">
-                            <span class="fa fa-user-secret"></span>
-                        </span>
+                        {% translate "Possible authenticity problems with this message have been detected." as authenticity_label %}
+                        {% include "foirequest/body/message/_badge.html" with badge_class="alpha-message__badge--error" icon_class="fa-user-secret" label=authenticity_label %}
                     {% endif %}
                     {% if message.is_escalation_message %}
-                        <span class="alpha-message__badge alpha-message__badge--kind"
-                              data-bs-toggle="tooltip"
-                              title="{% blocktrans %}Message to the mediation authority.{% endblocktrans %}">
-                            <span class="fa fa-shield"></span>
-                        </span>
+                        {% translate "Message to the mediation authority." as escalation_label %}
+                        {% include "foirequest/body/message/_badge.html" with badge_class="alpha-message__badge--kind" icon_class="fa-shield" label=escalation_label %}
                     {% endif %}
                     {% if message.content_hidden %}
-                        <span class="alpha-message__badge alpha-message__badge--kind"
-                              data-bs-toggle="tooltip"
-                              title="{% blocktrans %}This message is not yet public.{% endblocktrans %}">
-                            <span class="fa fa-lock"></span>
-                        </span>
+                        {% translate "This message is not yet public." as hidden_label %}
+                        {% include "foirequest/body/message/_badge.html" with badge_class="alpha-message__badge--kind" icon_class="fa-lock" label=hidden_label %}
                     {% endif %}
                     {% get_delivery_status message as delivery_status %}
                     {% if delivery_status.is_failed %}
-                        <span class="alpha-message__badge alpha-message__badge--error"
-                              data-bs-toggle="tooltip"
-                              title="{% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}">
-                            <span class="fa fa-bolt"></span>
-                        </span>
+                        {% blocktrans with kind=message.get_kind_display asvar delivery_failed_label %}{{ kind }} delivery has failed.{% endblocktrans %}
+                        {% include "foirequest/body/message/_badge.html" with badge_class="alpha-message__badge--error" icon_class="fa-bolt" label=delivery_failed_label %}
                     {% endif %}
                     {# relative time #}
                     <a href="#{{ message.get_html_id }}"
@@ -121,17 +109,21 @@
                     </span>
                 {% endif %}
                 <!-- delivery details link-->
-                <a href="#" class="alpha-message__meta-toggle text-body">
+                <button type="button"
+                        class="alpha-message__meta-toggle text-body"
+                        aria-expanded="false"
+                        aria-controls="{{ message.get_html_id }}-meta">
                     {% trans "Details" %}
-                    <i class="fa fa-angle-down" aria-hidden="true"></i>
-                </a>
+                    <i class="fa fa-angle-down alpha-message__meta-chevron"
+                       aria-hidden="true"></i>
+                </button>
             </div>
         </div>
     </div>
     {# meta details container #}
     {% include "foirequest/body/message/meta_container.html" %}
     {# body #}
-    <div class="alpha-message__body">
+    <div id="{{ message.get_html_id }}-body" class="alpha-message__body">
         <div class="alpha-message__wrap alpha-message__bodyinner">
             {# guidance #}
             {% if not message.content_hidden or object|can_read_foirequest_authenticated:request %}
