@@ -22,6 +22,7 @@
 
   &__head {
     cursor: pointer;
+    align-items: center;
   }
   &__avatar {
     flex: 0 0 $avatar_size_mobile;

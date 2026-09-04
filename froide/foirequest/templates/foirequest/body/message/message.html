@@ -18,7 +18,8 @@
         <button type="button"
                 class="alpha-message__expand-toggle d-print-none"
                 aria-expanded="{% if message.timestamp == object.last_message %}true{% else %}false{% endif %}"
-                aria-controls="{{ message.get_html_id }}-body">
+                aria-controls="{{ message.get_html_id }}-body"
+                title="{% trans "Toggle message" %}">
             <i class="fa fa-angle-down alpha-message__expand-chevron"
                aria-hidden="true"></i>
             <span class="visually-hidden">{% trans "Toggle message" %}</span>
