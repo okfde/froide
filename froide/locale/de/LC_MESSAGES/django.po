@@ -10890,6 +10890,10 @@ msgstr "Organisationen"
 msgid "overdue"
 msgstr "verspätet"
 
+#: froide/foirequest/templates/foirequest/body/timeline.html
+msgid "Timeline of this request"
+msgstr "Verlauf dieser Anfrage"
+
 #: froide/foirequest/filters.py
 msgctxt "slug"
 msgid "overdue"

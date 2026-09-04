@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load content_helper %}
 {% block foirequest_timeline %}
+    <h4>{% trans "Timeline of this request" %}</h4>
     <div id="timeline" class="alpha-timeline d-none d-lg-block">
         <div class="alpha-timeline__wrap">
             {% for group in object.messages_by_month %}
