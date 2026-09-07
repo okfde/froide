@@ -596,6 +596,9 @@ def depublish_requests(user, **kwargs):
 def delete_foirequest_emails_from_imap(user_foirequests) -> int:
     from .foi_mail import get_foi_mail_client
 
+    if not user_foirequests:
+        return 0
+
     with get_foi_mail_client() as mailbox:
         message_count = 0
         for foirequest in user_foirequests:
