@@ -12,6 +12,7 @@ class ProofNoConfig(AppConfig):
 class ProofConfig(AppConfig):
     name = "froide.proof"
     verbose_name = _("Proofs")
+    default = True
 
     def ready(self):
         from froide.account import account_canceled, account_merged
