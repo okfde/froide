@@ -40,32 +40,14 @@ class ProofSettingsForm(forms.Form):
     proof_image = forms.ImageField(
         required=True, label=_("Select image of proof"), widget=ProofImageWidget
     )
-
-    def save(self, request):
-        proof = Proof(user=request.user, name=self.cleaned_data["proof_name"])
-        proof.save_with_file(self.cleaned_data["proof_image"])
-        return proof
-
-
-class ProofMessageForm(JSONMixin, ProofSettingsForm):
     proof_store = forms.BooleanField(
-        required=False,
-        label=_("Store this proof in your account for repeated use."),
+        required=True,
+        label=_("Consent to store proof in your account"),
         widget=BootstrapCheckboxInput,
     )
-    field_order = ["proof", "proof_name", "proof_image", "proof_store"]
 
-    def __init__(self, *args, user=None, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["proof_name"].required = False
-        self.fields["proof_image"].required = False
-        self.user = user
-        if user.is_authenticated:
-            proof_choice = get_proof_choice_field(
-                user, initial=self.initial.get("proof")
-            )
-            if proof_choice:
-                self.fields["proof"] = proof_choice
         self.fields["proof_store"].help_text = format_html(
             _(
                 "By checking this box, I agree that the image file I have selected "
@@ -81,6 +63,31 @@ class ProofMessageForm(JSONMixin, ProofSettingsForm):
             site_name=settings.SITE_NAME,
             url_privacy=get_content_url("privacy"),
         )
+
+    def save(self, request):
+        proof = Proof(user=request.user, name=self.cleaned_data["proof_name"])
+        proof.save_with_file(self.cleaned_data["proof_image"])
+        return proof
+
+
+class ProofMessageForm(JSONMixin, ProofSettingsForm):
+    field_order = ["proof", "proof_name", "proof_image", "proof_store"]
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["proof_name"].required = False
+        self.fields["proof_image"].required = False
+        self.fields["proof_store"].label = (
+            _("Store this proof in your account for repeated use."),
+        )
+        self.fields["proof_store"].required = False
+        self.user = user
+        if user.is_authenticated:
+            proof_choice = get_proof_choice_field(
+                user, initial=self.initial.get("proof")
+            )
+            if proof_choice:
+                self.fields["proof"] = proof_choice
         self.order_fields(self.field_order)
 
     def get_js_context(self):
