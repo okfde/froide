@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
@@ -160,7 +159,6 @@ def upload_documents(request):
             },
             "i18n": {
                 "uppy": get_uppy_i18n(),
-                "createDocuments": gettext("Create documents now"),
             },
             "url": {
                 "tusEndpoint": reverse("api:upload-list"),
