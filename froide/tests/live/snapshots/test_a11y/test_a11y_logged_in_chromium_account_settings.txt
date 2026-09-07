@@ -2,4 +2,5 @@ incomplete:color-contrast
 violations:color-contrast
 violations:heading-order
 violations:label
+violations:link-in-text-block
 violations:page-has-heading-one

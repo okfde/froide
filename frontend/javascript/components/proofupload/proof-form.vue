@@ -85,6 +85,7 @@
         <label class="form-check-label fw-bold" for="id_proof_store">
           {{ formFields.proof_store.label }}
         </label>
+        <div class="form-text" v-html="formFields.proof_store.help_text"></div>
       </div>
     </div>
   </div>
