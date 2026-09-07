@@ -585,9 +585,10 @@ def cancel_user(sender, user=None, **kwargs):
     permanently_anonymize_requests(user_foirequests.select_related("user"))
 
 
-def depublish_requests(user, **kwargs):
+def depublish_requests(sender, **kwargs):
     from .models import FoiRequest
 
+    user = sender
     user_foirequests = FoiRequest.objects.filter(user=user)
     user_foirequests.update(visibility=FoiRequest.VISIBILITY.INVISIBLE)
     update_foirequest_index(FoiRequest.objects.filter(user=user))
