@@ -4,6 +4,7 @@ from django.urls import reverse
 
 import pytest
 
+from froide.account.utils import cancel_user
 from froide.foirequest.models import FoiRequest
 
 from .models import Proof
@@ -86,3 +87,13 @@ def test_send_message_with_proof(world, client):
     assert proof_attachment[2] == "image/jpeg"
 
     assert proof_attachment[0] in message.body
+
+
+@pytest.mark.django_db
+def test_delete_proof_on_account_cancellation(user):
+    proof = make_proof(user)
+    assert Proof.objects.count() == 1
+    assert proof.file.storage.exists(proof.file.name)
+    cancel_user(user)
+    assert Proof.objects.count() == 0
+    assert not proof.file.storage.exists(proof.file.name)

@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-09 09:51+0200\n"
-"PO-Revision-Date: 2026-08-10 17:46+0100\n"
+"PO-Revision-Date: 2026-09-07 12:19+0100\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/froide/de/>\n"
 "Language: de\n"
@@ -1689,6 +1689,10 @@ msgstr "Konflikt."
 #: froide/upload/forms.py
 msgid "Connected to the Internet"
 msgstr "Verbunden mit dem Internet"
+
+#: froide/proof/forms.py
+msgid "Consent to store proof in your account"
+msgstr "Zustimmung zur Speicherung des Nachweises in Ihrem Konto"
 
 #: froide/foirequest/templates/foirequest/header/header.html
 msgid "Consider sending a letter to a mediator"
@@ -6379,6 +6383,10 @@ msgstr "Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag eingetrag
 #: froide/document/admin.py
 msgid "Reindex collection"
 msgstr "Sammlung neu indizieren"
+
+#: froide/georegion/models.py
+msgid "Related Regions"
+msgstr "Verwandte Regionen"
 
 #: froide/georegion/admin.py
 msgid "Relative to"
