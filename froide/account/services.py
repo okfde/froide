@@ -103,7 +103,7 @@ class AccountService(object):
 
         # ensure username is unique
         user.username = username_base
-        save_obj_unique(user, "username", postfix_format="_{count}")
+        save_obj_unique(user, "username", delimiter="_")
 
         if USER_CAN_CLAIM_VIP and data.get("claims_vip"):
             user.tags.add(VIP_TAG)
