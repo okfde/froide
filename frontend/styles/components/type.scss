@@ -19,6 +19,18 @@ h3 {
   hyphens: manual;
 }
 
+// Make a heading look and space like a regular paragraph.
+.heading-reset {
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  margin-bottom: $paragraph-margin-bottom;
+  hyphens: auto;
+
+  &:not(:first-child) {
+    margin-top: 0;
+  }
+}
+
 .no-hyphens {
   hyphens: none;
 }
