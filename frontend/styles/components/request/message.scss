@@ -93,6 +93,9 @@
     display: none;
   }
   &__meta-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
     cursor: pointer;
     padding: 0;
     border: 0;
@@ -100,7 +103,12 @@
   }
   &__meta-chevron,
   &__expand-chevron {
-    display: inline-block;
+    // a square box keeps the glyph centred as it rotates between states
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
     transform: rotate(-90deg);
     transition: transform 0.2s ease-in-out;
   }

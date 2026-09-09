@@ -1,8 +1,8 @@
 {% load i18n %}
 {% load content_helper %}
 {% block foirequest_timeline %}
-    <h4>{% trans "Timeline of this request" %}</h4>
     <div id="timeline" class="alpha-timeline d-none d-lg-block">
+        <h3 class="h6">{% trans "Timeline of this request" %}</h3>
         <div class="alpha-timeline__wrap">
             {% for group in object.messages_by_month %}
                 <div class="alpha-timeline__item {% if group.show_overdue_message %}alpha-timeline__item--overdue{% endif %} {% if forloop.last %}alpha-timeline__item--last{% endif %}"

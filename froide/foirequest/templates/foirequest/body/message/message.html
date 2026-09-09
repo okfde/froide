@@ -17,7 +17,7 @@
         {# expand/collapse message #}
         <button type="button"
                 class="alpha-message__expand-toggle d-print-none"
-                aria-expanded="{% if message.timestamp == object.last_message %}true{% else %}false{% endif %}"
+                aria-expanded="false"
                 aria-controls="{{ message.get_html_id }}-body"
                 title="{% trans "Toggle message" %}">
             <i class="fa fa-angle-down alpha-message__expand-chevron"
@@ -113,9 +113,9 @@
                         class="alpha-message__meta-toggle text-body"
                         aria-expanded="false"
                         aria-controls="{{ message.get_html_id }}-meta">
-                    {% trans "Details" %}
                     <i class="fa fa-angle-down alpha-message__meta-chevron"
                        aria-hidden="true"></i>
+                    {% trans "Details" %}
                 </button>
             </div>
         </div>
