@@ -249,8 +249,9 @@ export default class Timeline {
         continue
       }
 
-      const innerWrapElement = this.element.children[0] as HTMLElement
-      const timelineHeight = this.element.clientHeight
+      const innerWrapElement = this.element.querySelector(
+        '.alpha-timeline__wrap'
+      ) as HTMLElement
       const isVisible = entry.isIntersecting
       this.items[timelineKey].updateItemVisibility(msgId, isVisible)
 
@@ -266,25 +267,25 @@ export default class Timeline {
       const activeElements = document.querySelectorAll(
         '.alpha-timeline__item--active'
       )
-      const activeElement =
-        activeElements.length === 1
-          ? (activeElements[0] as HTMLElement)
-          : (activeElements[
-              Math.round(activeElements.length / 2)
-            ] as HTMLElement)
+      const activeElement = activeElements[
+        Math.floor(activeElements.length / 2)
+      ] as HTMLElement
 
       if (activeElement) {
-        // const documentScrollTop = document.documentElement.scrollTop
-        // const messagesRootOffsetTop = this.messagesContainer.offsetTop
-        // const isBehindFirstMessage = documentScrollTop > messagesRootOffsetTop
-        const activeElementOffset = activeElement.offsetTop
-        // const activeElementOffsetPersent = (activeElementOffset / innerWrapElement.clientHeight) * 100
-        // console.warn(activeElementOffset, innerWrapElement.clientHeight, maxOffsetPersent)
-        const scrollValue =
-          activeElementOffset > timelineHeight / 2 &&
-          !this.firstMessageIsVisible
-            ? this.element.clientHeight / 2 - activeElementOffset
-            : 0
+        // how far the list extends beyond the visible timeline area;
+        // zero when everything already fits, so nothing needs to move
+        const overflow = Math.max(
+          0,
+          innerWrapElement.scrollHeight - window.innerHeight
+        )
+        // the viewport centre, expressed relative to the timeline container
+        // so it can be compared against offsetTop
+        const viewportCentre =
+          window.innerHeight / 2 - this.element.getBoundingClientRect().top
+        // shift needed to bring the active month to that centre
+        const desired = viewportCentre - activeElement.offsetTop
+        // clamp the scroll value to the range [-overflow, 0] so that the list never scrolls past its own bounds
+        const scrollValue = Math.max(-overflow, Math.min(0, desired))
         innerWrapElement.style.transform = `translateY(${scrollValue}px)`
       }
     }
