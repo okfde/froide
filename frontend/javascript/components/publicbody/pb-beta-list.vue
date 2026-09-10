@@ -27,6 +27,9 @@
             <a
               class="btn btn-primary"
               :href="getMakeRequestURLForResult(result)"
+              :aria-label="
+                i18n._('makeRequestToPublicBody', { name: result.name })
+              "
               @click.prevent="selectSearchResult(result.id)"
             >
               {{ i18n.makeRequest }}

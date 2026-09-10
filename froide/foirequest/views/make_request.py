@@ -226,6 +226,9 @@ class MakeRequestView(FormView):
                 "writeMessage": _("Write message"),
                 "submitRequest": _("Submit request"),
                 "makeRequest": _("Make request"),
+                "makeRequestToPublicBody": _("Make request to {name}").format(
+                    name="${name}"
+                ),
                 "makeRequestYourself": _("Make a request yourself"),
                 "writeRequest": _("Write the request"),
                 "recipientPb": _("Receiving public body"),
