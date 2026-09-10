@@ -20,6 +20,7 @@ from django.core.validators import validate_email
 from django.urls import reverse
 from django.utils.crypto import salted_hmac
 
+from froide.bounce.models import EmailToken
 from froide.helper.email_parsing import (
     parse_email,
     parse_email_address,
@@ -99,7 +100,8 @@ class CustomTimestampSigner(TimestampSigner):
 
 def make_bounce_address(email_str: str) -> str:
     email_address = parse_email_address(email_str)
-    return make_signed_address(email_address.email)
+    token = EmailToken.objects.get_token_for_email(email_address.email)
+    return BOUNCE_FORMAT.format(token=token)
 
 
 def make_unsubscribe_header(email_str: str, reference: str) -> str:
@@ -120,7 +122,8 @@ def make_unsubscribe_header(email_str: str, reference: str) -> str:
 
 
 def make_unsubscribe_address(email):
-    return make_signed_address(email, email_format=UNSUBSCRIBE_FORMAT)
+    token = EmailToken.objects.get_token_for_email(email)
+    return UNSUBSCRIBE_FORMAT.format(token=token)
 
 
 def make_signed_address(email, email_format=BOUNCE_FORMAT):
@@ -165,6 +168,15 @@ def get_original_email_from_signed(
     head, tail = email_format.split("{token}")
     # Cut off head and tail of bounce formatting
     token = signed_email[len(head) : -len(tail)]
+
+    # Check if new style database token
+    # = was the char for the email address, not present in new style token
+    if "=" not in token:
+        email = EmailToken.objects.get_email_for_token(token)
+        if email:
+            return email, True
+        return "", False
+
     parts = token.split(SEP_REPL)
     signature = SIGN_SEP.join(parts[:2])
 
