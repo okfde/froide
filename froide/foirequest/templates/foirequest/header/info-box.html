@@ -14,7 +14,7 @@
     {# header (status, status icon) #}
     <div class="info-box__header d-flex flex-nowrap justify-content-between align-items-center">
         <div>
-            <h3 class="h5 info-box__title">{{ object.readable_status }}</h3>
+            <h2 class="h5 info-box__title">{{ object.readable_status }}</h2>
             {% if object.awaits_response and object.status_representation != 'awaiting_response' %}
                 <div class="info-box__subtitle">{% trans "Awaiting response" %}</div>
             {% endif %}
