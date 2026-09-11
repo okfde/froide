@@ -5,7 +5,7 @@
 {% load document_tags %}
 {% block document_top %}
     <div class="container mt-3 mb-5">
-        <h2 id="document-title">
+        <h1 class="h2" id="document-title">
             {{ object.title }}
             {% if object|can_write_document:request %}
                 <a href="#"
@@ -15,7 +15,7 @@
                     <span class="visually-hidden">{% trans "Edit title" %}</span>
                 </a>
             {% endif %}
-        </h2>
+        </h1>
         {% if object|can_write_document:request %}
             {% include 'filingcabinet/_set_title_form.html' with form_id='document-title-form' %}
             {% include 'filingcabinet/_set_description_form.html' with form_id='document-description-form' %}

@@ -19,11 +19,13 @@
                     </div>
                 {% endif %}
                 <div class="card">
-                    <div class="card-header">{% translate "Please authenticate again with any of the methods below" %}</div>
+                    <h1 class="card-header heading-reset mb-0">
+                        {% translate "Please authenticate again with any of the methods below" %}
+                    </h1>
                     <ul class="list-group list-group-flush">
                         {% if "FIDO2" in mfa_methods %}
                             <li class="list-group-item">
-                                <h5>{% translate "Use hardware security key" %}</h5>
+                                <h2 class="h5">{% translate "Use hardware security key" %}</h2>
                                 <form data-fido2-auth="{{ mfa_data }}" method="POST" class="disable-submit">
                                     {% csrf_token %}
                                     {{ form.code.as_hidden }}
@@ -35,7 +37,7 @@
                         {% endif %}
                         {% if "TOTP" in mfa_methods %}
                             <li class="list-group-item">
-                                <h5>{% translate "Use your authenticator app" %}</h5>
+                                <h2 class="h5">{% translate "Use your authenticator app" %}</h2>
                                 <form method="post" class="disable-submit">
                                     {% csrf_token %}
                                     {% render_field form.code %}
@@ -47,7 +49,7 @@
                         {% endif %}
                         {% if request.user.has_usable_password %}
                             <li class="list-group-item">
-                                <h5>{% translate "Use your password" %}</h5>
+                                <h2 class="h5">{% translate "Use your password" %}</h2>
                                 <form method="post" class="disable-submit">
                                     {% csrf_token %}
                                     {% render_field form.password %}
