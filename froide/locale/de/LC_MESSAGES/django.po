@@ -4542,6 +4542,11 @@ msgstr "Nicht unwichtig"
 msgid "Make request"
 msgstr "Anfrage stellen"
 
+#: froide/foirequest/views/make_request.py
+#, python-brace-format
+msgid "Make request to {name}"
+msgstr "Anfrage an {name} stellen"
+
 #: froide/settings.py
 msgid "Make requests on your behalf"
 msgstr "Kann Anfragen in Ihrem Namen stellen"
