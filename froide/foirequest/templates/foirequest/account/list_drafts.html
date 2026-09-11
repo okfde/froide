@@ -11,9 +11,9 @@
 {% block pre_table %}
     <div class="row">
         <div class="col-lg-8 mt-2">
-            <h2 class="mb-3">{% translate "Your draft requests" %}</h2>
+            <h1 class="h2 mb-3">{% translate "Your draft requests" %}</h1>
             {% trans "Search your draft requests" as search_title %}
-            <p>
+            <h2 class="heading-reset">
                 {% if view.query %}
                     {% blocktrans trimmed with query=view.query count request_count=page_obj.paginator.count %}
                         Your search for “{{ query }}” produced one search result.
@@ -27,7 +27,7 @@
                         You have {{ request_count }} request drafts.
                     {% endblocktrans %}
                 {% endif %}
-            </p>
+            </h2>
         </div>
     </div>
 {% endblock %}

@@ -15,10 +15,10 @@
 {% block pre_table %}
     <div class="row">
         <div class="col-12 mt-2">
-            <h2 class="mb-3">{% translate "Your requests" %}</h2>
+            <h1 class="h2 mb-3">{% translate "Your requests" %}</h1>
             {% url "account-requests" as search_url %}
             {% include "foirequest/_request_search.html" with search_url=search_url %}
-            <p>
+            <h2 class="heading-reset">
                 {% if is_filtered %}
                     {% blocktrans trimmed with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
                         Your search produced one search result.
@@ -32,7 +32,7 @@
                         You have {{ request_count }} requests.
                     {% endblocktrans %}
                 {% endif %}
-            </p>
+            </h2>
         </div>
     </div>
     <div class="row">
@@ -53,7 +53,7 @@
                        title="{{ object.readable_status }}"></a>
                 </td>
                 <td>
-                    {% include "foirequest/snippets/request_item_inner.html" %}
+                    {% include "foirequest/snippets/request_item_inner.html" with heading_tag="h3" %}
                     {% if object.status == "awaiting_user_confirmation" %}
                         <form class="d-inline"
                               action="{% url 'foirequest-confirm_request' slug=object.slug %}"

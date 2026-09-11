@@ -7,11 +7,11 @@
               method="post"
               action="{% block app-form-action-url %}{% url 'oauth2_provider:update' application.id %}{% endblock app-form-action-url %}">
             {% csrf_token %}
-            <h3 class="block-center-heading">
+            <h1 class="h3 block-center-heading">
                 {% block app-form-title %}
                     {% trans "Edit application" %} {{ application.name }}
                 {% endblock app-form-title %}
-            </h3>
+            </h1>
             {% render_form form %}
             <div class="control-group">
                 <div class="controls">

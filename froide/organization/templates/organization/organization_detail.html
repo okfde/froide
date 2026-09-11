@@ -34,7 +34,7 @@
                     <h2 class="pb-3">{% trans "Last requests" %}</h2>
                     <ul class="list-unstyled row row-cols-md-2">
                         {% for foirequest in foirequests %}
-                            <li>{% include "foirequest/snippets/request_item.html" with object=foirequest %}</li>
+                            <li>{% include "foirequest/snippets/request_item.html" with object=foirequest heading_tag="h3" %}</li>
                         {% endfor %}
                     </ul>
                     <a href="{% url 'foirequest-list' %}?organization={{ object.slug }}">
