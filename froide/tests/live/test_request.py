@@ -80,7 +80,7 @@ async def test_make_not_logged_in_request(
     await page.goto("%s%s" % (live_server.url, activate_url))
     account_confirmed = reverse("account-confirmed")
     assert account_confirmed in page.url
-    await expect(page.locator("xpath=//h2")).to_have_text(
+    await expect(page.locator("xpath=//h1")).to_have_text(
         "Your email address is now confirmed!"
     )
     req = FoiRequest.objects.get(user=new_user)
