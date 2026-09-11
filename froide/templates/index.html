@@ -12,7 +12,7 @@
             <div class="row">
                 <div class="col-lg-6 col-md-6">
                     {% block index_sub_left %}
-                        <h3>{% blocktrans %}What is Freedom of Information?{% endblocktrans %}</h3>
+                        <h2 class="h3">{% blocktrans %}What is Freedom of Information?{% endblocktrans %}</h2>
                         <p>
                             {% blocktrans %}Every citizen has the right under the Freedom of Information Laws to ask for and receive access to information from Public Bodies concerning public affairs.{% endblocktrans %}
                             <br />
@@ -24,7 +24,7 @@
                 </div>
                 <div class="col-lg-6 col-md-6">
                     {% block index_sub_right %}
-                        <h3>{% blocktrans %}What does this site do?{% endblocktrans %}</h3>
+                        <h2 class="h3">{% blocktrans %}What does this site do?{% endblocktrans %}</h2>
                         <p>
                             {% blocktrans %}This site publishes Freedom of Information requests and replies so that others don't have to ask for the same information and replies can be scrutinized by the public.{% endblocktrans %}
                             <br />
@@ -38,20 +38,20 @@
             <div class="row">
                 <div class="col-lg-6 col-md-6">
                     {% if successful_foi_requests %}
-                        <h3>{% blocktrans %}Successful Requests{% endblocktrans %}</h3>
+                        <h2 class="h3">{% blocktrans %}Successful Requests{% endblocktrans %}</h2>
                         <ul class="list-unstyled">
                             {% for object in successful_foi_requests %}
-                                <li>{% include "foirequest/snippets/request_item.html" %}</li>
+                                <li>{% include "foirequest/snippets/request_item.html" with heading_tag="h3" %}</li>
                             {% endfor %}
                         </ul>
                     {% endif %}
                 </div>
                 <div class="col-lg-6 col-md-6">
                     {% if unsuccessful_foi_requests %}
-                        <h3>{% blocktrans %}Unsuccessful Requests{% endblocktrans %}</h3>
+                        <h2 class="h3">{% blocktrans %}Unsuccessful Requests{% endblocktrans %}</h2>
                         <ul class="list-unstyled">
                             {% for object in unsuccessful_foi_requests %}
-                                <li>{% include "foirequest/snippets/request_item.html" %}</li>
+                                <li>{% include "foirequest/snippets/request_item.html" with heading_tag="h3" %}</li>
                             {% endfor %}
                         </ul>
                     {% endif %}
