@@ -6,9 +6,9 @@
             {% block first_index_row %}
                 <div class="col-lg-6 col-md-6">
                     {% block first_index_row_search %}
-                        <h2>
+                        <h1 class="h2">
                             {% block site_name %}{{ SITE_NAME }}{% endblock %}
-                        </h2>
+                        </h1>
                         {% block site_description %}
                             <p class="lead">
                                 {% blocktrans %}This site publishes Freedom of Information requests and helps you to make your own!{% endblocktrans %}
@@ -52,11 +52,11 @@
                         <div id="main-foirequests" class="well">
                             {% if featured %}
                                 <div>
-                                    <h3>
+                                    <h2 class="h3">
                                         <small>{% trans "Featured Request" %}</small>
                                         <br />
                                         {{ featured.title }}
-                                    </h3>
+                                    </h2>
                                     <p>{{ featured.text|truncatewords:55|linebreaksbr }}</p>
                                     <p>
                                         {% if featured.url %}

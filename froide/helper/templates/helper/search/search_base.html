@@ -7,10 +7,10 @@
     <div class="row">
         <div class="col-md-8 order-2">
             <div class="mb-3 mt-2">
-                <h2>
+                <h1 class="h2">
                     {% block search_title %}
                     {% endblock search_title %}
-                </h2>
+                </h1>
             </div>
             {% block search_form %}
                 <form action="{{ search_url }}"
@@ -32,7 +32,7 @@
             {% endblock search_form %}
             {% block search_results_label %}
                 <div class="mb-4 text-end">
-                    <p>
+                    <h2 class="heading-reset">
                         {% if filtered_objects %}
                             {% blocktrans trimmed with request_count=page_obj.paginator.formatted_count count counter=page_obj.paginator.count %}
                                 Your search produced one search result.
@@ -42,7 +42,7 @@
                         {% else %}
                             {% blocktrans with num=page_obj.paginator.formatted_count count counter=count %}One result{% plural %}{{ num }} results{% endblocktrans %}
                         {% endif %}
-                    </p>
+                    </h2>
                 </div>
             {% endblock search_results_label %}
             {% block search_results %}
@@ -50,7 +50,7 @@
                     {% for object in object_list %}
                         <li class="d-flex">
                             {% if object_template %}
-                                {% include object_template with object=object %}
+                                {% include object_template with object=object heading_tag="h3" %}
                             {% else %}
                                 <a href="{{ object.get_absolute_url }}">{{ object }}</a>
                             {% endif %}

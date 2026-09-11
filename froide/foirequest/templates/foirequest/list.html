@@ -48,7 +48,7 @@
 {% block search_results %}
     <ul class="list-unstyled">
         {% for object in object_list %}
-            <li>{% include "foirequest/snippets/request_item.html" %}</li>
+            <li>{% include "foirequest/snippets/request_item.html" with heading_tag="h3" %}</li>
         {% empty %}
             <li>
                 {% if filtered_objects %}
@@ -66,7 +66,7 @@
 {% block sidebar_bottom %}
     <div class="card mb-3">
         <div class="card-body">
-            <h6>{% blocktrans %}Feeds for these requests{% endblocktrans %}</h6>
+            <h2 class="h6">{% blocktrans %}Feeds for these requests{% endblocktrans %}</h2>
             <ul class="list-unstyled">
                 <li>
                     <a href="{% url 'foirequest-list_feed' %}?{{ getvars }}">

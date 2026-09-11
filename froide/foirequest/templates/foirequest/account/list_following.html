@@ -11,9 +11,9 @@
 {% block pre_table %}
     <div class="row">
         <div class="col-lg-8 mt-2">
-            <h2 class="mb-3">{% translate "Requests you follow" %}</h2>
+            <h1 class="h2 mb-3">{% translate "Requests you follow" %}</h1>
             {% trans "Search the requests you follow" as search_title %}
-            <p>
+            <h2 class="heading-reset">
                 {% if view.query %}
                     {% blocktrans trimmed with query=view.query count request_count=page_obj.paginator.count %}
                         You follow one request matching your search for “{{ query }}”.
@@ -27,7 +27,7 @@
                         You follow {{ request_count }} requests.
                     {% endblocktrans %}
                 {% endif %}
-            </p>
+            </h2>
         </div>
     </div>
 {% endblock %}
@@ -39,7 +39,7 @@
                title="{{ object.readable_status }}"></a>
         </td>
         <td>
-            {% include "foirequest/snippets/request_item_inner.html" %}
+            {% include "foirequest/snippets/request_item_inner.html" with heading_tag="h3" %}
             {% if object.status == "awaiting_response" %}
                 {% if object.due_date %}
                     <small>{% blocktrans with date=object.due_date|date:"DATE_FORMAT" %}Deadline: {{ date }}{% endblocktrans %}</small>
