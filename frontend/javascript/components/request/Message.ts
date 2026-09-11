@@ -6,6 +6,8 @@ export default class Message {
   id: string
   element: HTMLElement
   metaContainer: HTMLElement
+  expandToggle: HTMLElement | null
+  metaToggle: HTMLElement | null
   expandedClassName = 'alpha-message--expanded'
   metaExpandedClassName = 'alpha-message__meta-container--visible'
 
@@ -15,6 +17,10 @@ export default class Message {
     this.metaContainer = this.element.querySelector(
       '.alpha-message__meta-container'
     ) as HTMLElement
+    this.expandToggle = this.element.querySelector(
+      '.alpha-message__expand-toggle'
+    )
+    this.metaToggle = this.element.querySelector('.alpha-message__meta-toggle')
 
     // event listeners
 
@@ -22,32 +28,30 @@ export default class Message {
     element
       .querySelector('.alpha-message__head')
       ?.addEventListener('click', this.onHeadClick.bind(this))
-    element
-      .querySelector('.alpha-message__meta-toggle')
-      ?.addEventListener('click', this.toggleMetaContainer.bind(this))
+    this.metaToggle?.addEventListener(
+      'click',
+      this.toggleMetaContainer.bind(this)
+    )
     element
       .querySelectorAll('.alpha-attachment__more-trigger')
       .forEach((el) => {
         el.addEventListener('click', this.showAllAttachments.bind(this))
       })
 
-    // create storage item and/or expand message
-    if (!this.storageItem) {
-      // create localStorage item
-      try {
-        // localStorage access may cause DOMException if blocked
-        localStorage.setItem(
-          this.id,
-          JSON.stringify({ isExpanded: isLastItem || forceExpand })
-        )
-      } catch {
-        console.warn('Could not create localStorage item')
-      }
-      // maybe expand
-      if (isLastItem || forceExpand) this.expandMessage()
+    // A deep link (forceExpand) always expands. Otherwise a stored value is an
+    // explicit user choice and wins; without one, the last message starts
+    // expanded.
+    const shouldExpand =
+      (this.storageItem && this.isExpanded) ||
+      (!this.storageItem && isLastItem) ||
+      forceExpand
+
+    // expandMessage() / collapseMessage() persist the state, so the message and
+    // its storage item always agree.
+    if (shouldExpand) {
+      this.expandMessage()
     } else {
-      // expand message according to storage state
-      if (this.isExpanded || forceExpand) this.expandMessage()
+      this.collapseMessage()
     }
   }
 
@@ -86,8 +90,9 @@ export default class Message {
   }
 
   onHeadClick(e: Event): void {
-    this.toggleMessage()
     e.preventDefault()
+    e.stopPropagation()
+    this.toggleMessage()
   }
 
   toggleMessage(): void {
@@ -104,12 +109,16 @@ export default class Message {
   expandMessage(): void {
     this.updateStorageItem({ isExpanded: true })
     this.element.classList.add(this.expandedClassName)
+    this.expandToggle?.setAttribute('aria-expanded', 'true')
   }
 
   collapseMessage(): void {
     this.updateStorageItem({ isExpanded: false })
     this.element.classList.remove(this.expandedClassName)
+    this.expandToggle?.setAttribute('aria-expanded', 'false')
+    // the meta container collapses along with the message
     this.metaContainer.classList.remove(this.metaExpandedClassName)
+    this.metaToggle?.setAttribute('aria-expanded', 'false')
   }
 
   showMetaContainer(): void {
@@ -121,7 +130,10 @@ export default class Message {
   toggleMetaContainer(e?: Event): void {
     e?.preventDefault()
     e?.stopPropagation()
-    this.metaContainer.classList.toggle(this.metaExpandedClassName)
+    const isVisible = this.metaContainer.classList.toggle(
+      this.metaExpandedClassName
+    )
+    this.metaToggle?.setAttribute('aria-expanded', String(isVisible))
   }
 
   showAllAttachments(e: Event): void {

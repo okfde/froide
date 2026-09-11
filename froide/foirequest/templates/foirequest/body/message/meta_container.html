@@ -1,7 +1,8 @@
 {% load i18n %}
 {% load foirequest_tags %}
 {% load permission_helper %}
-<div class="alpha-message__meta-container alpha-message__wrap">
+<div id="{{ message.get_html_id }}-meta"
+     class="alpha-message__meta-container alpha-message__wrap">
     {% block before_meta %}
     {% endblock before_meta %}
     <dl class="message-meta mb-0 row">

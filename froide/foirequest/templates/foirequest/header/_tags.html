@@ -24,11 +24,13 @@
                                         <i class="fa fa-pencil" aria-hidden="true"></i>
                                         <span class="visually-hidden">{% trans "Edit tags" %}</span>
                                     </a>
-                                    <span data-bs-toggle="tooltip"
-                                          title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
+                                    <button type="button"
+                                            class="btn btn-sm p-0 align-baseline"
+                                            data-bs-toggle="tooltip"
+                                            title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
                                         <i class="fa fa-question-circle-o" aria-hidden="true"></i>
                                         <span class="visually-hidden">{% translate "What does this mean?" %}</span>
-                                    </span>
+                                    </button>
                                 {% endif %}
                             </li>
                         </ul>
@@ -39,11 +41,13 @@
                         <i class="fa fa-pencil" aria-hidden="true"></i>
                         {% trans "Add tags" %}
                     </a>
-                    <span data-bs-toggle="tooltip"
-                          title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
+                    <button type="button"
+                            class="btn btn-sm p-0 align-baseline"
+                            data-bs-toggle="tooltip"
+                            title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
                         <i class="fa fa-question-circle-o" aria-hidden="true"></i>
                         <span class="visually-hidden">{% translate "What does this mean?" %}</span>
-                    </span>
+                    </button>
                 {% endif %}
             </div>
             <!-- tags form-->
