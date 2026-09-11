@@ -6,7 +6,7 @@
     {% trans "Account Settings" %}
 {% endblock title %}
 {% block settings_body %}
-    <h2>{% trans "Account Settings" %}</h2>
+    <h1 class="h2">{% trans "Account Settings" %}</h1>
     <dl id="general">
         <dt>{% blocktrans %}Your name:{% endblocktrans %}</dt>
         <dd>
@@ -50,7 +50,7 @@
         </dd>
     </dl>
     <div id="change-user-now" class="card mb-3 mt-5">
-        <h5 class="card-header">{% trans "Change details" %}</h5>
+        <h2 class="h5 card-header">{% trans "Change details" %}</h2>
         <div class="card-body">
             <form action="{% url 'account-change_user' %}"
                   method="post"
@@ -66,7 +66,7 @@
         </div>
     </div>
     <div id="settings" class="card mb-3 mt-5">
-        <h5 class="card-header">{% trans "Account settings" %}</h5>
+        <h2 class="h5 card-header">{% trans "Account settings" %}</h2>
         <div class="card-body">
             <form action="{% url 'account-change_settings' %}#settings" method="post">
                 {% csrf_token %}
@@ -81,7 +81,7 @@
     </div>
     {% if not request.user.private %}
         <div id="profile" class="card mb-3 mt-5">
-            <h5 class="card-header">{% trans "Public profile" %}</h5>
+            <h2 class="h5 card-header">{% trans "Public profile" %}</h2>
             <div class="card-body">
                 <p>
                     <a href="{{ request.user.get_absolute_url }}">{% translate "Your public profile" %}</a>
@@ -102,7 +102,7 @@
     {% endif %}
     {% include "account/includes/change_password_form.html" %}
     <div id="mfa" class="card mb-3">
-        <h5 class="card-header">{% translate "Setup two-factor login" %}</h5>
+        <h2 class="h5 card-header">{% translate "Setup two-factor login" %}</h2>
         <div class="card-body">
             {% recentauthrequired "mfa" %}
             {% if not request.user.has_usable_password %}
@@ -138,7 +138,7 @@
 {% block post_password %}
 {% endblock post_password %}
 <div id="proofs" class="card mb-3">
-    <h5 class="card-header">{% translate "Proofs" %}</h5>
+    <h2 class="h5 card-header">{% translate "Proofs" %}</h2>
     <div class="card-body">
         {% recentauthrequired "proofs" %}
         {% include "proof/proof_settings.html" %}
@@ -147,7 +147,7 @@
 </div>
 <hr />
 <div id="apps" class="card mb-3">
-    <h5 class="card-header">{% trans "External apps" %}</h5>
+    <h2 class="h5 card-header">{% trans "External apps" %}</h2>
     <div class="card-body">
         {% recentauthrequired "apps" %}
         <a href="{% url 'oauth2_provider:authorized-token-list' %}">
@@ -158,7 +158,7 @@
 </div>
 <hr />
 <div id="export" class="card mb-3">
-    <h5 class="card-header">{% trans "Export your data" %}</h5>
+    <h2 class="h5 card-header">{% trans "Export your data" %}</h2>
     <div class="card-body">
         {% recentauthrequired "export" %}
         <form action="{% url 'account-create_export' %}" method="post">
@@ -171,15 +171,15 @@
 </div>
 <hr />
 <div id="delete-account-section" class="card">
-    <h5 class="card-header">{% blocktrans %}Delete your account{% endblocktrans %}</h5>
+    <h2 class="h5 card-header">{% blocktrans %}Delete your account{% endblocktrans %}</h2>
     <div class="card-body">
         {% recentauthrequired "delete-account-section" %}
         <div class="alert alert-danger">
-            <h4>
+            <h3 class="h4">
                 <i class="fa fa-fire"></i>
                 {% trans "Danger: deleting your account cannot be undone." %}
                 <i class="fa fa-fire"></i>
-            </h4>
+            </h3>
             <form action="{% url 'account-delete_account' %}" method="post">
                 {% csrf_token %}
                 {% render_form user_delete_form %}
@@ -196,7 +196,7 @@
 </div>
 </div>
 <div id="developer" class="card mt-5">
-    <h5 class="card-header">{% blocktrans %}Developer{% endblocktrans %}</h5>
+    <h2 class="h5 card-header">{% blocktrans %}Developer{% endblocktrans %}</h2>
     <div class="card-body">
         {% if froide.api_activated %}
             {% recentauthrequired "developer" %}
