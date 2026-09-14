@@ -581,12 +581,10 @@ export default {
       return this.fetchedForms?.user_form || this.userFormInitial
     },
     proofForm() {
-      if (
-        !(
-          this.proofFormInitial?.fields?.proof ||
-          this.proofFormInitial?.fields?.proof_name
-        )
-      ) {
+      if (!(
+        this.proofFormInitial?.fields?.proof ||
+        this.proofFormInitial?.fields?.proof_name
+      )) {
         return null
       }
       return this.fetchedForms?.proof_form || this.proofFormInitial

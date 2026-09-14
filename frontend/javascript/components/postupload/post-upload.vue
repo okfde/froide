@@ -873,8 +873,7 @@ addEventListener('hashchange', () => {
                 class="btn btn-primary"
                 @click="gotoStep(fieldErrorStep[key])"
               >
-                {{ i18n.review
-                }}<!--{{ fieldErrorStep[key] }}-->
+                {{ i18n.review }}<!--{{ fieldErrorStep[key] }}-->
               </button>
               <button
                 type="button"
