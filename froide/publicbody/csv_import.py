@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 import requests
 
 from froide.georegion.models import GeoRegion
+from froide.helper.db_utils import save_obj_with_slug
 from froide.helper.search.utils import trigger_search_index_update_qs
 from froide.helper.text_utils import slugify
 
@@ -77,9 +78,6 @@ class CSVImporter(object):
         if "url" in row:
             if row["url"] and not row["url"].startswith(("http://", "https://")):
                 row["url"] = "http://" + row["url"]
-
-        if "slug" not in row and "name" in row:
-            row["slug"] = slugify(row["name"])
 
         if "classification" in row:
             row["classification"] = self.get_classification(
@@ -149,6 +147,8 @@ class CSVImporter(object):
                 pb = PublicBody._default_manager.get(
                     slug=row["slug"], regions__in=regions
                 )
+            elif "slug" in row and row["slug"]:
+                pb = PublicBody._default_manager.get(slug=row["slug"])
             else:
                 raise NotUniquelyIdentifiable
 
@@ -176,7 +176,8 @@ class CSVImporter(object):
         pb.updated_at = self.import_time
         pb.confirmed = True
         pb.site = self.site
-        pb.save()
+        save_obj_with_slug(pb, "name")
+
         if row.get("jurisdiction"):
             pb.laws.add(*row["jurisdiction"].laws)
         if regions:

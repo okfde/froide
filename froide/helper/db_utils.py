@@ -1,58 +1,63 @@
-from django.db import IntegrityError, models
+from typing import TypeVar
+
+from django.db import models
+from django.db.models.functions import Cast
 
 from froide.helper.text_utils import slugify
 
+ModelType = TypeVar("ModelType", bound=models.Model)
 
-def save_obj_with_slug(obj: models.Model, attribute: str = "title", **kwargs) -> None:
+
+def save_obj_with_slug(obj: ModelType, attribute: str = "title", **kwargs) -> ModelType:
     obj.slug = slugify(getattr(obj, attribute))
     return save_obj_unique(obj, "slug", **kwargs)
 
 
 def save_obj_unique(
-    obj: models.Model,
-    attr: str,
+    obj: ModelType,
+    attr: str = "slug",
     count: int = 0,
-    postfix_format: str = "-{count}",
-) -> None:
+    delimiter: str = "-",
+) -> ModelType:
     klass = obj.__class__
-    MAX_COUNT = 10000  # max 10 thousand loops
-    base_attr = getattr(obj, attr)
-    initial_count = count
-    first_round = count == 0
-    postfix = ""
-    while True:
-        try:
-            while count - initial_count < MAX_COUNT:
-                if not first_round:
-                    postfix = postfix_format.format(count=count)
-                if not klass.objects.filter(
-                    **{attr: getattr(obj, attr) + postfix}
-                ).exists():
-                    break
-                if first_round:
-                    first_round = False
-                    count = max(
-                        klass.objects.filter(
-                            **{"%s__startswith" % attr: base_attr}
-                        ).count(),
-                        initial_count,
-                    )
-                else:
-                    count += 1
-            setattr(obj, attr, base_attr + postfix)
-            obj.save()
-        except IntegrityError:
-            if count - initial_count < MAX_COUNT:
-                if first_round:
-                    first_round = False
-                    count = max(
-                        klass.objects.filter(
-                            **{"%s__startswith" % attr: base_attr}
-                        ).count(),
-                        initial_count,
-                    )
-                count += 1
-            else:
-                raise
+
+    # the initial slug without a numbered suffix
+    initial_value: str = getattr(obj, attr)
+    suffix = ""
+
+    if klass.objects.filter(**{attr: initial_value}).exists():
+        regex = rf"^{initial_value}{delimiter}(\d+)$"
+
+        # find all objects that follow pattern, e.g. "my-slug-3"
+        qs = klass.objects.filter(**{f"{attr}__regex": regex})
+
+        # extract number using regex replace and cast to int
+
+        qs = qs.annotate(
+            slug_suffix=Cast(
+                models.Func(
+                    models.F(attr),
+                    models.Value(regex),
+                    models.Value(r"\1"),
+                    function="REGEXP_REPLACE",
+                ),
+                models.IntegerField(),
+            ),
+        )
+
+        qs = qs.order_by("-slug_suffix")
+
+        if largest := qs.first():
+            suffix_number = largest.slug_suffix + 1
         else:
-            break
+            suffix_number = 1
+
+        suffix_number = max(suffix_number, count)
+
+        suffix = f"{delimiter}{suffix_number}"
+
+    final_slug = initial_value + suffix
+    setattr(obj, attr, final_slug)
+    obj.save()
+
+    return obj
