@@ -29,7 +29,9 @@ class ESQueryMixin:
 
         has_query = request.GET.get("q")
         if has_query:
-            self.sqs.sqs = self.sqs.sqs.highlight("content")
+            self.sqs.sqs = self.sqs.sqs.highlight_options(encoder="html").highlight(
+                "content"
+            )
             self.sqs.sqs = self.sqs.sqs.sort("_score")
 
         self.override_sqs()
