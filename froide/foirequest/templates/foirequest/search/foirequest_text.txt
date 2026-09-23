@@ -1,3 +1,4 @@
+{% autoescape off %}
 {{ object.title }}
 
 {{ object.get_description }}
@@ -25,3 +26,4 @@
 {% for cat in object.public_body.categories.all %}
     {{ cat.name }}
 {% endfor %}
+{% endautoescape %}
