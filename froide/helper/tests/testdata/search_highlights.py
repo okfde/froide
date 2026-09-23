@@ -5,10 +5,10 @@
 search_highlight_tests = [
     (
         [
-            "Unterlagen zum &amp;quot;<em>Gender</em>-Verbot&amp;quot;\n\nAlle Unterlagen (interne und externe Korrespondenz, Vermerke",
-            ", Dienstanweisungen etc.) im Zusammenhang mit dem sogenannten &amp;quot;<em>Gender</em>-Verbot&amp;quot; an sächsischen",
-            "Schulen\n\nAnfrage erfolgreich \n\n\n\n\n    \n    Unterlagen zum &amp;quot;<em>Gender</em>-Verbot&amp;quot; [#284078]\n    Antrag",
-            "externe Korrespondenz, Vermerke, Dienstanweisungen etc.) im Zusammenhang mit dem sogenannten &amp;quot;<em>Gender</em>-Verbot",
+            "Unterlagen zum &quot;<em>Gender</em>-Verbot&quot;\n\nAlle Unterlagen (interne und externe Korrespondenz, Vermerke",
+            ", Dienstanweisungen etc.) im Zusammenhang mit dem sogenannten &quot;<em>Gender</em>-Verbot&quot; an sächsischen",
+            "Schulen\n\nAnfrage erfolgreich \n\n\n\n\n    \n    Unterlagen zum &quot;<em>Gender</em>-Verbot&quot; [#284078]\n    Antrag",
+            "externe Korrespondenz, Vermerke, Dienstanweisungen etc.) im Zusammenhang mit dem sogenannten &quot;<em>Gender</em>-Verbot",
         ],
         (
             "Unterlagen zum &quot;<em>Gender</em>-Verbot&quot; […] "
@@ -43,11 +43,11 @@ search_highlight_tests = [
         [
             ":&#x2F;&#x2F;fragdenstaat.de&#x2F;hilfe&#x2F;fuer-behoerden&#x2F;\n\n      \n    \n\n    \n    Ihre Beschwerde im Bereich <em>Informationsfreiheit</em>",
             "Der Landesbeauftragte für den Datenschutz\nund die <em>Informationsfreiheit</em> Rheinland-Pfalz\n\nInternet",
-            "Zeichen:\tfragdenstaat.de # 186145\n\n\n&amp;lt;&amp;lt;E-Mail-Adresse&amp;gt;&amp;gt;\n\n\nIhre Beschwerde im Bereich <em>Informationsfreiheit</em>",
+            "Zeichen:\tfragdenstaat.de # 186145\n\n\n&lt;&lt;E-Mail-Adresse&gt;&gt;\n\n\nIhre Beschwerde im Bereich <em>Informationsfreiheit</em>",
             "Sie darauf hinweisen, dass die Anrufung des Landesbeauftragten für den Datenschutz und die <em>Informationsfreiheit</em>",
             "Slfdiprn0220071607220.pdf\n      \n    \n\n    \n    Ihre Beschwerde im Bereich <em>Informationsfreiheit</em>",
             "Der Landesbeauftragte für den Datenschutz\nund die <em>Informationsfreiheit</em> Rheinland-Pfalz\n\nInternet",
-            "Zeichen:\tfragdenstaat.de # 186145\n\n\n&amp;lt;&amp;lt;E-Mail-Adresse&amp;gt;&amp;gt;\n\n\nIhre Beschwerde im Bereich <em>Informationsfreiheit</em>",
+            "Zeichen:\tfragdenstaat.de # 186145\n\n\n&lt;&lt;E-Mail-Adresse&gt;&gt;\n\n\nIhre Beschwerde im Bereich <em>Informationsfreiheit</em>",
             "Mit freundlichen Grüßen\n      \n    \n\n    \n    AW: Ihre Beschwerde im Bereich <em>Informationsfreiheit</em> [#186145",
             "Ihr Antrag auf Informationszugang\n    Der Landesbeauftragte für den Datenschutz\nund die <em>Informationsfreiheit</em>",
             "Der Widerspruch ist bei dem Landesbeauftragten für den Datenschutz und die <em>Informationsfreiheit</em> Rheinland-Pfalz",
@@ -84,7 +84,7 @@ search_highlight_tests = [
             "<em>Schriftverkehr</em> zwischen BMI und AA in Bezug auf Schreiben an Seenotrettungsorganisationen\n\nSämtlichen",
             "<em>Schriftverkehr</em> zwischen dem BMI und dem AA in Bezug auf das Schreiben des MinDir Weinbrenneran Seenotrettungsorganisationen",
             "Information nicht vorhanden \n\n\n\n\n    \n    <em>Schriftverkehr</em> zwischen BMI und AA in Bezug auf Schreiben an",
-            "&#x2F;VIG\r\n\r\nSehr geehrte&amp;lt;&amp;lt; Anrede &amp;gt;&amp;gt;\n\r\nbitte senden Sie mir Folgendes zu:\n\nSämtlichen <em>Schriftverkehr</em>",
+            "&#x2F;VIG\r\n\r\nSehr geehrte&lt;&lt; Anrede &gt;&gt;\n\r\nbitte senden Sie mir Folgendes zu:\n\nSämtlichen <em>Schriftverkehr</em>",
             "notwendig wäre, besuchen Sie:\nhttps:&#x2F;&#x2F;fragdenstaat.de&#x2F;hilfe&#x2F;fuer-behoerden&#x2F;\n\n      \n    \n\n    \n    <em>Schriftverkehr</em>",
             "geehrter Herr Semsrott,\n\n\xa0\n\nin Erledigung Ihres IFG- Antrages teile ich Ihnen mit, dass kein\n<em>Schriftverkehr</em>",
         ],
@@ -95,5 +95,17 @@ search_highlight_tests = [
             "Sämtlichen <em>Schriftverkehr</em> […] "
             "in Erledigung Ihres IFG- Antrages teile ich Ihnen mit, dass kein\n<em>Schriftverkehr</em>"
         ),
+    ),
+    (
+        [
+            "Anlage\n\n&lt;script&gt;alert(1)&lt;&#x2F;script&gt; im <em>Antrag</em> enthalten",
+        ],
+        "&lt;script&gt;alert(1)&lt;&#x2F;script&gt; im <em>Antrag</em> enthalten",
+    ),
+    (
+        [
+            "Anlage\n\nTom &amp;amp; Jerry &amp; der <em>Antrag</em>",
+        ],
+        "Tom &amp;amp; Jerry &amp; der <em>Antrag</em>",
     ),
 ]
