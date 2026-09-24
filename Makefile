@@ -13,7 +13,7 @@ htmlcov:
 	coverage html
 
 backend_dependencies:
-	uv sync --upgrade-package django-filingcabinet $(UV_SYNC_ARGS)
+	uv sync --all-extras --upgrade-package django-filingcabinet $(UV_SYNC_ARGS)
 
 frontend_dependencies:
 	pnpm update @okfde/filingcabinet
