@@ -2,6 +2,8 @@ export DJANGO_SETTINGS_MODULE=froide.settings
 export DJANGO_CONFIGURATION=Test
 export PYTHONWARNINGS=default
 
+-include Makefile.local
+
 test:
 	ruff check
 	pytest --cov froide/
@@ -11,7 +13,7 @@ htmlcov:
 	coverage html
 
 backend_dependencies:
-	uv sync --upgrade-package django-filingcabinet
+	uv sync --all-extras --upgrade-package django-filingcabinet $(UV_SYNC_ARGS)
 
 frontend_dependencies:
 	pnpm update @okfde/filingcabinet
