@@ -349,15 +349,7 @@ def test_move_all_requests_to_other_project(user, client, move):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    "move",
-    [
-        expected_failure(
-            move_via_web_form,
-            "removed request keeps its number, old project keeps its public body",
-        ),
-    ],
-)
+@pytest.mark.parametrize("move", [move_via_web_form])
 def test_remove_request_from_project(user, client, move):
     old_project = make_project(user, 3)
     req = old_project.foirequest_set.get(project_order=0)

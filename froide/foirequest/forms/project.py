@@ -41,6 +41,8 @@ class AssignProjectForm(forms.Form):
         project = self.cleaned_data["project"]
         old_project = self.instance.project
         self.instance.project = project
+        if project is None:
+            self.instance.project_order = None
         self.instance.save()
 
         if old_project is not None:
