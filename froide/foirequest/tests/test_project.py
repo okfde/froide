@@ -376,3 +376,12 @@ def test_remove_request_from_project(user, client, move):
     assert req.project is None
     assert req.project_order is None
     assert_project_consistent(old_project)
+
+
+@pytest.mark.django_db
+def test_project_numbers_start_at_one(user):
+    project = make_project(user, 3)
+
+    requests = project.foirequest_set.order_by("project_order")
+
+    assert [req.project_number for req in requests] == [1, 2, 3]
