@@ -477,7 +477,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
             f = Form(request.POST)
             if f.is_valid():
                 project = f.cleaned_data["obj"]
-                project.add_requests(queryset)
+                FoiProject.move_requests(queryset, project)
                 self.message_user(request, _("Successfully added requests to project."))
                 # Return None to display the change list page again.
                 return None
@@ -1162,8 +1162,9 @@ def execute_move_requests(admin, request, queryset, action_obj):
     assert not queryset.filter(id=action_obj.id).exists()
 
     for foi_project in queryset:
-        action_obj.add_requests(FoiRequest.objects.filter(project=foi_project))
-        foi_project.update_from_requests()
+        FoiProject.move_requests(
+            FoiRequest.objects.filter(project=foi_project), action_obj
+        )
 
 
 @admin.register(FoiProject)

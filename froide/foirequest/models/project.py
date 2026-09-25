@@ -126,6 +126,26 @@ class FoiProject(models.Model):
         self.update_publicbodies()
         self.update_request_count()
 
+    @classmethod
+    def move_requests(cls, requests, project):
+        """Move requests into project, or out of their project if project is None."""
+        project_id = project.id if project is not None else None
+        requests = [req for req in requests if req.project_id != project_id]
+        if not requests:
+            return
+        old_project_ids = {req.project_id for req in requests} - {None}
+
+        if project is not None:
+            project.add_requests(requests)
+        else:
+            for req in requests:
+                req.project = None
+                req.project_order = None
+                req.save()
+
+        for old_project in cls._base_manager.filter(id__in=old_project_ids):
+            old_project.update_from_requests()
+
     def make_public(self, publish_requests=False, user=None):
         self.public = True
         self.save()
