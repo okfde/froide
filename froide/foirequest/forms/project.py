@@ -44,9 +44,9 @@ class AssignProjectForm(forms.Form):
         self.instance.save()
 
         if old_project is not None:
-            old_project.recalculate_order()
+            old_project.update_from_requests()
         if project is not None:
-            project.recalculate_order()
+            project.update_from_requests()
 
         return self.instance
 

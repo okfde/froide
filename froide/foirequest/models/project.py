@@ -123,10 +123,8 @@ class FoiProject(models.Model):
             req.project = self
             req.project_order = order_max
             req.save()
-            if req.public_body:
-                self.publicbodies.add(req.public_body)
-        self.request_count = self.foirequest_set.all().count()
-        self.save()
+        self.update_publicbodies()
+        self.update_request_count()
 
     def make_public(self, publish_requests=False, user=None):
         self.public = True
@@ -137,18 +135,26 @@ class FoiProject(models.Model):
             if not req.is_public():
                 req.make_public(user=user)
 
+    def update_from_requests(self):
+        self.recalculate_order()
+        self.update_publicbodies()
+        self.update_request_count()
+
     def recalculate_order(self):
-        requests = self.foirequest_set.order_by("project_order").all()
+        requests = self.foirequest_set.order_by("project_order")
         for i, req in enumerate(requests):
             if req.project != self or req.project_order != i:
                 req.project = self
                 req.project_order = i
                 req.save()
 
-            if req.public_body:
-                self.publicbodies.add(req.public_body)
+    def update_publicbodies(self):
+        self.publicbodies.add(
+            *PublicBody.objects.filter(foirequest__project=self).distinct()
+        )
 
-        self.request_count = len(requests)
+    def update_request_count(self):
+        self.request_count = self.foirequest_set.count()
         self.save()
 
     def get_description(self):
