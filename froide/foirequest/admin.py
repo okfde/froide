@@ -1163,6 +1163,7 @@ def execute_move_requests(admin, request, queryset, action_obj):
 
     for foi_project in queryset:
         action_obj.add_requests(FoiRequest.objects.filter(project=foi_project))
+        foi_project.update_from_requests()
 
 
 @admin.register(FoiProject)

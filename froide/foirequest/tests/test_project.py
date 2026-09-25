@@ -274,10 +274,6 @@ def move_via_admin_merge_action(client, requests, project):
     assert response.url == url
 
 
-def expected_failure(move, reason):
-    return pytest.param(move, marks=pytest.mark.xfail(strict=True, reason=reason))
-
-
 def assert_project_consistent(project):
     project.refresh_from_db()
     requests = list(project.foirequest_set.order_by("project_order"))
@@ -323,16 +319,7 @@ def test_move_request_without_project_into_project(user, client, move):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    "move",
-    [
-        move_via_web_form,
-        expected_failure(
-            move_via_admin_merge_action,
-            "old project keeps its count and public bodies",
-        ),
-    ],
-)
+@pytest.mark.parametrize("move", [move_via_web_form, move_via_admin_merge_action])
 def test_move_all_requests_to_other_project(user, client, move):
     old_project = make_project(user, 3)
     new_project = make_project(user, 3)
