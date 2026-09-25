@@ -40,15 +40,16 @@ class AssignProjectForm(forms.Form):
     def save(self):
         project = self.cleaned_data["project"]
         old_project = self.instance.project
-        self.instance.project = project
-        if project is None:
+
+        if project is not None:
+            project.add_requests([self.instance])
+        else:
+            self.instance.project = None
             self.instance.project_order = None
-        self.instance.save()
+            self.instance.save()
 
         if old_project is not None:
             old_project.update_from_requests()
-        if project is not None:
-            project.update_from_requests()
 
         return self.instance
 

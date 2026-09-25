@@ -297,10 +297,7 @@ def assert_moved_to_end(project, moved_requests):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    "move",
-    [expected_failure(move_via_web_form, "moved request keeps its number")],
-)
+@pytest.mark.parametrize("move", [move_via_web_form])
 def test_move_request_to_other_project(user, client, move):
     old_project = make_project(user, 3)
     new_project = make_project(user, 3)
@@ -329,7 +326,7 @@ def test_move_request_without_project_into_project(user, client, move):
 @pytest.mark.parametrize(
     "move",
     [
-        expected_failure(move_via_web_form, "moved requests keep their numbers"),
+        move_via_web_form,
         expected_failure(
             move_via_admin_merge_action,
             "old project keeps its count and public bodies",
