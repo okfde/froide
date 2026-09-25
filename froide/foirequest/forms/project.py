@@ -41,6 +41,9 @@ class AssignProjectForm(forms.Form):
         project = self.cleaned_data["project"]
         old_project = self.instance.project
 
+        if project == old_project:
+            return self.instance
+
         if project is not None:
             project.add_requests([self.instance])
         else:

@@ -360,6 +360,20 @@ def test_remove_request_from_project(user, client, move):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("move", [move_via_web_form])
+def test_move_request_to_same_project_keeps_number(user, client, move):
+    project = make_project(user, 3)
+    req = project.foirequest_set.get(project_order=0)
+
+    move(client, [req], project)
+
+    req.refresh_from_db()
+    assert req.project == project
+    assert req.project_order == 0
+    assert_project_consistent(project)
+
+
+@pytest.mark.django_db
 def test_project_numbers_start_at_one(user):
     project = make_project(user, 3)
 
