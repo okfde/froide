@@ -299,12 +299,7 @@ def assert_moved_to_end(project, moved_requests):
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "move",
-    [
-        expected_failure(
-            move_via_web_form,
-            "moved request keeps its number, old project keeps its public body",
-        ),
-    ],
+    [expected_failure(move_via_web_form, "moved request keeps its number")],
 )
 def test_move_request_to_other_project(user, client, move):
     old_project = make_project(user, 3)
@@ -334,10 +329,7 @@ def test_move_request_without_project_into_project(user, client, move):
 @pytest.mark.parametrize(
     "move",
     [
-        expected_failure(
-            move_via_web_form,
-            "moved requests keep their numbers, old project keeps public bodies",
-        ),
+        expected_failure(move_via_web_form, "moved requests keep their numbers"),
         expected_failure(
             move_via_admin_merge_action,
             "old project keeps its count and public bodies",
@@ -385,3 +377,18 @@ def test_project_numbers_start_at_one(user):
     requests = project.foirequest_set.order_by("project_order")
 
     assert [req.project_number for req in requests] == [1, 2, 3]
+
+
+@pytest.mark.django_db
+def test_update_publicbodies_removes_public_bodies_of_removed_requests(user):
+    project = make_project(user, 3)
+    req = project.foirequest_set.get(project_order=0)
+    req.project = None
+    req.save()
+
+    project.update_publicbodies()
+
+    assert req.public_body not in project.publicbodies.all()
+    assert set(project.publicbodies.all()) == {
+        remaining.public_body for remaining in project.foirequest_set.all()
+    }

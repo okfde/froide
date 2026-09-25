@@ -148,8 +148,8 @@ class FoiProject(models.Model):
                 req.save()
 
     def update_publicbodies(self):
-        self.publicbodies.add(
-            *PublicBody.objects.filter(foirequest__project=self).distinct()
+        self.publicbodies.set(
+            PublicBody.objects.filter(foirequest__project=self).distinct()
         )
 
     def update_request_count(self):
