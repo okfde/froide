@@ -27,3 +27,4 @@ froide/static/js
 froide/static/css
 froide/static/fonts
 .vscode/settings.json
+Makefile.local
