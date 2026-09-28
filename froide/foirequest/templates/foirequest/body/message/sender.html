@@ -8,9 +8,7 @@
                 {% if message.user_real_sender and message.user_real_sender != message.sender_public_body.name %}
                     {% if message.sender_public_body %}
                         <span>{{ message.sender_public_body.name }} –</span>
-                        <span class="redacted-dummy redacted-hover"
-                              data-bs-toggle="tooltip"
-                              title="{% trans 'Only visible to you' %}">{{ message.user_real_sender }}</span>
+                        {% include "snippets/redacted_dummy.html" with content=message.user_real_sender %}
                     {% else %}
                         {{ message.sender_name }}
                     {% endif %}
@@ -20,16 +18,11 @@
             </span>
         {% else %}
             {% if object.user.private %}
-                <span class="redacted-dummy redacted-hover"
-                      data-bs-toggle="tooltip"
-                      title="{% trans 'Only visible to you' %}">
-                {% else %}
-                    <span>
-                    {% endif %}
-                    {{ message.user_real_sender }}
-                </span>
+                {% include "snippets/redacted_dummy.html" with content=message.user_real_sender %}
+            {% else %}
+                <span>{{ message.user_real_sender }}</span>
             {% endif %}
-        </span>
+        {% endif %}
     {% else %}
         {% if message.is_response %}
             {% if froide.public_body_officials_public %}

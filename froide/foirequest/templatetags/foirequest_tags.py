@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Case, Value, When
 from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars_html
+from django.template.loader import render_to_string
 from django.utils.html import Urlizer, format_html
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext as _
@@ -249,15 +250,33 @@ def urlizetrunc_no_mail(
     return content
 
 
+REDACTED_DUMMY_SPLIT_TOKEN = "\x00"
+
+
+def get_redacted_dummy_tags() -> tuple[SafeString, SafeString]:
+    """
+    Render the redaction markup split into its opening and closing half.
+
+    The diff in `froide.helper.text_diff` wraps runs of arbitrary length, so it
+    needs the two tags separately. Rendering the template once around a split
+    token keeps it the single definition of that markup.
+    """
+    html = render_to_string(
+        "snippets/redacted_dummy.html",
+        {"content": REDACTED_DUMMY_SPLIT_TOKEN},
+    ).strip()
+    start_tag, end_tag = html.split(REDACTED_DUMMY_SPLIT_TOKEN)
+    return SafeString(start_tag), SafeString(end_tag)
+
+
 def mark_redacted(original="", redacted="", authenticated_read=False) -> SafeString:
     if authenticated_read:
+        start_tag, end_tag = get_redacted_dummy_tags()
         content: SafeString = mark_differences(
             original,
             redacted,
-            attrs='class="redacted-dummy redacted-hover"'
-            ' data-bs-toggle="tooltip" title="{title}"'.format(
-                title=_("Only visible to you")
-            ),
+            start_tag=start_tag,
+            end_tag=end_tag,
         )
     else:
         content: SafeString = mark_differences(
