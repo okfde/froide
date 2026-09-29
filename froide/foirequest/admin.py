@@ -234,6 +234,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "unpublish",
         "unpublish_permanently",
         "add_to_project",
+        "remove_from_project",
         "set_team",
         "unblock_request",
         "close_requests",
@@ -497,6 +498,14 @@ class FoiRequestAdmin(admin.ModelAdmin):
         return TemplateResponse(
             request, "foirequest/admin/add_to_project.html", context
         )
+
+    @admin.action(
+        description=_("Remove selected requests from their project"),
+        permissions=["change"],
+    )
+    def remove_from_project(self, request, queryset):
+        FoiProject.move_requests(queryset.filter(project__isnull=False), None)
+        self.message_user(request, _("Successfully removed requests from project."))
 
     set_team = make_choose_object_action(
         Team, execute_set_team, _("Set team for requests...")

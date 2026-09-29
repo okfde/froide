@@ -274,6 +274,21 @@ def move_via_admin_merge_action(client, requests, project):
     assert response.url == url
 
 
+def move_via_admin_remove_action(client, requests, project):
+    assert project is None
+    login_staff_user(client, "change_foirequest")
+    url = reverse("admin:foirequest_foirequest_changelist")
+    response = client.post(
+        url,
+        {
+            "action": "remove_from_project",
+            "_selected_action": [req.id for req in requests],
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == url
+
+
 def assert_project_consistent(project):
     project.refresh_from_db()
     requests = list(project.foirequest_set.order_by("project_order"))
@@ -333,7 +348,7 @@ def test_move_all_requests_to_other_project(user, client, move):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("move", [move_via_web_form])
+@pytest.mark.parametrize("move", [move_via_web_form, move_via_admin_remove_action])
 def test_remove_request_from_project(user, client, move):
     old_project = make_project(user, 3)
     req = old_project.foirequest_set.get(project_order=0)
