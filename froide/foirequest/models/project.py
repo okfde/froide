@@ -161,7 +161,7 @@ class FoiProject(models.Model):
         self.update_request_count()
 
     def recalculate_order(self):
-        requests = self.foirequest_set.order_by("project_order")
+        requests = self.foirequest_set.order_by("project_order", "id")
         for i, req in enumerate(requests):
             if req.project_order != i:
                 req.project_order = i

@@ -370,6 +370,24 @@ def test_project_numbers_start_at_one(user):
 
 
 @pytest.mark.django_db
+def test_recalculate_order_keeps_older_request_first_for_duplicate_numbers(user):
+    project = make_project(user, 0)
+    # Insert the newer request first. Postgres usually returns fresh rows in
+    # insertion order, so without a tiebreak newer would come before older.
+    newer = factories.FoiRequestFactory.create(
+        id=100002, user=user, project=project, project_order=0
+    )
+    older = factories.FoiRequestFactory.create(
+        id=100001, user=user, project=project, project_order=0
+    )
+
+    project.recalculate_order()
+
+    requests = project.foirequest_set.order_by("project_order")
+    assert [req.id for req in requests] == [older.id, newer.id]
+
+
+@pytest.mark.django_db
 def test_update_publicbodies_removes_public_bodies_of_removed_requests(user):
     project = make_project(user, 3)
     req = project.foirequest_set.get(project_order=0)
