@@ -112,7 +112,7 @@ def make_unsubscribe_header(email_str: str, reference: str) -> str:
         + reverse("bounce:unsubscribe", kwargs={"reference": reference})
         + "?email={email}".format(email=quote(unsub_email))
     )
-    return "<mailto:{email}?subject={subject}>,<{url}>".format(
+    return "<mailto:{email}?subject={subject}>, <{url}>".format(
         email=unsub_email,
         subject=quote(
             "{prefix}{reference}".format(prefix=UNSUBSCRIBE_PREFIX, reference=reference)
