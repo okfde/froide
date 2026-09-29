@@ -5,16 +5,21 @@ from datetime import datetime, timedelta
 from django.db import connection
 from django.test import TestCase
 
+import pytest
+
 from froide.foirequest.tests.factories import UserFactory
 from froide.helper.email_parsing import EmailAddress, parse_email
 from froide.helper.email_utils import BounceType
 
 from .models import Bounce
+from .signals import email_unsubscribed
 from .utils import (
     add_bounce_mail,
     check_deactivation_condition,
     get_recipient_address_from_bounce,
     make_bounce_address,
+    make_unsubscribe_address,
+    make_unsubscribe_header,
 )
 
 TEST_DATA_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "testdata"))
@@ -111,3 +116,40 @@ class BounceTest(TestCase):
         )
         result = check_deactivation_condition(bounce)
         self.assertFalse(result)
+
+
+@pytest.mark.django_db
+def test_one_click_unsubscribe_view(client):
+    email = "testmail@example.org"
+    ref = "abcdef"
+    unsub_email = make_unsubscribe_address(email)
+    header = make_unsubscribe_header(email, ref)
+    mailto, url = header.split(",")
+    mailto = mailto.strip()
+    url = url.strip()
+    url = url[1:-1]
+    unsub_email_from_header = mailto[1:-1].split("?")[0].split(":")[1]
+    assert unsub_email == unsub_email_from_header
+
+    handled = None
+
+    def signal_handler(sender, **kwargs):
+        nonlocal handled
+        handled = sender, kwargs
+
+    email_unsubscribed.connect(signal_handler)
+
+    response = client.get(url)
+    assert response.status_code == 405
+    assert handled is None
+
+    response = client.post(url)
+    assert response.status_code == 400
+    assert handled is None
+    response = client.post(url, {"List-Unsubscribe": "One-Click"})
+    assert response.status_code == 200
+    assert handled is not None
+    sender, kwargs = handled
+    assert kwargs["email"] == email
+    assert kwargs["reference"] == ref
+    assert kwargs["method"] == "unsubscribe-post"
