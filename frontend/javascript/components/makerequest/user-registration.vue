@@ -93,6 +93,7 @@
       </label>
       <div class="col-sm-8 col-md-5">
         <input
+          id="id_user_email"
           v-model="email"
           ref="email"
           type="email"

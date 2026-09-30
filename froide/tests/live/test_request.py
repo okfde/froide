@@ -59,10 +59,12 @@ async def test_make_not_logged_in_request(
     await page.locator("[name=terms]").click()
     await check_a11y(page, suffix="step_create_account")
     step = page.locator("#step_create_account")
-    await expect(step.locator("[name=address]")).to_have_accessible_description(
+    address = step.get_by_label("Your postal address")
+    await expect(address).to_have_accessible_description(
         re.compile("Your address will not be displayed publicly")
     )
-    await expect(step.locator("[name=user_email]")).to_have_accessible_description(
+    email = step.get_by_label("Your email address")
+    await expect(email).to_have_accessible_description(
         re.compile("The given address will need to be confirmed")
     )
     privacy = page.get_by_role("group", name="Privacy")
@@ -547,7 +549,7 @@ async def test_make_request_captcha(
     await page.locator("#step_create_account .btn-primary").click()
 
     step = page.locator("#step_preview_submit")
-    captcha = step.locator("[name=test]")
+    captcha = step.get_by_label("What is three plus four?")
     await expect(captcha).to_be_visible()
     await check_a11y(page, suffix="step_preview_submit")
     await expect(captcha).to_have_accessible_description(

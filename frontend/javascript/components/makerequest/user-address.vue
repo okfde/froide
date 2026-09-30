@@ -16,6 +16,7 @@
         <textarea
           v-model="address"
           ref="address"
+          id="id_address"
           name="address"
           class="form-control"
           aria-describedby="id_address_helptext"
