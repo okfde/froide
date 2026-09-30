@@ -3,10 +3,13 @@ import re
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core import mail
+from django.db.models import signals
+from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
 
 import pytest
+from factory.django import mute_signals
 from playwright.async_api import Page, expect
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
@@ -17,6 +20,7 @@ from froide.publicbody.models import PublicBody
 
 from .utils import (
     do_login,
+    fill_create_account_step,
     go_to_create_account_step,
     go_to_make_request_url,
     go_to_request_page,
@@ -55,12 +59,12 @@ async def test_make_not_logged_in_request(
     await page.locator("[name=terms]").click()
     await check_a11y(page, suffix="step_create_account")
     step = page.locator("#step_create_account")
-    await expect(
-        step.get_by_text("Your address will not be displayed publicly")
-    ).to_be_visible()
-    await expect(
-        step.get_by_text("The given address will need to be confirmed")
-    ).to_be_visible()
+    await expect(step.locator("[name=address]")).to_have_accessible_description(
+        re.compile("Your address will not be displayed publicly")
+    )
+    await expect(step.locator("[name=user_email]")).to_have_accessible_description(
+        re.compile("The given address will need to be confirmed")
+    )
     privacy = page.get_by_role("group", name="Privacy")
     await expect(privacy.locator("[name=private]")).to_have_count(2)
     await expect(privacy).to_have_accessible_description(
@@ -178,6 +182,14 @@ async def test_make_logged_in_request(
     await page.fill("[name=subject]", req_title)
     await page.fill("[name=body]", req_body)
     await page.locator("[name=confirm]").click()
+    step = page.locator("#step_write_request")
+    await step.locator("summary", has_text="proof").click()
+    await expect(step.locator("[name=proof_name]")).to_have_accessible_description(
+        re.compile("Label this proof")
+    )
+    await expect(step.locator("[name=proof_store]")).to_have_accessible_description(
+        re.compile("may be stored by")
+    )
     await page.locator("#step_write_request .btn-primary").click()
 
     await page.locator("#step_request_public .btn-primary").click()
@@ -515,4 +527,68 @@ async def test_make_request_claims_vip(
     await check_a11y(page, suffix="step_create_account")
     await expect(group).to_have_accessible_description(
         re.compile("You work in journalism")
+    )
+
+
+@pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
+@pytest.mark.asyncio(loop_scope="session")
+async def test_make_request_captcha(
+    page: Page, live_server, public_body_with_index, check_a11y, settings, monkeypatch
+):
+    settings.FROIDE_CONFIG = {**settings.FROIDE_CONFIG, "spam_protection": True}
+    monkeypatch.setattr(
+        NewUserForm, "SPAM_PROTECTION", {"timing": True, "captcha": "always"}
+    )
+    pb = PublicBody.objects.all().first()
+
+    await go_to_create_account_step(page, live_server, pb)
+    await fill_create_account_step(page)
+    await page.locator("#step_create_account .btn-primary").click()
+
+    step = page.locator("#step_preview_submit")
+    captcha = step.locator("[name=test]")
+    await expect(captcha).to_be_visible()
+    await check_a11y(page, suffix="step_preview_submit")
+    await expect(captcha).to_have_accessible_description(
+        re.compile("give evidence you are human")
+    )
+
+
+@pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
+@pytest.mark.asyncio(loop_scope="session")
+@override_settings(SERVE_MEDIA=True)
+async def test_manage_attachments_document_modal(
+    page: Page, live_server, dummy_user, check_a11y
+):
+    req = factories.FoiRequestFactory(
+        user=dummy_user, created_at=timezone.now(), status="resolved"
+    )
+    mes = factories.FoiMessageFactory(request=req)
+    att = factories.FoiAttachmentFactory(belongs_to=mes, approved=True)
+    with mute_signals(signals.post_save):
+        doc = att.create_document()
+    assert doc is not None
+
+    await do_login(page, live_server)
+    await page.goto(
+        live_server.url
+        + reverse(
+            "foirequest-manage_attachments",
+            kwargs={"slug": req.slug, "message_id": mes.id},
+        )
+    )
+    await page.locator("#attachment-manager .icon-with-name").first.click()
+
+    modal = page.locator(".modal.show")
+    await expect(modal).to_be_visible()
+    await check_a11y(page)
+    await expect(
+        modal.get_by_role("textbox", name="Document title")
+    ).to_have_accessible_description(re.compile("Give this document a proper title"))
+    await expect(
+        modal.get_by_role("textbox", name="Description", exact=True)
+    ).to_have_accessible_description(
+        re.compile("Describe the contents of the document")
     )

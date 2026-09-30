@@ -33,6 +33,15 @@ async def go_to_create_account_step(page, live_server, pb):
 
 
 @pytest.mark.asyncio(loop_scope="session")
+async def fill_create_account_step(page, email="peter.parker@example.com"):
+    await page.fill("[name=first_name]", "Peter")
+    await page.fill("[name=last_name]", "Parker")
+    await page.fill("[name=address]", "123 Queens Blvd\n12345 Queens")
+    await page.fill("[name=user_email]", email)
+    await page.locator("[name=terms]").click()
+
+
+@pytest.mark.asyncio(loop_scope="session")
 async def go_to_request_page(page, live_server, foirequest):
     path = reverse("foirequest-show", kwargs={"slug": foirequest.slug})
     await page.goto(live_server.url + path)

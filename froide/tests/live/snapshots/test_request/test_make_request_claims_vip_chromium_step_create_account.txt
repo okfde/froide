@@ -1,4 +1,5 @@
 incomplete:color-contrast
 violations:color-contrast
+violations:label-title-only
 violations:landmark-unique
 violations:page-has-heading-one

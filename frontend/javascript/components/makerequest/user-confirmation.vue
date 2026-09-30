@@ -26,8 +26,14 @@
           {{ formFields.test.label }}
         </label>
         <div class="col-lg-9">
-          <input class="form-control" type="text" required name="test" />
-          <p class="help-block">
+          <input
+            class="form-control"
+            type="text"
+            required
+            name="test"
+            aria-describedby="id_test_helptext"
+          />
+          <p id="id_test_helptext" class="help-block">
             <span>{{ formFields.test.help_text }}</span>
           </p>
         </div>
