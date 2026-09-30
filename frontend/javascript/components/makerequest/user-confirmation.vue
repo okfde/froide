@@ -30,6 +30,7 @@
             class="form-control"
             type="text"
             required
+            id="id_test"
             name="test"
             aria-describedby="id_test_helptext"
           />
