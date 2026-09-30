@@ -1189,6 +1189,10 @@ msgstr "Trat in Kraft am"
 msgid "Campaign"
 msgstr "Aktion"
 
+#: froide/campaign/templates/campaign/request_banner.html
+msgid "Campaign banner"
+msgstr "Kampagnenbanner"
+
 #: froide/foirequest/models/request.py
 msgid "Can mark as not FOI"
 msgstr "Kann als Nicht-IFG markieren"
@@ -6525,6 +6529,10 @@ msgstr "Anfrageentwürfe"
 #, python-brace-format
 msgid "Request got tag “{}”."
 msgstr "Anfrage hat nun Tag „{}“"
+
+#: froide/foirequest/templates/foirequest/header/info-box.html
+msgid "Request information"
+msgstr "Anfrageinformationen"
 
 #: froide/foirequest/moderation.py
 msgid "Request marked as not an FOI request."

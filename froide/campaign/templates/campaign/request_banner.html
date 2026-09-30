@@ -4,7 +4,10 @@
     {% if campaign.url or campaign.description %}
         <div class="card d-print-none">
             <div class="card-body">
-                {% if campaign.description %}{{ campaign.description|markdown }}{% endif %}
+                {% if campaign.description %}
+                    <h2 class="visually-hidden">{% trans "Campaign banner" %}</h2>
+                    {{ campaign.description|markdown }}
+                {% endif %}
                 {% if campaign.url %}
                     <p class="text-end">
                         {% blocktrans trimmed with name=campaign.name url=campaign.url %}

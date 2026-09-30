@@ -11,10 +11,11 @@
 {% endcomment %}
 <div id="infobox"
      class="info-box mb-3 info-box--{% if object.is_overdue or object.resolution == 'refused' %}danger{% elif object.status_is_final and object.is_successful or object.resolution == 'partially_successful' %}success{% else %}regular{% endif %}">
+    <h2 class="visually-hidden">{% trans "Request information" %}</h2>
     {# header (status, status icon) #}
     <div class="info-box__header d-flex flex-nowrap justify-content-between align-items-center">
         <div>
-            <h2 class="h5 info-box__title">{{ object.readable_status }}</h2>
+            <h3 class="h5 info-box__title">{{ object.readable_status }}</h3>
             {% if object.awaits_response and object.status_representation != 'awaiting_response' %}
                 <div class="info-box__subtitle">{% trans "Awaiting response" %}</div>
             {% endif %}

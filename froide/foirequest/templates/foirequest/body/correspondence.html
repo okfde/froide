@@ -1,31 +1,153 @@
 {% load i18n %}
 {% load foirequest_tags %}
-<div id="correspondence" class="mb-6">
-    {% block foirequest_messages %}
-        {% for message in object.messages %}
-            {% if forloop.last and object.messages|length > 1 %}
-                {% block foirequest_message_before_last %}{% endblock %}
-            {% endif %}
-            {% include "foirequest/body/message/message.html" %}
-            {% if forloop.last and object.messages|length == 1 %}
-                {% block foirequest_message_after_single %}{% endblock %}
-            {% endif %}
-        {% empty %}
-            <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
-        {% endfor %}
-    {% endblock foirequest_messages %}
-    {% block after_foirequest_messages %}
-        {% if object|can_write_foirequest:request and object.awaits_classification %}
-            <div class="position-sticky d-print-none" style="bottom: 0">
-                <div class="bg-warning-subtle text-center p-2">
-                    <a href="#set-status" data-scrollto="set-status">{% translate "Please set the status of this request!" %}</a>
+<div role="tabpanel"
+     class="tab-pane fade {% if not show_documents %}active show{% endif %} bg-body-secondary"
+     id="correspondence-panel"
+     aria-labelledby="correspondence-tab">
+    {# Correspondence, Action buttons and Timeline #}
+    <h2 class="visually-hidden">{% translate "Correspondence" %}</h2>
+    {# Action buttons #}
+    <div class="container-sm-full px-0">
+        <div class="row mx-3 mx-lg-0 py-4 d-print-none">
+            <div class="col-lg-8 px-0 d-flex">
+                {% if object|can_write_foirequest:request and object.public_body %}
+                    <a href="#write-messages"
+                       data-scrollto="write-messages"
+                       class="btn btn-primary btn-sm me-1 write-message-top-link"
+                       role="button">
+                        <i class="fa fa-send" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline">{% trans "Send message" %}</span>
+                    </a>
+                    <a href="{% url "foirequest-upload_postal_message_create" slug=object.slug %}"
+                       class="btn btn-primary btn-sm upload-post-link">
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                        <span>{% trans "Upload Mail" %}</span>
+                    </a>
+                {% endif %}
+                {% with hide_label=object|can_write_foirequest:request %}
+                    <a href="#"
+                       class="btn btn-outline-secondary btn-sm js-trigger-expand-all-messages ms-auto"
+                       title="{% trans "Expand/collapse all" %}">
+                        <i class="fa fa-expand" aria-hidden="true"></i>
+                        <i class="fa fa-compress d-none-important" aria-hidden="true"></i>
+                        <span class="d-none-important {% if hide_label %}d-none d-md-inline{% endif %}">{% trans "Collapse all" %}</span>
+                        <span class="{% if hide_label %}d-none d-md-inline{% endif %}">{% trans "Expand all" %}</span>
+                    </a>
+                    <a href="#"
+                       class="btn btn-outline-secondary btn-sm js-trigger-scroll-to-end ms-1"
+                       title="{% trans "Scroll to end" %}">
+                        <i class="fa fa-long-arrow-down" aria-hidden="true"></i>
+                        <span {% if hide_label %}class="d-none d-md-inline"{% endif %}>{% trans "Scroll to end" %}</span>
+                    </a>
+                {% endwith %}
+            </div>
+        </div>
+        <div class="row mx-0">
+            <div class="px-0 col-lg-8">
+                <div id="correspondence" class="mb-6">
+                    {% block foirequest_messages %}
+                        <ul class="list-unstyled mb-0" role="list">
+                            {% for message in object.messages %}
+                                {% if forloop.last and object.messages|length > 1 %}
+                                    {% block foirequest_message_before_last %}{% endblock %}
+                                {% endif %}
+                                {% include "foirequest/body/message/message.html" %}
+                                {% if forloop.last and object.messages|length == 1 %}
+                                    {% block foirequest_message_after_single %}{% endblock %}
+                                {% endif %}
+                            {% empty %}
+                                <li>{% blocktrans %}No messages yet{% endblocktrans %}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endblock foirequest_messages %}
+                    {% block after_foirequest_messages %}
+                        {% if object|can_write_foirequest:request and object.awaits_classification %}
+                            <div class="position-sticky d-print-none" style="bottom: 0">
+                                <div class="bg-warning-subtle text-center p-2">
+                                    <a href="#set-status" data-scrollto="set-status">{% translate "Please set the status of this request!" %}</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endblock %}
+                    {% if object.closed %}
+                        <div class="alert alert-secondary">
+                            {% blocktrans %}This request has been closed and cannot receive further messages.{% endblocktrans %}
+                        </div>
+                    {% endif %}
+                </div>
+                {% if object|can_write_foirequest:request and object.public_body %}
+                    {# Reply action buttons #}
+                    <div class="text-center mb-6 d-print-none">
+                        <a href="#write-messages"
+                           data-scrollto="write-messages"
+                           class="btn btn-primary m-2">
+                            <i class="fa fa-send" aria-hidden="true"></i> {% trans "Send message" %}
+                        </a>
+                        <a href="{% url "foirequest-upload_postal_message_create" slug=object.slug %}"
+                           class="btn btn-primary m-2">
+                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                            <span>{% trans "Upload Mail" %}</span>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="px-0 px-lg-3 col-lg-4 d-print-none">{% include "foirequest/body/timeline.html" %}</div>
+        </div>
+    </div>
+    {# Reply form #}
+    {% if object|can_write_foirequest:request and object.public_body %}
+        <div id="reply-form-helper" class="d-print-none"></div>
+        <div id="write-messages" class="reply-form bg-body d-print-none">
+            <a href="#"
+               class="btn btn-link reply-form__toggle-sticky-btn d-none d-md-inline">
+                <i class="fa fa-unlock" aria-hidden="true"></i>
+                {% trans "Sticky" %}
+            </a>
+            <div class="reply-form__wrap py-4">
+                <div class="container px-lg-0">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active"
+                                       data-bs-toggle="tab"
+                                       href="#write-message"
+                                       role="tab"
+                                       aria-controls="write-message"
+                                       aria-selected="true">{% trans "Write message" %}</a>
+                                </li>
+                                {% if object.can_be_escalated %}
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                           data-bs-toggle="tab"
+                                           href="#escalate"
+                                           role="tab"
+                                           aria-controls="escalate"
+                                           aria-selected="false">{% trans "Start mediation" %}</a>
+                                    </li>
+                                {% endif %}
+                                {% block request_action_menu_footer %}
+                                {% endblock request_action_menu_footer %}
+                            </ul>
+                            <div class="tab-content">
+                                <div id="write-message" class="tab-pane fade show active">
+                                    {% include "foirequest/body/actions/send_message.html" %}
+                                </div>
+                                {% if object.can_be_escalated %}
+                                    <div id="escalate"
+                                         class="tab-pane fade"
+                                         role="tabpanel"
+                                         aria-labelledby="profile-tab">
+                                        {% include "foirequest/body/actions/escalate.html" %}
+                                    </div>
+                                {% endif %}
+                                {% block request_action_pane_footer %}
+                                {% endblock request_action_pane_footer %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        {% endif %}
-    {% endblock %}
-    {% if object.closed %}
-        <div class="alert alert-secondary">
-            {% blocktrans %}This request has been closed and cannot receive further messages.{% endblocktrans %}
         </div>
     {% endif %}
 </div>
