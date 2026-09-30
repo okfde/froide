@@ -54,6 +54,13 @@ async def test_make_not_logged_in_request(
     await page.fill("[name=user_email]", user_email)
     await page.locator("[name=terms]").click()
     await check_a11y(page, suffix="step_create_account")
+    step = page.locator("#step_create_account")
+    await expect(
+        step.get_by_text("Your address will not be displayed publicly")
+    ).to_be_visible()
+    await expect(
+        step.get_by_text("The given address will need to be confirmed")
+    ).to_be_visible()
     privacy = page.get_by_role("group", name="Privacy")
     await expect(privacy.locator("[name=private]")).to_have_count(2)
     await expect(privacy).to_have_accessible_description(

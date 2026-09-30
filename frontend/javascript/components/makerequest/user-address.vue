@@ -28,7 +28,7 @@
           @keyup="addressUpdated()"
         />
         <p class="help-block">
-          <span v-html="addressHelpText" />
+          <span v-html="addressHelpTextValue" />
         </p>
         <div
           v-if="!clearFormErrors && errors.address"

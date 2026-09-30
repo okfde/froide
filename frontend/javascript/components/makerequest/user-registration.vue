@@ -104,6 +104,9 @@
           :maxlength="userformFields.user_email.max_length"
           @change="updateEmailChanged(true)"
         />
+        <p class="help-block">
+          {{ userformFields.user_email.help_text }}
+        </p>
         <p
           v-for="e in userformErrors.user_email"
           :key="e.message"
