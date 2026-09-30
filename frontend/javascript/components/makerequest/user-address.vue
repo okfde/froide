@@ -18,6 +18,7 @@
           ref="address"
           name="address"
           class="form-control"
+          aria-describedby="id_address_helptext"
           :class="{
             'is-invalid':
               (errors.address && !addressChanged) || addressValid === false
@@ -27,7 +28,7 @@
           @change="addressUpdated(true)"
           @keyup="addressUpdated()"
         />
-        <p class="help-block">
+        <p id="id_address_helptext" class="help-block">
           <span v-html="addressHelpTextValue" />
         </p>
         <div

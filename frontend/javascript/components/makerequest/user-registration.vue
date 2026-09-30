@@ -102,9 +102,10 @@
           :placeholder="userformFields.user_email.placeholder"
           required
           :maxlength="userformFields.user_email.max_length"
+          aria-describedby="id_user_email_helptext"
           @change="updateEmailChanged(true)"
         />
-        <p class="help-block">
+        <p id="id_user_email_helptext" class="help-block">
           {{ userformFields.user_email.help_text }}
         </p>
         <p
