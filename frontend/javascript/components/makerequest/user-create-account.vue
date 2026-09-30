@@ -24,7 +24,7 @@
     />
 
     <template v-if="config.settings.user_can_hide_web">
-      <h3 class="fs-6">{{ i18n.privacy }}</h3>
+      <h3 id="id_private_label" class="fs-6">{{ i18n.privacy }}</h3>
       <UserPublic
         :user-form="userForm"
         :config="config"
@@ -35,7 +35,9 @@
     </template>
 
     <template v-if="config.settings.user_can_claim_vip && showUserClaimsVip">
-      <h3 class="fs-6">{{ userForm.fields.claims_vip.label }}</h3>
+      <h3 id="id_claims_vip_label" class="fs-6">
+        {{ userForm.fields.claims_vip.label }}
+      </h3>
       <UserClaimsVip
         :user-form="userForm"
         v-model:initial-value="userClaimsVip"

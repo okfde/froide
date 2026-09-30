@@ -1,5 +1,6 @@
 import re
 
+from django import forms
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.urls import reverse
@@ -9,11 +10,17 @@ import pytest
 from playwright.async_api import Page, expect
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
+from froide.account.forms import NewUserForm
 from froide.foirequest.models import FoiRequest, RequestDraft
 from froide.foirequest.tests import factories
 from froide.publicbody.models import PublicBody
 
-from .utils import do_login, go_to_make_request_url, go_to_request_page
+from .utils import (
+    do_login,
+    go_to_create_account_step,
+    go_to_make_request_url,
+    go_to_request_page,
+)
 
 User = get_user_model()
 
@@ -43,11 +50,15 @@ async def test_make_not_logged_in_request(
     await page.fill("[name=first_name]", "Peter")
     await page.fill("[name=last_name]", "Parker")
     await page.fill("[name=address]", "123 Queens Blvd\n12345 Queens")
-
     user_email = "peter.parker@example.com"
     await page.fill("[name=user_email]", user_email)
     await page.locator("[name=terms]").click()
     await check_a11y(page, suffix="step_create_account")
+    privacy = page.get_by_role("group", name="Privacy")
+    await expect(privacy.locator("[name=private]")).to_have_count(2)
+    await expect(privacy).to_have_accessible_description(
+        re.compile("Your name will be sent to public bodies")
+    )
     await page.locator("#step_create_account .btn-primary").click()
 
     await page.fill("[name=subject]", req_title)
@@ -57,6 +68,11 @@ async def test_make_not_logged_in_request(
     await page.locator("#step_write_request .btn-primary").click()
 
     await check_a11y(page, suffix="step_request_public")
+    visibility = page.get_by_role("group", name="Public visibility of the request")
+    await expect(visibility.locator("[name=public]")).to_have_count(2)
+    await expect(visibility).to_have_accessible_description(
+        re.compile("you contribute to a public archive of official information")
+    )
     await page.locator("#step_request_public .btn-primary").click()
 
     await check_a11y(page, suffix="step_preview_submit")
@@ -461,3 +477,35 @@ async def test_set_status(
 
     req.refresh_from_db()
     assert req.resolution == to_resolution
+
+
+@pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
+@pytest.mark.asyncio(loop_scope="session")
+async def test_make_request_claims_vip(
+    page: Page, live_server, public_body_with_index, check_a11y, settings, monkeypatch
+):
+    # claims_vip is only declared on the form if enabled at import time
+    monkeypatch.setitem(
+        NewUserForm.base_fields,
+        "claims_vip",
+        forms.TypedChoiceField(
+            required=False,
+            initial=False,
+            label="For journalists",
+            help_text="You work in journalism?",
+            choices=[(False, "No"), (True, "Yes")],
+            coerce=lambda x: x != "False",
+        ),
+    )
+    settings.FROIDE_CONFIG = {**settings.FROIDE_CONFIG, "user_can_claim_vip": True}
+    pb = PublicBody.objects.all().first()
+
+    await go_to_create_account_step(page, live_server, pb)
+
+    group = page.get_by_role("group", name="For journalists")
+    await expect(group.locator("[name=claims_vip]")).to_have_count(2)
+    await check_a11y(page, suffix="step_create_account")
+    await expect(group).to_have_accessible_description(
+        re.compile("You work in journalism")
+    )

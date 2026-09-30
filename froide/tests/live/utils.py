@@ -21,6 +21,18 @@ async def go_to_make_request_url(page, live_server, pb=None):
 
 
 @pytest.mark.asyncio(loop_scope="session")
+async def go_to_create_account_step(page, live_server, pb):
+    """Write a request to `pb` while logged out, up to the sign up step."""
+    await go_to_make_request_url(page, live_server, pb=pb)
+    await page.fill("[name=subject]", "FoiRequest Number")
+    await page.fill("[name=body]", "Documents describing & something...")
+    await page.locator("[name=confirm]").click()
+    await page.locator("#step_write_request .btn-primary").click()
+    await page.locator("#step_request_public .btn-primary").click()
+    await page.locator("#step_login_create .btn-primary >> nth=0").click()
+
+
+@pytest.mark.asyncio(loop_scope="session")
 async def go_to_request_page(page, live_server, foirequest):
     path = reverse("foirequest-show", kwargs={"slug": foirequest.slug})
     await page.goto(live_server.url + path)

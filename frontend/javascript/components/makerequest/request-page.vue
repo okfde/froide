@@ -361,14 +361,18 @@
                 v-show="step == STEPS.REQUEST_PUBLIC"
                 id="step_request_public"
               >
-                <h2>{{ i18n.requestVisibility }}</h2>
-                <DjangoSlot name="request-public-preamble" />
+                <h2 id="id_public_label">{{ i18n.requestVisibility }}</h2>
+                <div id="id_public_preamble">
+                  <DjangoSlot name="request-public-preamble" />
+                </div>
                 <RequestPublic
                   :form="requestForm"
                   :hide-public="hidePublic"
                   v-model:initial-public="requestPublic"
                 />
-                <DjangoSlot name="request-public-postamble" />
+                <div id="id_public_postamble">
+                  <DjangoSlot name="request-public-postamble" />
+                </div>
                 <div class="my-4">
                   <button
                     type="button"
