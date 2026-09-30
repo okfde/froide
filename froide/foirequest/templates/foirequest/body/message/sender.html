@@ -1,15 +1,16 @@
 {% load i18n %}
 {% load foirequest_tags %}
-<div class="alpha-message__sender text-truncate">
+<h3 id="{{ message.get_html_id }}-sender"
+    class="alpha-message__sender text-truncate h6 mb-0">
     {% if object|can_read_foirequest_authenticated:request %}
         {% if message.is_response %}
             <span title="{{ message.sender_email }}">
                 {% if message.user_real_sender and message.user_real_sender != message.sender_public_body.name %}
                     {% if message.sender_public_body %}
+                        <span>{{ message.sender_public_body.name }} –</span>
                         <span class="redacted-dummy redacted-hover"
                               data-bs-toggle="tooltip"
                               title="{% trans 'Only visible to you' %}">{{ message.user_real_sender }}</span>
-                        <span>– {{ message.sender_public_body.name }}</span>
                     {% else %}
                         {{ message.sender_name }}
                     {% endif %}
@@ -32,10 +33,10 @@
     {% else %}
         {% if message.is_response %}
             {% if froide.public_body_officials_public %}
+                {% if message.sender_public_body %}<span>{{ message.sender_public_body.name }} –</span>{% endif %}
                 {% if message.sender != message.sender_public_body.name %}
                     <span title="{{ message.sender }}">{{ message.sender }}</span>
                 {% endif %}
-                {% if message.sender_public_body %}<span>– {{ message.sender_public_body.name }}</span>{% endif %}
             {% else %}
                 {% if message.sender_public_body %}
                     <span title="{{ message.sender_public_body.name }}">{{ message.sender_public_body.name }}</span>
@@ -47,4 +48,4 @@
             <span title="{{ message.sender }}">{{ message.sender }}</span>
         {% endif %}
     {% endif %}
-</div>
+</h3>
