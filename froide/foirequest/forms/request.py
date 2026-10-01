@@ -142,7 +142,9 @@ class RequestForm(JSONMixin, forms.Form):
             trusted = self.request.user.is_trusted
         if not trusted and len(body) > MAX_BODY_LENGTH:
             raise forms.ValidationError(
-                _("Message exceeds {} character limit.").format(MAX_BODY_LENGTH)
+                _("Message exceeds {limit} character limit.").format(
+                    limit=MAX_BODY_LENGTH
+                )
             )
         return body
 

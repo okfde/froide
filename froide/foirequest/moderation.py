@@ -80,7 +80,7 @@ class ApplyInternalTag(BaseModerationAction):
             user=request.user,
             context={"action": "tag", "tag": self.tag},
         )
-        return _("Request got tag “{}”.").format(self.tag)
+        return _("Request got tag “{tag}”.").format(tag=self.tag)
 
 
 class ApplyUserTag(BaseModerationAction):
@@ -98,7 +98,7 @@ class ApplyUserTag(BaseModerationAction):
             user=request.user,
             context={"action": "user_tag", "tag": self.tag},
         )
-        return _("User got tag “{}”.").format(self.tag)
+        return _("User got tag “{tag}”.").format(tag=self.tag)
 
 
 class AddUserNote(BaseModerationAction):

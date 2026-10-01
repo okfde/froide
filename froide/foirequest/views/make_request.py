@@ -308,9 +308,9 @@ class MakeRequestView(FormView):
                     "jurisdiction agnostic."
                 ),
                 "replacePlaceholderMarker": _(
-                    _("Please replace all placeholder values marked by “{}”.").format(
-                        PLACEHOLDER_MARKER
-                    )
+                    _(
+                        "Please replace all placeholder values marked by “{marker}”."
+                    ).format(marker=PLACEHOLDER_MARKER)
                 ),
                 "resetFullText": _("Reset text to template version"),
                 "savedFullTextChanges": _("Your previous customized text"),

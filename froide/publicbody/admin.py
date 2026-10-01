@@ -536,7 +536,8 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
             self._confirm_pb(pb, request.user)
 
         self.message_user(
-            request, _("{} public bodies were confirmed.").format(queryset.count())
+            request,
+            _("{count} public bodies were confirmed.").format(count=queryset.count()),
         )
 
     def send_message(self, request, pk):
@@ -743,7 +744,7 @@ class PublicBodyChangeProposalAdmin(admin.ModelAdmin):
             obj.accept(request.user, batch=True)
 
         self.message_user(
-            request, _("{} change proposals were accepted.").format(count)
+            request, _("{count} change proposals were accepted.").format(count=count)
         )
 
 
