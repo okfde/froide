@@ -4,6 +4,7 @@ from pathlib import Path
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core import mail
+from django.core.validators import EmailValidator
 from django.db.models import signals
 from django.test import override_settings
 from django.urls import reverse
@@ -599,3 +600,31 @@ async def test_manage_attachments_document_modal(
     ).to_have_accessible_description(
         re.compile("Describe the contents of the document")
     )
+
+
+@pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
+@pytest.mark.asyncio(loop_scope="session")
+async def test_make_request_server_side_error(page: Page, live_server):
+    pb = factories.PublicBodyFactory()
+    await go_to_create_account_step(page, live_server, pb)
+    # Valid for the browser, invalid for Django
+    await fill_create_account_step(page, email="peter.parker@example")
+    await page.locator("#step_create_account .btn-primary").click()
+
+    # Form errors are fetched and displayed without reloading the page
+    async with page.expect_response(lambda r: r.request.method == "POST") as resp:
+        await page.locator("#send-request-button").click()
+    assert (await resp.value).status == 400
+    # The review step marks the rejected email for correction
+    correct = page.locator(
+        "#step_preview_submit .row",
+        has=page.get_by_role("heading", name="Email", exact=True),
+    ).get_by_role("button")
+    await expect(correct).to_have_text("Correct")
+    await correct.click()
+
+    # Go back to account creation step for correction
+    await expect(
+        page.locator("#step_create_account").get_by_text(str(EmailValidator.message))
+    ).to_be_visible()
