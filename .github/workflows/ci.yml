@@ -20,6 +20,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - uses: j178/prek-action@v1
+        env:
+          SKIP: makemessages-de
 
   test:
     runs-on: ubuntu-latest
@@ -46,6 +48,11 @@ jobs:
           uv sync
           playwright install --with-deps chromium
           pnpm install
+      - name: Check German translations are up to date
+        if: matrix.python-version == '3.13'
+        run: |
+          make checkmessagesde
+          git diff --exit-code -- '**/django.po'
       - name: Build frontend
         run: pnpm run build
       - name: Compile translations
