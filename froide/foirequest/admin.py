@@ -17,7 +17,8 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path, reverse, reverse_lazy
 from django.utils import timezone
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from froide.account.models import UserTag, annotate_deterministic_field
@@ -234,6 +235,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "unpublish",
         "unpublish_permanently",
         "add_to_project",
+        "remove_from_project",
         "set_team",
         "unblock_request",
         "close_requests",
@@ -254,7 +256,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
     )
     save_on_top = True
 
-    readonly_fields = ("secret_address", "secret")
+    readonly_fields = ("secret_address", "secret", "project", "project_order")
 
     tag_all = make_batch_tag_action(
         autocomplete_url=reverse_lazy("api:request-tags-autocomplete")
@@ -477,7 +479,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
             f = Form(request.POST)
             if f.is_valid():
                 project = f.cleaned_data["obj"]
-                project.add_requests(queryset)
+                FoiProject.move_requests(queryset, project)
                 self.message_user(request, _("Successfully added requests to project."))
                 # Return None to display the change list page again.
                 return None
@@ -497,6 +499,14 @@ class FoiRequestAdmin(admin.ModelAdmin):
         return TemplateResponse(
             request, "foirequest/admin/add_to_project.html", context
         )
+
+    @admin.action(
+        description=_("Remove selected requests from their project"),
+        permissions=["change"],
+    )
+    def remove_from_project(self, request, queryset):
+        FoiProject.move_requests(queryset.filter(project__isnull=False), None)
+        self.message_user(request, _("Successfully removed requests from project."))
 
     set_team = make_choose_object_action(
         Team, execute_set_team, _("Set team for requests...")
@@ -1162,7 +1172,9 @@ def execute_move_requests(admin, request, queryset, action_obj):
     assert not queryset.filter(id=action_obj.id).exists()
 
     for foi_project in queryset:
-        action_obj.add_requests(FoiRequest.objects.filter(project=foi_project))
+        FoiProject.move_requests(
+            FoiRequest.objects.filter(project=foi_project), action_obj
+        )
 
 
 @admin.register(FoiProject)
@@ -1187,8 +1199,9 @@ class FoiProjectAdmin(admin.ModelAdmin):
     raw_id_fields = (
         "user",
         "team",
-        "publicbodies",
     )
+    exclude = ["publicbodies"]
+    readonly_fields = ["request_count", "requests_admin_link", "publicbodies_links"]
     actions = ["move_requests", "publish"]
 
     def site_link(self, obj):
@@ -1197,11 +1210,26 @@ class FoiProjectAdmin(admin.ModelAdmin):
         )
 
     def requests_admin_link(self, obj):
+        if obj.pk is None:
+            return "-"
         return format_html(
             '<a href="{}">{}</a>',
             reverse("admin:foirequest_foirequest_changelist")
             + ("?project__id__exact={}".format(obj.id)),
             _("Requests in admin"),
+        )
+
+    @admin.display(description=_("Public Bodies"))
+    def publicbodies_links(self, obj):
+        if obj.pk is None:
+            return "-"
+        return format_html_join(
+            mark_safe("<br>"),
+            '<a href="{}">{}</a>',
+            (
+                (reverse("admin:publicbody_publicbody_change", args=[pb.id]), pb.name)
+                for pb in obj.publicbodies.order_by("name")
+            ),
         )
 
     move_requests = make_choose_object_action(

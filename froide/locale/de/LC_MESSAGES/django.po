@@ -6434,6 +6434,10 @@ msgstr "Entferne aus Such-Index"
 msgid "Remove password and publish"
 msgstr "Veröffentlichen ohne Passwort"
 
+#: froide/foirequest/admin.py
+msgid "Remove selected requests from their project"
+msgstr "Ausgewählte Anfragen aus ihrem Projekt entfernen"
+
 #: froide/publicbody/admin.py
 msgid "Removed from search index"
 msgstr "Aus Such-Index entfernt"
@@ -7538,7 +7542,7 @@ msgstr "Erfolgreiche Anfragen"
 
 #: froide/foirequest/admin.py
 msgid "Successfully added requests to project."
-msgstr "Anfragen wurde erfolgreich zu Projekt hinzugefügt."
+msgstr "Anfragen wurden erfolgreich zu Projekt hinzugefügt."
 
 #: froide/helper/admin_utils.py
 msgid "Successfully added tags"
@@ -7551,6 +7555,10 @@ msgstr "Erfolgreich ausgeführt."
 #: froide/foirequest/admin.py
 msgid "Successfully marked requests as identical."
 msgstr "Markierung als identisch war erfolgreich."
+
+#: froide/foirequest/admin.py
+msgid "Successfully removed requests from project."
+msgstr "Anfragen wurden erfolgreich aus Projekt entfernt."
 
 #: froide/foirequest/templates/foirequest/body/message/guidance.html
 msgid "Suggested reply"
