@@ -408,7 +408,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
         start_export_task.delay(export_user.id, notification_user_id=request.user.id)
         self.message_user(
-            request, _("Export of user '{}' started.").format(export_user)
+            request, _("Export of user '{user}' started.").format(user=export_user)
         )
         return None
 

@@ -331,10 +331,8 @@ class TusTerminateMixin(mixins.DestroyModelMixin):
         # When the upload is still saving, we're not able to destroy the entity
         if upload.state == UploadState.SAVING:
             return Response(
-                _(
-                    'Unable to terminate upload while in state "{}".'.format(
-                        upload.state
-                    )
+                _('Unable to terminate upload while in state "{state}".').format(
+                    state=upload.state
                 ),
                 status=status.HTTP_409_CONFLICT,
             )

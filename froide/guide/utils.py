@@ -223,7 +223,9 @@ def send_notifications(notifications):
     requests = list(requests)
     single_request = len(requests) == 1
     if single_request:
-        subject = _("New guidance for your request [#{}]").format(requests[0])
+        subject = _("New guidance for your request [#{request}]").format(
+            request=requests[0]
+        )
     else:
         subject = _("New guidance for your requests")
 

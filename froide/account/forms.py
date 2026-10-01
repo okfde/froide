@@ -190,9 +190,9 @@ class NewUserBaseForm(AddressBaseForm):
         if ALLOW_PSEUDONYM and not address_required:
             self.fields["first_name"].help_text = format_html(
                 _(
-                    '<a target="_blank" href="{}">You may use a pseudonym if you don\'t need to receive postal messages</a>.'
+                    '<a target="_blank" href="{url}">You may use a pseudonym if you don\'t need to receive postal messages</a>.'
                 ),
-                get_content_url("pseudonym"),
+                url=get_content_url("pseudonym"),
             )
 
     def clean_user_email(self) -> str:

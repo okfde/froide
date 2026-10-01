@@ -373,7 +373,9 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
             )
             if proposal.user != user and not batch:
                 proposal.user.send_mail(
-                    _("Changes to public body “{}” have been applied").format(pb.name),
+                    _("Changes to public body “{name}” have been applied").format(
+                        name=pb.name
+                    ),
                     _(
                         "Hello,\n\nYou can find the changed public body here:"
                         "\n\n{url}\n\nAll the Best,\n{site_name}"
