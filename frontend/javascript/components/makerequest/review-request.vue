@@ -335,7 +335,7 @@ export default {
     },
     hasFormErrorsEmail() {
       if (this.userForm?.fields.user_email?.value !== this.user.email) return
-      return 'email' in this.userForm.errors
+      return 'user_email' in this.userForm.errors
     },
     needCorrectionSubject() {
       return this.hasFormErrorsSubject || this.subjectValid === false
