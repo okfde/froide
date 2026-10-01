@@ -24,6 +24,17 @@ repos:
     hooks:
       - id: django-blocktrans-trimmed
         name: Ensure blocktrans/blocktranslate use trimmed
-        language: python
+        language: script
         entry: scripts/enforce_blocktrans_trimmed.py
         files: \.html$
+      - id: gettext-named-placeholders
+        name: Ensure translatable strings use named placeholders
+        language: script
+        entry: scripts/enforce_named_placeholders.py
+        files: \.py$
+      - id: makemessages-de
+        name: Ensure German translations are up to date
+        language: system
+        entry: make checkmessagesde
+        files: \.(py|html|txt|po)$
+        pass_filenames: false
