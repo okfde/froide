@@ -404,8 +404,8 @@ msgstr "<a href=\"%(url)s\">Bitte prüfen Sie unsere Liste der Behörden</a>, ob
 
 #: froide/account/forms.py
 #, python-brace-format
-msgid "<a target=\"_blank\" href=\"{}\">You may use a pseudonym if you don't need to receive postal messages</a>."
-msgstr "<a target=\"_blank\" href=\"{}\">Sie können ein Pseudonym verwenden, wenn Sie keine Post erhalten müssen</a>."
+msgid "<a target=\"_blank\" href=\"{url}\">You may use a pseudonym if you don't need to receive postal messages</a>."
+msgstr "<a target=\"_blank\" href=\"{url}\">Sie können ein Pseudonym verwenden, wenn Sie keine Post erhalten müssen</a>."
 
 #: froide/foirequest/templates/foirequest/header/header.html
 #, python-format
@@ -616,6 +616,7 @@ msgid "Account Privacy:"
 msgstr "Privatsphäreneinstellung:"
 
 #: froide/account/templates/account/settings.html
+#: froide/account/templates/account/settings_base.html
 msgid "Account Settings"
 msgstr "Nutzerkonto-Einstellungen"
 
@@ -1369,8 +1370,8 @@ msgstr "Ändern ohne Übernehmen"
 
 #: froide/publicbody/forms.py
 #, python-brace-format
-msgid "Changes to public body “{}” have been applied"
-msgstr "Änderungen an Behörde „{}“ wurden vorgenommen"
+msgid "Changes to public body “{name}” have been applied"
+msgstr "Änderungen an Behörde „{name}“ wurden vorgenommen"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "Check all requests"
@@ -1601,7 +1602,7 @@ msgstr "Verknüpfte Anfragen schließen"
 msgid "Close requests"
 msgstr "Anfrage schließen"
 
-#: froide/foirequest/templates/foirequest/body/body.html
+#: froide/foirequest/templates/foirequest/body/correspondence.html
 msgid "Collapse all"
 msgstr "Alle einklappen"
 
@@ -1693,6 +1694,10 @@ msgstr "Konflikt."
 #: froide/upload/forms.py
 msgid "Connected to the Internet"
 msgstr "Verbunden mit dem Internet"
+
+#: froide/proof/forms.py
+msgid "Consent to store proof in your account"
+msgstr "Einwilligung, den Nachweis in Ihrem Konto zu speichern"
 
 #: froide/foirequest/templates/foirequest/header/header.html
 msgid "Consider sending a letter to a mediator"
@@ -1798,6 +1803,7 @@ msgstr "Untenstehenden URL kopieren"
 msgid "Correct"
 msgstr "Korrigieren"
 
+#: froide/foirequest/templates/foirequest/body/correspondence.html
 #: froide/foirequest/templates/foirequest/header/tabs.html
 msgid "Correspondence"
 msgstr "Korrespondenz"
@@ -1871,10 +1877,6 @@ msgstr "Erstellen einer Batch-Anfrage"
 #: froide/document/templates/document/upload.html
 msgid "Create documents"
 msgstr "Dokumente erstellen"
-
-#: froide/document/views.py
-msgid "Create documents now"
-msgstr "Dokumente jetzt erstellen"
 
 #: froide/foirequest/views/request_actions.py
 msgid "Create response now"
@@ -2609,6 +2611,14 @@ msgstr "Rauswerfen"
 msgid "Email"
 msgstr "E-Mail"
 
+#: froide/bounce/models.py
+msgid "Email Token"
+msgstr "E-Mail-Token"
+
+#: froide/bounce/models.py
+msgid "Email Tokens"
+msgstr "E-Mail-Tokens"
+
 #: froide/account/forms.py froide/organization/forms.py froide/team/forms.py
 msgid "Email address"
 msgstr "E-Mail-Adresse"
@@ -2748,11 +2758,11 @@ msgstr "Beispiele:"
 msgid "Execute"
 msgstr "Ausführen"
 
-#: froide/foirequest/templates/foirequest/body/body.html
+#: froide/foirequest/templates/foirequest/body/correspondence.html
 msgid "Expand all"
 msgstr "Alle ausklappen"
 
-#: froide/foirequest/templates/foirequest/body/body.html
+#: froide/foirequest/templates/foirequest/body/correspondence.html
 msgid "Expand/collapse all"
 msgstr "Alle ausklappen"
 
@@ -2766,8 +2776,8 @@ msgstr "Läuft ab am"
 
 #: froide/account/admin.py
 #, python-brace-format
-msgid "Export of user '{}' started."
-msgstr "Export von Nutzer:in '{}' gestartet."
+msgid "Export of user '{user}' started."
+msgstr "Export von Nutzer:in '{user}' gestartet."
 
 #: froide/foirequest/admin.py
 msgid "Export public body tag stats to CSV"
@@ -4430,7 +4440,7 @@ msgstr "Lade PDF..."
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
 #: froide/foirequest/templates/foirequest/redact.html
-#: froide/foirequest/views/message.py
+#: froide/foirequest/views/make_request.py froide/foirequest/views/message.py
 #: froide/helper/templates/helper/auto_submit.html
 #: froide/publicbody/templates/publicbody/admin/match_georegions.html
 #: froide/upload/forms.py
@@ -4730,8 +4740,8 @@ msgstr "Nachrichtenentwürfe"
 
 #: froide/foirequest/forms/request.py
 #, python-brace-format
-msgid "Message exceeds {} character limit."
-msgstr "Nachrichtentext überschreitet die Begrenzung von {} Zeichen."
+msgid "Message exceeds {limit} character limit."
+msgstr "Nachrichtentext überschreitet die Begrenzung von {limit} Zeichen."
 
 #: froide/foirequest/models/message.py
 #, python-format
@@ -4973,8 +4983,8 @@ msgstr "Neues Dokument mit {count} Seiten"
 
 #: froide/guide/utils.py
 #, python-brace-format
-msgid "New guidance for your request [#{}]"
-msgstr "Neuer Hinweis zu Ihrer Anfrage [#{}]"
+msgid "New guidance for your request [#{request}]"
+msgstr "Neuer Hinweis zu Ihrer Anfrage [#{request}]"
 
 #: froide/guide/utils.py
 msgid "New guidance for your requests"
@@ -5252,17 +5262,17 @@ msgid_plural "%(count)s requests to this public body"
 msgstr[0] "Eine Anfrage an diese Behörde"
 msgstr[1] "%(count)s Anfragen an diese Behörde"
 
+#: froide/foirequest/views/make_request.py
+msgctxt "js"
+msgid "One result"
+msgstr "Ein Ergebnis"
+
 #: froide/helper/templates/helper/search/search_base.html
 #, python-format
 msgid "One result"
 msgid_plural "%(num)s results"
 msgstr[0] "Ein Ergebnis"
 msgstr[1] "%(num)s Ergebnisse"
-
-#: froide/foirequest/views/make_request.py
-msgctxt "js"
-msgid "One result"
-msgstr "Ein Ergebnis"
 
 #: froide/foirequest/api_views/attachment.py
 msgid "Only PDF attachments can be converted to a document."
@@ -5726,8 +5736,8 @@ msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften."
 
 #: froide/foirequest/validators.py froide/foirequest/views/make_request.py
 #, python-brace-format
-msgid "Please replace all placeholder values marked by “{}”."
-msgstr "Bitte ersetzen Sie alle Platzhalter-Werte, die mit „{}“ markiert sind."
+msgid "Please replace all placeholder values marked by “{marker}”."
+msgstr "Bitte ersetzen Sie alle Platzhalter-Werte, die mit „{marker}“ markiert sind."
 
 #: froide/foirequest/views/request_actions.py
 #, python-format
@@ -6389,6 +6399,10 @@ msgstr "Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag eingetrag
 msgid "Reindex collection"
 msgstr "Sammlung neu indizieren"
 
+#: froide/georegion/models.py
+msgid "Related Regions"
+msgstr "Verwandte Regionen"
+
 #: froide/georegion/admin.py
 msgid "Relative to"
 msgstr "Relativ zu"
@@ -6527,8 +6541,8 @@ msgstr "Anfrageentwürfe"
 
 #: froide/foirequest/moderation.py
 #, python-brace-format
-msgid "Request got tag “{}”."
-msgstr "Anfrage hat nun Tag „{}“"
+msgid "Request got tag “{tag}”."
+msgstr "Anfrage hat nun Tag „{tag}“"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
 msgid "Request information"
@@ -6849,7 +6863,7 @@ msgstr "Gescanntes Dokument"
 msgid "Scanned Letter"
 msgstr "Gescannter Brief"
 
-#: froide/foirequest/templates/foirequest/body/body.html
+#: froide/foirequest/templates/foirequest/body/correspondence.html
 #: froide/foirequest/templates/foirequest/body/timeline.html
 msgid "Scroll to end"
 msgstr "Zum Ende"
@@ -7061,7 +7075,7 @@ msgstr "Sende E-Mail an Nutzer:innen"
 msgid "Send mail to users..."
 msgstr "Sende E-Mail an Nutzer:innen..."
 
-#: froide/foirequest/templates/foirequest/body/body.html
+#: froide/foirequest/templates/foirequest/body/correspondence.html
 #: froide/foirequest/templates/foirequest/snippets/withdrawal_popup.html
 msgid "Send message"
 msgstr "Nachricht versenden"
@@ -7190,6 +7204,7 @@ msgstr "Diese Tags auf den gewählten Objekten setzen:"
 
 #: froide/account/apps.py froide/account/templates/account/settings_base.html
 #: froide/account/templates/oauth2_provider/base.html
+#: froide/foirequest/templates/foirequest/body/settings.html
 #: froide/foirequest/templates/foirequest/header/tabs.html
 #: froide/templates/mfa/base.html
 msgid "Settings"
@@ -7418,7 +7433,7 @@ msgstr "Seiten hier auftrennen"
 msgid "Start export of user data"
 msgstr "Export von Nutzer:innendaten starten"
 
-#: froide/foirequest/templates/foirequest/body/body.html
+#: froide/foirequest/templates/foirequest/body/correspondence.html
 msgid "Start mediation"
 msgstr "Vermittlung starten"
 
@@ -7460,7 +7475,7 @@ msgstr "Bleiben Sie auf dem Laufenden zu den Themen, die Sie interessieren. Sie 
 msgid "Step"
 msgstr "Schritt"
 
-#: froide/foirequest/templates/foirequest/body/body.html
+#: froide/foirequest/templates/foirequest/body/correspondence.html
 msgid "Sticky"
 msgstr "Anheften"
 
@@ -7632,14 +7647,14 @@ msgstr "Teams"
 msgid "Terms of Use"
 msgstr "Nutzungsbedingungen"
 
-#: froide/foisite/models.py froide/frontpage/models.py
-msgid "Text"
-msgstr "Text"
-
 #: froide/foirequest/views/make_request.py froide/foirequest/views/message.py
 msgctxt "Search input"
 msgid "Text"
 msgstr "Freitext"
+
+#: froide/foisite/models.py froide/frontpage/models.py
+msgid "Text"
+msgstr "Text"
 
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
 msgid "Text only"
@@ -8243,6 +8258,10 @@ msgstr "Anfragen des:der Nutzer:in"
 msgid "This word needs to stay redacted."
 msgstr "Dieses Wort muss geschwärzt bleiben."
 
+#: froide/foirequest/templates/foirequest/body/timeline.html
+msgid "Timeline of this request"
+msgstr "Verlauf dieser Anfrage"
+
 #: froide/foirequest/models/event.py froide/foirequest/models/message.py
 #: froide/frontpage/models.py
 msgid "Timestamp"
@@ -8416,8 +8435,8 @@ msgstr "URL: %(url)s"
 
 #: froide/upload/api_views.py
 #, python-brace-format
-msgid "Unable to terminate upload while in state \"{}\"."
-msgstr "Upload konnte nicht abgebrochen werden während Zustand \"{}\"."
+msgid "Unable to terminate upload while in state \"{state}\"."
+msgstr "Upload konnte nicht abgebrochen werden während Zustand \"{state}\"."
 
 #: froide/foirequest/templates/foirequest/body/message/attachments/attachments.html
 msgid "Unapproved attachments:"
@@ -8600,7 +8619,7 @@ msgstr "+%{smart_count} Datei hochladen"
 msgid "Upload +%{smart_count} files"
 msgstr "+%{smart_count} Dateien hochladen"
 
-#: froide/foirequest/templates/foirequest/body/body.html
+#: froide/foirequest/templates/foirequest/body/correspondence.html
 msgid "Upload Mail"
 msgstr "Post hochladen"
 
@@ -8750,8 +8769,8 @@ msgstr "Nutzer:in hat Anfragenbeschränkung überschritten"
 
 #: froide/foirequest/moderation.py
 #, python-brace-format
-msgid "User got tag “{}”."
-msgstr "User hat nun Tag „{}“."
+msgid "User got tag “{tag}”."
+msgstr "User hat nun Tag „{tag}“."
 
 #: froide/account/admin.py
 msgid "User made private."
@@ -9093,7 +9112,7 @@ msgstr "Schreiben Sie einen öffentlichen Kommentar"
 msgid "Write a reminder to the public body!"
 msgstr "Schreiben Sie eine Erinnerung an die Behörde!"
 
-#: froide/foirequest/templates/foirequest/body/body.html
+#: froide/foirequest/templates/foirequest/body/correspondence.html
 #: froide/foirequest/views/make_request.py
 msgid "Write message"
 msgstr "Nachricht schreiben"
@@ -9389,6 +9408,11 @@ msgstr "Sie haben diese Behörde vorgeschlagen, aber sie wurde noch nicht freige
 msgid "You have provided a proof of your identity"
 msgstr "Sie haben einen Identitätsnachweis angefügt"
 
+#: froide/helper/templates/helper/admin/apply_action.html
+#, python-format
+msgid "You have selected %(count)s objects, here is a preview of the first %(preview_count)s:"
+msgstr "Sie haben %(count)s Objekte ausgewählt, hier ist eine Vorschau der ersten %(preview_count)s:"
+
 #: froide/templates/mfa/mfakey_list.html
 msgid "You have the following authenticator apps:"
 msgstr "Sie haben die folgenden Authentifizierungs-Apps:"
@@ -9607,6 +9631,10 @@ msgstr "Ihre Funktion"
 #: froide/team/templates/team/team_list.html
 msgid "Your Teams"
 msgstr "Ihre Teams"
+
+#: froide/account/templates/account/show.html
+msgid "Your account"
+msgstr "Ihr Konto"
 
 #: froide/foirequest/views/make_request.py
 msgid "Your account cannot send requests."
@@ -10133,12 +10161,12 @@ msgstr "werden zu diesem Projekt hinzugefügt:"
 msgid "as topic"
 msgstr "als Thema"
 
-#: froide/foirequest/models/project.py
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "asleep"
 msgstr "eingeschlafen"
 
-#: froide/foirequest/filters.py
-msgctxt "slug"
+#: froide/foirequest/models/project.py
 msgid "asleep"
 msgstr "eingeschlafen"
 
@@ -10505,6 +10533,10 @@ msgstr "Follower:innen"
 #, python-format
 msgid "for %(juris)s"
 msgstr "für %(juris)s"
+
+#: froide/foirequest/models/message.py
+msgid "form"
+msgstr "Formular"
 
 #: froide/helper/templates/helper/forms/widgets/daterange.html
 msgid "from"
@@ -10899,18 +10931,14 @@ msgstr "organisation/<str:slug>/einladung/"
 msgid "organizations"
 msgstr "Organisationen"
 
-#: froide/foirequest/templates/foirequest/body/timeline.html
-msgid "overdue"
-msgstr "verspätet"
-
-#: froide/foirequest/templates/foirequest/body/timeline.html
-msgid "Timeline of this request"
-msgstr "Verlauf dieser Anfrage"
-
 #: froide/foirequest/filters.py
 msgctxt "slug"
 msgid "overdue"
 msgstr "verspaetet"
+
+#: froide/foirequest/templates/foirequest/body/timeline.html
+msgid "overdue"
+msgstr "verspätet"
 
 #: froide/publicbody/models/foilaw.py
 msgid "overdue reply"
@@ -11519,6 +11547,11 @@ msgstr "zurueckgezogen-wegen-kosten"
 msgid "zipcode"
 msgstr "Postleitzahl"
 
+#: froide/publicbody/admin.py
+#, python-brace-format
+msgid "{count} change proposals were accepted."
+msgstr "{count} Bearbeitungsvorschläge wurden angenommen."
+
 #: froide/foirequest/views/make_request.py
 #, python-brace-format
 msgid "{count} public bodies"
@@ -11533,6 +11566,11 @@ msgstr "{count} Behörden ausgewählt"
 #, python-brace-format
 msgid "{count} public bodies found"
 msgstr "{count} Behörden gefunden"
+
+#: froide/publicbody/admin.py
+#, python-brace-format
+msgid "{count} public bodies were confirmed."
+msgstr "{count} Behörden wurden bestätigt."
 
 #: froide/foirequest/views/make_request.py
 #, python-brace-format
@@ -11619,16 +11657,6 @@ msgstr "vor {time_str}"
 msgid "{title} (page {page})"
 msgstr "{title} (Seite {page})"
 
-#: froide/publicbody/admin.py
-#, python-brace-format
-msgid "{} change proposals were accepted."
-msgstr "{} Bearbeitungsvorschläge wurden angenommen."
-
-#: froide/publicbody/admin.py
-#, python-brace-format
-msgid "{} public bodies were confirmed."
-msgstr "{} Behörden wurden bestätigt."
-
 #: froide/organization/templates/organization/organization_update_form.html
 #: froide/team/templates/team/team_detail.html
 msgid "– that's you!"
@@ -11649,10 +11677,6 @@ msgstr[1] "„%(subject)s” an %(count)s Behörden"
 #: froide/foirequest/views/request.py
 msgid "👋 Goodbye!"
 msgstr "👋 Viel Erfolg!"
-
-#: froide/account/templates/account/show.html
-msgid "Your account"
-msgstr "Ihr Konto"
 
 #, python-format
 #~ msgid ""
@@ -12247,6 +12271,9 @@ msgstr "Ihr Konto"
 
 #~ msgid "Create a new team."
 #~ msgstr "Lege ein neues Team an."
+
+#~ msgid "Create documents now"
+#~ msgstr "Dokumente jetzt erstellen"
 
 #, fuzzy
 #~ msgid "Data subject access request"
@@ -13048,9 +13075,6 @@ msgstr "Ihr Konto"
 #~ msgid "Related Public Bodies"
 #~ msgstr "Passende Behörden"
 
-#~ msgid "Related Websites"
-#~ msgstr "Verwandte Webseiten"
-
 #~ msgid "Reply to public body"
 #~ msgstr "Schreiben Sie an die Behörde"
 
@@ -13401,10 +13425,6 @@ msgstr "Ihr Konto"
 
 #~ msgid "Today"
 #~ msgstr "Heute"
-
-#, fuzzy
-#~ msgid "Tokens"
-#~ msgstr "token"
 
 #~ msgid "Topic:"
 #~ msgstr "Topic:"
