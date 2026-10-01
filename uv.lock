@@ -758,14 +758,14 @@ wheels = [
 
 [[package]]
 name = "django-extended-makemessages"
-version = "1.9.0"
+version = "1.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/23/96/ac2913243645fa270f780e20d58ab5a6a9374db5c3de4ee21576f32ebc6a/django_extended_makemessages-1.9.0.tar.gz", hash = "sha256:7416f95e93e7efc8f78f648ef0926378402534b438b5201d57b4b361b114db19", size = 12288, upload-time = "2026-05-25T21:52:09.181Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/80/8888f070d2006a6057c8b2be1b64ed38baeebd0a501eed598a69e9814178/django_extended_makemessages-1.11.0.tar.gz", hash = "sha256:2f68a97704c77aa18d9881d9616661be81a0d16eafafbfd9a1956619fb1706e6", size = 12946, upload-time = "2026-08-28T09:12:20.466Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/26/ca/a6b9b4eb3fdd0861ea4ad363ded9eac2ac82ee4377c853e7b2ced071de69/django_extended_makemessages-1.9.0-py3-none-any.whl", hash = "sha256:144cfc888c030d3e3fae36e57dec2560e8387caa5ece2fbe937c245fcdac708b", size = 13390, upload-time = "2026-05-25T21:52:07.665Z" },
+    { url = "https://files.pythonhosted.org/packages/d2/f6/9d1c71d54cc12dcef8e8f7e52e657b7206a5eb6874acae7c7259682a1d30/django_extended_makemessages-1.11.0-py3-none-any.whl", hash = "sha256:098145b4dbf1fc572f2ac6543534ff4da6a796ffed313a04bb56bdbabb6de1b5", size = 14480, upload-time = "2026-08-28T09:12:19.146Z" },
 ]
 
 [[package]]
@@ -1336,7 +1336,7 @@ provides-extras = ["a11y"]
 dev = [
     { name = "beautifulsoup4" },
     { name = "django-coverage-plugin" },
-    { name = "django-extended-makemessages", specifier = ">=1.7.1" },
+    { name = "django-extended-makemessages", specifier = ">=1.11.0,<1.12.0" },
     { name = "django-stubs", specifier = "<5.3" },
     { name = "django-stubs-ext", specifier = "<5.3" },
     { name = "factory-boy" },
