@@ -77,8 +77,8 @@ class ProofMessageForm(JSONMixin, ProofSettingsForm):
         super().__init__(*args, **kwargs)
         self.fields["proof_name"].required = False
         self.fields["proof_image"].required = False
-        self.fields["proof_store"].label = (
-            _("Store this proof in your account for repeated use."),
+        self.fields["proof_store"].label = _(
+            "Store this proof in your account for repeated use."
         )
         self.fields["proof_store"].required = False
         self.user = user

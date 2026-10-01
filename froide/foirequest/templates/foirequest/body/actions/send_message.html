@@ -71,7 +71,8 @@
 {% endaddtoblock %}
 {% endwith %}
 <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
-<p class="form-text text-body-secondary">
+{# Not `.form-text`: this describes no field, it is an alternative to the form #}
+<p class="mt-1 small text-body-secondary">
     <small>
         {% trans "If you need to provide an alternative email address, use this one:" %}
         <br />

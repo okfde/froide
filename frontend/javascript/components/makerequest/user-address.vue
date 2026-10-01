@@ -16,8 +16,10 @@
         <textarea
           v-model="address"
           ref="address"
+          id="id_address"
           name="address"
           class="form-control"
+          aria-describedby="id_address_helptext"
           :class="{
             'is-invalid':
               (errors.address && !addressChanged) || addressValid === false
@@ -27,8 +29,8 @@
           @change="addressUpdated(true)"
           @keyup="addressUpdated()"
         />
-        <p class="help-block">
-          <span v-html="addressHelpText" />
+        <p id="id_address_helptext" class="help-block">
+          <span v-html="addressHelpTextValue" />
         </p>
         <div
           v-if="!clearFormErrors && errors.address"

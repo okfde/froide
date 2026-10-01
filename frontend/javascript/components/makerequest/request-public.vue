@@ -7,7 +7,12 @@
         :value="hidePublic"
         id="id_hide_public"
       />
-      <div class="mb-3" v-if="!hidePublic">
+      <fieldset
+        class="mb-3"
+        v-if="!hidePublic"
+        aria-labelledby="id_public_label"
+        aria-describedby="id_public_preamble id_public_postamble"
+      >
         <div class="card-body">
           <div
             v-for="(choice, choiceIndex) in form.fields.public.choices"
@@ -29,7 +34,7 @@
             />
           </div>
         </div>
-      </div>
+      </fieldset>
       <div v-else style="display: none">
         <input
           type="hidden"

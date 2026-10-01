@@ -48,11 +48,14 @@
         class="form-control"
         maxlength="255"
         id="id_proof_name"
+        aria-describedby="id_proof_name_helptext"
         :disabled="!!proof"
         :required="proofImageRequired"
       />
 
-      <div class="form-text">{{ formFields.proof_name.help_text }}</div>
+      <div id="id_proof_name_helptext" class="form-text">
+        {{ formFields.proof_name.help_text }}
+      </div>
     </div>
 
     <div class="mb-3">
@@ -81,11 +84,16 @@
           class="form-check-input"
           :disabled="!!proof"
           id="id_proof_store"
+          aria-describedby="id_proof_store_helptext"
         />
         <label class="form-check-label fw-bold" for="id_proof_store">
           {{ formFields.proof_store.label }}
         </label>
-        <div class="form-text" v-html="formFields.proof_store.help_text"></div>
+        <div
+          id="id_proof_store_helptext"
+          class="form-text"
+          v-html="formFields.proof_store.help_text"
+        ></div>
       </div>
     </div>
   </div>

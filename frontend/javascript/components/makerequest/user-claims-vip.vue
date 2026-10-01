@@ -1,32 +1,37 @@
 <template>
-  <div class="row mt-2">
-    <div class="col-md-8">
-      <p>{{ field.help_text }}</p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-8">
-      <div
-        v-for="(choice, choiceIndex) in field.choices"
-        :key="choice.value"
-        class="form-check form-check-emphasized"
-      >
-        <input
-          :id="'id_claims_vip_choice' + choiceIndex"
-          class="form-check-input"
-          v-model="value"
-          type="radio"
-          name="claims_vip"
-          :value="choice.value"
-        />
-        <label
-          :for="'id_claims_vip_choice' + choiceIndex"
-          class="form-check-label"
-          v-html="choice.label"
-        />
+  <fieldset
+    aria-labelledby="id_claims_vip_label"
+    aria-describedby="id_claims_vip_helptext"
+  >
+    <div class="row mt-2">
+      <div class="col-md-8">
+        <p id="id_claims_vip_helptext">{{ field.help_text }}</p>
       </div>
     </div>
-  </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div
+          v-for="(choice, choiceIndex) in field.choices"
+          :key="choice.value"
+          class="form-check form-check-emphasized"
+        >
+          <input
+            :id="'id_claims_vip_choice' + choiceIndex"
+            class="form-check-input"
+            v-model="value"
+            type="radio"
+            name="claims_vip"
+            :value="choice.value"
+          />
+          <label
+            :for="'id_claims_vip_choice' + choiceIndex"
+            class="form-check-label"
+            v-html="choice.label"
+          />
+        </div>
+      </div>
+    </div>
+  </fieldset>
 </template>
 
 <script>

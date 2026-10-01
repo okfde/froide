@@ -40,13 +40,16 @@ const submitClick = () => {
       type="text"
       class="form-control"
       :id="'documentTitle' + attachment.document.id"
+      :aria-describedby="'documentTitleHelp' + attachment.document.id"
       v-model="fields.title"
       :disabled="isDocumentSubmitting"
       :placeholder="i18n.documentTitlePlaceholder"
     />
-    <small class="form-text text-body-secondary">{{
-      i18n.documentTitleHelp
-    }}</small>
+    <small
+      :id="'documentTitleHelp' + attachment.document.id"
+      class="form-text text-body-secondary"
+      >{{ i18n.documentTitleHelp }}</small
+    >
   </div>
   <div class="mb-3">
     <label
@@ -57,13 +60,16 @@ const submitClick = () => {
     <textarea
       class="form-control"
       :id="'documentDescription' + attachment.document.id"
+      :aria-describedby="'documentDescriptionHelp' + attachment.document.id"
       rows="4"
       v-model="fields.description"
       :disabled="isDocumentSubmitting"
     ></textarea>
-    <small class="form-text text-body-secondary">{{
-      i18n.descriptionHelp
-    }}</small>
+    <small
+      :id="'documentDescriptionHelp' + attachment.document.id"
+      class="form-text text-body-secondary"
+      >{{ i18n.descriptionHelp }}</small
+    >
   </div>
   <button
     type="button"

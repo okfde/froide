@@ -25,6 +25,7 @@
                                                class="form-control"
                                                type="text"
                                                name="q"
+                                               aria-describedby="index-search-help"
                                                autocomplete="off"
                                                placeholder="{% block index-search-placeholder %}{% endblock %}" />
                                         <button class="btn btn-primary" type="submit">
@@ -34,7 +35,7 @@
                                     </div>
                                 </div>
                                 {% block example_search_terms_block %}
-                                    <span class="form-text text-body-secondary">
+                                    <span id="index-search-help" class="form-text text-body-secondary">
                                         {% block example_search_terms %}
                                             {% blocktrans %}Try the following:{% endblocktrans %}
                                             <a href="{% url 'foirequest-search' %}?q={% trans "Nuclear" %}">{% trans "Nuclear" %}</a>

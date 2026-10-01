@@ -1,3 +1,5 @@
+import re
+
 from django.urls import reverse
 
 import pytest
@@ -80,3 +82,14 @@ async def test_a11y_foirequest_list_search_options(page: Page, live_server, chec
     await expect(page.locator("details[open]")).to_have_count(1)
 
     await check_a11y(page)
+
+
+@pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
+@pytest.mark.asyncio(loop_scope="session")
+async def test_a11y_index_search_help(page: Page, live_server):
+    await page.goto(live_server.url + reverse("index"))
+
+    await expect(page.locator("#index-search")).to_have_accessible_description(
+        re.compile("Try the following")
+    )

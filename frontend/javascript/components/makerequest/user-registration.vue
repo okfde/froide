@@ -93,6 +93,7 @@
       </label>
       <div class="col-sm-8 col-md-5">
         <input
+          id="id_user_email"
           v-model="email"
           ref="email"
           type="email"
@@ -102,8 +103,12 @@
           :placeholder="userformFields.user_email.placeholder"
           required
           :maxlength="userformFields.user_email.max_length"
+          aria-describedby="id_user_email_helptext"
           @change="updateEmailChanged(true)"
         />
+        <p id="id_user_email_helptext" class="help-block">
+          {{ userformFields.user_email.help_text }}
+        </p>
         <p
           v-for="e in userformErrors.user_email"
           :key="e.message"

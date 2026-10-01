@@ -436,7 +436,7 @@ msgstr "<p>Ihr Name wird als Teil Ihrer Anfrage an die Behörde gesendet. Falls 
 
 #: froide/foirequest/templates/foirequest/request.html
 #, python-format
-msgid "<p>Your request is accesible for everybody on %(SITE_NAME)s. With your request, you contribute to a public archive of official information. You are part of a growing community that strives for transparency in politics and adminstration.</p><p>You can opt into publishing your request later, e.g. after the disclosure of your investigation or research.</p>"
+msgid "<p>Your request is accessible for everybody on %(SITE_NAME)s. With your request, you contribute to a public archive of official information. You are part of a growing community that strives for transparency in politics and administration.</p><p>You can opt into publishing your request later, e.g. after the disclosure of your investigation or research.</p>"
 msgstr "<p>Ihre Anfrage ist für alle auf %(SITE_NAME)s sichtbar. Öffentliche Anfragen sind ein zentraler Bestandteil unserer Transparenz-Plattform: Sie tragen zu einem frei zugänglichen Archiv amtlicher Informationen bei und ermöglichen es anderen, von Ihren Fragen und den Antworten der Behörden zu profitieren. So schaffen wir gemeinsam mehr Transparenz in Politik und Verwaltung.</p><p>In begründeten Ausnahmenfällen können Sie Ihre Anfrage zunächst auch nicht veröffentlichen, zum Beispiel wenn Sie an einer investigativen Recherche arbeiten. Wir bitten Sie darum, Ihre Anfrage dann nachträglich zu veröffentlichen.</p>"
 
 #: froide/publicbody/urls.py
