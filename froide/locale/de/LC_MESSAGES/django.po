@@ -3200,7 +3200,7 @@ msgstr "Deutsch"
 
 #: froide/follow/templates/follow/_follow_form.html
 msgid "Get notified by email of changes."
-msgstr "Erhalten Sie Neuigkeiten per Email."
+msgstr "Erhalten Sie Neuigkeiten per E-Mail."
 
 #: froide/publicbody/templates/publicbody/jurisdiction.html
 msgid "Get to know your right!"
@@ -3515,7 +3515,7 @@ msgid ""
 msgstr ""
 "Hallo %(name)s,\n"
 "\n"
-"Sie haben bei Ihrer Registierung angegeben, journalistisch tätig zu sein und %(site_name)s für Ihre Recherchen nutzen zu wollen.\n"
+"Sie haben bei Ihrer Registrierung angegeben, journalistisch tätig zu sein und %(site_name)s für Ihre Recherchen nutzen zu wollen.\n"
 "Gerne können wir für Ihnen Account spezielle Funktionen freischalten, etwa um Anfragen an mehrere Behörden gleichzeitig stellen.\n"
 "Bitte senden Sie uns dazu einen kurzen Nachweis Ihrer Tätigkeit, damit wir Ihnen Zugang gewähren können.\n"
 "\n"
@@ -4636,7 +4636,7 @@ msgstr "Als moderiert markieren"
 
 #: froide/foirequest/templates/foirequest/admin/mark_same_as.html
 msgid "Mark multiple requests identical"
-msgstr "Mehrer Anfragen als identische markieren"
+msgstr "Mehrere Anfragen als identisch markieren"
 
 #: froide/problem/views.py
 msgid "Mark resolved"
@@ -6409,7 +6409,7 @@ msgstr "Relativ zu"
 
 #: froide/foirequest/views/make_request.py
 msgid "Relevant resources"
-msgstr "Relevante Resourcen"
+msgstr "Relevante Ressourcen"
 
 #: froide/accesstoken/templates/accesstoken/token_widget.html
 #: froide/foirequest/views/make_request.py
@@ -8386,7 +8386,7 @@ msgstr "Art der Verwaltungseinheit"
 
 #: froide/account/forms.py
 msgid "Type the phrase above exactly as displayed."
-msgstr "Geben Sie das obrige Wort genau so ein wie angezeigt."
+msgstr "Geben Sie das obige Wort genau so ein wie angezeigt."
 
 #: froide/searchalert/forms.py
 #: froide/searchalert/templates/searchalert/list.html
@@ -9066,7 +9066,7 @@ msgstr "Welche Behörden?"
 
 #: froide/foirequest/views/message.py
 msgid "Which documents do you want to redact?"
-msgstr "Welche dieser Dokumente möchen Sie schwärzen?"
+msgstr "Welche dieser Dokumente möchten Sie schwärzen?"
 
 #: froide/foirequest/templates/foirequest/snippets/request_publicbody_helptext.html
 msgid "Which public body do you want to request information at? Here you can search and filter all available public bodies."
@@ -9509,7 +9509,7 @@ msgstr "Sie müssen eine Behörde angeben!"
 #: froide/account/views.py
 #, python-format
 msgid "You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s"
-msgstr "Sie haben vermutlich Ihre Browser-Cookies deaktivert, allerdings brauchen Sie Cookies für diese Seite! Cookies werden auf dieser Seite nur über eine sichere Verbindung gesendet. Der technische Grund für diesen Fehler ist: %(reason)s"
+msgstr "Sie haben vermutlich Ihre Browser-Cookies deaktiviert, allerdings brauchen Sie Cookies für diese Seite! Cookies werden auf dieser Seite nur über eine sichere Verbindung gesendet. Der technische Grund für diesen Fehler ist: %(reason)s"
 
 #: froide/account/forms.py
 msgid "You provided the wrong password!"
@@ -10186,7 +10186,7 @@ msgstr "Anhänge wurden hochgeladen"
 
 #: froide/account/templates/account/settings.html
 msgid "authenticator app"
-msgstr "Autentifizierungs-App"
+msgstr "Authentifizierungs-App"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 #: froide/problem/templates/problem/message_toolbar_item.html
@@ -11526,7 +11526,7 @@ msgstr "Besuch in Person"
 
 #: froide/searchalert/models.py
 msgid "weekly"
-msgstr "wöchtenlich"
+msgstr "wöchentlich"
 
 #: froide/foirequest/templates/foirequest/list.html
 #, python-format
