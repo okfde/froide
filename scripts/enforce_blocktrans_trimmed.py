@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Pre-commit hook to enforce that blocktrans/blocktranslate blocks
-whose body starts with a newline use the ``trimmed`` keyword.
+whose body starts with a newline (optionally preceded by spaces or
+tabs) use the ``trimmed`` keyword.
 
 A leading newline typically means the block is indented for
 readability and the whitespace is unintentional. Blocks where
@@ -29,6 +30,8 @@ BLOCK_PATTERN = re.compile(
     """,
     re.VERBOSE | re.DOTALL,
 )
+TRIMMED_PATTERN = re.compile(r"\btrimmed\b")
+LEADING_NEWLINE_PATTERN = re.compile(r"[ \t]*\n")
 
 
 def fix_file(path: Path) -> bool:
@@ -41,7 +44,7 @@ def fix_file(path: Path) -> bool:
         body = match.group(4)
         end_tag = match.group(5)
 
-        if "trimmed" in args or not body.startswith("\n"):
+        if TRIMMED_PATTERN.search(args) or not LEADING_NEWLINE_PATTERN.match(body):
             return match.group(0)
 
         return opening + " trimmed" + args + close + body + end_tag
