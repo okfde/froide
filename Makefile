@@ -18,8 +18,15 @@ frontend_dependencies:
 
 dependencies: backend_dependencies frontend_dependencies
 
+PYTHON ?= .venv/bin/python
+MAKEMESSAGES_OPTS = --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov --add-location file --no-wrap --sort-output --keep-header
+MAKEMESSAGES_EXTRA_OPTS =
+
 messagesde:
-	python manage.py extendedmakemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov --add-location file --no-wrap --sort-output --keep-header
+	$(PYTHON) manage.py extendedmakemessages -l de $(MAKEMESSAGES_OPTS) $(MAKEMESSAGES_EXTRA_OPTS)
+
+checkmessagesde:
+	$(MAKE) messagesde MAKEMESSAGES_EXTRA_OPTS="--no-untranslated --no-fuzzy"
 
 openapi:
 	python manage.py spectacular --file froide/openapi-schema.yaml --validate
