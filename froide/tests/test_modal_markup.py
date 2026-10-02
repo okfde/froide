@@ -1,10 +1,13 @@
 from django.contrib.auth.models import Permission
+from django.urls import reverse
 from django.utils import timezone
 
 import pytest
 from bs4 import BeautifulSoup, Tag
 
 from froide.foirequest.models import DeliveryStatus
+from froide.team.models import TeamMembership
+from froide.team.tests import TeamMembershipFactory
 
 
 def has_accessible_name(modal: Tag):
@@ -15,6 +18,12 @@ def has_accessible_name(modal: Tag):
     assert title.get_text(strip=True), f"{modal['id']} is labelled by an empty element"
 
 
+def title_is_h1(modal: Tag):
+    title = modal.select_one(".modal-title")
+    assert title is not None, f"{modal['id']} has no title"
+    assert title.name == "h1", f"{modal['id']} has a <{title.name}> as title"
+
+
 def has_one_close_button(modal: Tag):
     buttons = modal.select("button.btn-close[aria-label]")
     assert len(buttons) == 1, f"{modal['id']} has {len(buttons)} close buttons"
@@ -22,6 +31,7 @@ def has_one_close_button(modal: Tag):
 
 RULES = [
     has_accessible_name,
+    title_is_h1,
     has_one_close_button,
 ]
 
@@ -76,9 +86,50 @@ def moderator_page(client, user_factory, foi_request_factory, foi_message_factor
     return get_modals(client, req.get_absolute_url(), ["resend-"])
 
 
+@pytest.fixture
+def anonymous_page(client, foi_request_factory, foi_message_factory):
+    req, _ = make_request(foi_request_factory, foi_message_factory)
+    return get_modals(
+        client,
+        req.get_absolute_url(),
+        ["follow-form-", "share-mastodon-", "problemreport-"],
+    )
+
+
+@pytest.fixture
+def withdrawn_page(client, foi_request_factory, foi_message_factory):
+    req, _ = make_request(foi_request_factory, foi_message_factory)
+    client.force_login(req.user)
+    # Set by the view that withdraws the request
+    session = client.session
+    session["show_withdrawal_popup"] = req.id
+    session.save()
+    return get_modals(client, req.get_absolute_url(), ["withdrawalModal"])
+
+
+@pytest.fixture
+def search_page(client):
+    return get_modals(client, reverse("foirequest-list"), ["searchalert-form-modal"])
+
+
+@pytest.fixture
+def team_page(client, user):
+    membership = TeamMembershipFactory(user=user, role=TeamMembership.ROLE.OWNER)
+    client.force_login(user)
+    return get_modals(
+        client,
+        reverse("team-detail", kwargs={"pk": membership.team.pk}),
+        ["delete-team-modal"],
+    )
+
+
 PAGES = [
     "requester_page",
     "moderator_page",
+    "anonymous_page",
+    "withdrawn_page",
+    "search_page",
+    "team_page",
 ]
 
 

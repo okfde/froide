@@ -38,13 +38,13 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="problemreport-{{ message.pk }}-title">
+                <h1 class="modal-title h5" id="problemreport-{{ message.pk }}-title">
                     {% if not message.problemreports_count %}
                         {% trans "Report a problem" %}
                     {% else %}
                         {% trans "Problem reports" %}
                     {% endif %}
-                </h5>
+                </h1>
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="modal"

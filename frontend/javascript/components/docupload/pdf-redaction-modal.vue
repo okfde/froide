@@ -44,9 +44,9 @@ const hasLongName = computed(() => attachment.name?.length > 40)
     body-classes="p-0"
   >
     <template #header>
-      <h5 class="modal-title" :class="{ 'fs-6': hasLongName }">
+      <h1 class="modal-title h5" :class="{ 'fs-6': hasLongName }">
         {{ i18n.redact }}, {{ attachment.name }}
-      </h5>
+      </h1>
     </template>
     <template #body>
       <div class="container mb-2">
