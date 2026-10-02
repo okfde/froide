@@ -91,7 +91,7 @@ defineExpose({ show })
     "
   >
     <template #header>
-      <h2 class="h5 modal-title">{{ i18n.help }}</h2>
+      <h1 class="h5 modal-title">{{ i18n.help }}</h1>
     </template>
     <template #body>
       <span v-if="isFetching" class="spinner spinner-border" role="status">

@@ -162,9 +162,9 @@ const hasLongName = computed(
       content-classes="h-100"
     >
       <template #header>
-        <h2 class="modal-title" :class="{ 'fs-6': hasLongName }">
+        <h1 class="modal-title h2" :class="{ 'fs-6': hasLongName }">
           {{ attachment.document?.title || attachment.name }}
-        </h2>
+        </h1>
       </template>
       <template #body>
         <div class="row h-100">
