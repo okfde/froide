@@ -21,6 +21,7 @@ const props = defineProps({
 const modalEl = ref()
 const titleId = useId()
 let bsModal
+let returnFocusTo: Element | null = null
 
 // Current behavior is "keep-alive"-ish:
 // modal markup will be rendered on first show,
@@ -29,6 +30,7 @@ let bsModal
 const doRender = ref(false)
 
 const show = async () => {
+  returnFocusTo = document.activeElement
   if (!doRender.value) {
     doRender.value = true
     await nextTick()
@@ -46,6 +48,10 @@ const hide = () => {
 
 const initialize = () => {
   bsModal = new Modal(modalEl.value)
+  // Bootstrap only does this for modals that are opened by a data-bs-toggle trigger
+  modalEl.value.addEventListener('hidden.bs.modal', () => {
+    if (returnFocusTo instanceof HTMLElement) returnFocusTo.focus()
+  })
 }
 
 onMounted(() => {

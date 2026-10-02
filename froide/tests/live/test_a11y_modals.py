@@ -47,3 +47,8 @@ async def test_bs_modal(page: Page, live_server, attachment):
     dialog = page.get_by_role("dialog", name=ATTACHMENT_NAME)
     await expect(dialog).to_be_visible()
     await expect(dialog.get_by_role("heading", level=1)).to_have_text(ATTACHMENT_NAME)
+
+    await page.keyboard.press("Escape")
+
+    await expect(dialog).to_be_hidden()
+    await expect(trigger).to_be_focused()
