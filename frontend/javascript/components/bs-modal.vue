@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, useId } from 'vue'
 import { Modal } from 'bootstrap'
 
 const props = defineProps({
@@ -19,6 +19,7 @@ const props = defineProps({
 })
 
 const modalEl = ref()
+const titleId = useId()
 let bsModal
 
 // Current behavior is "keep-alive"-ish:
@@ -66,12 +67,13 @@ defineExpose({
       class="modal"
       tabindex="-1"
       role="dialog"
+      :aria-labelledby="titleId"
       v-if="doRender"
     >
       <div :class="'modal-dialog ' + dialogClasses" role="document">
         <div :class="'modal-content ' + contentClasses">
           <div class="modal-header">
-            <div class="text-break">
+            <div :id="titleId" class="text-break">
               <slot name="header"></slot>
             </div>
             <button

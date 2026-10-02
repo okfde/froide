@@ -33,11 +33,12 @@
      data-teleport="body"
      tabindex="-1"
      role="dialog"
-     id="problemreport-{{ message.pk }}">
+     id="problemreport-{{ message.pk }}"
+     aria-labelledby="problemreport-{{ message.pk }}-title">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">
+                <h5 class="modal-title" id="problemreport-{{ message.pk }}-title">
                     {% if not message.problemreports_count %}
                         {% trans "Report a problem" %}
                     {% else %}

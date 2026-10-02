@@ -7,11 +7,12 @@
      data-teleport="body"
      tabindex="-1"
      role="dialog"
-     id="resend-{{ message.pk }}">
+     id="resend-{{ message.pk }}"
+     aria-labelledby="resend-{{ message.pk }}-title">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{% translate "Resend message" %}</h5>
+                <h5 class="modal-title" id="resend-{{ message.pk }}-title">{% translate "Resend message" %}</h5>
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="modal"
