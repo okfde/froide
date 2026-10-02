@@ -76,7 +76,7 @@ dev = [
   "froide[a11y]",
   "beautifulsoup4",
   "django-coverage-plugin",
-  "django-extended-makemessages>=1.11.0,<1.12.0",
+  "django-extended-makemessages>=1.11.0,<1.13.0",
   "django-stubs<5.3",
   "factory-boy",
   "faker",
