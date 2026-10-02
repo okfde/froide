@@ -1,7 +1,18 @@
+from django.contrib.auth.models import Permission
 from django.utils import timezone
 
 import pytest
 from bs4 import BeautifulSoup, Tag
+
+from froide.foirequest.models import DeliveryStatus
+
+
+def has_accessible_name(modal: Tag):
+    title_id = modal.get("aria-labelledby")
+    assert title_id, f"{modal['id']} has no aria-labelledby"
+    title = modal.find(id=title_id)
+    assert title is not None, f"{modal['id']} is labelled by a missing element"
+    assert title.get_text(strip=True), f"{modal['id']} is labelled by an empty element"
 
 
 def has_one_close_button(modal: Tag):
@@ -10,6 +21,7 @@ def has_one_close_button(modal: Tag):
 
 
 RULES = [
+    has_accessible_name,
     has_one_close_button,
 ]
 
@@ -47,8 +59,26 @@ def requester_page(client, foi_request_factory, foi_message_factory):
     )
 
 
+@pytest.fixture
+def moderator_page(client, user_factory, foi_request_factory, foi_message_factory):
+    # Moderators can resend a message that could not be delivered
+    req, message = make_request(foi_request_factory, foi_message_factory)
+    DeliveryStatus.objects.create(
+        message=message, status=DeliveryStatus.Delivery.STATUS_FAILED
+    )
+    moderator = user_factory()
+    moderator.user_permissions.add(
+        Permission.objects.get(
+            codename="moderate", content_type__app_label="foirequest"
+        )
+    )
+    client.force_login(moderator)
+    return get_modals(client, req.get_absolute_url(), ["resend-"])
+
+
 PAGES = [
     "requester_page",
+    "moderator_page",
 ]
 
 
