@@ -6,6 +6,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    allow:
+      - dependency-type: all
+        update-types:
+          - version-update:semver-patch
+          - version-update:semver-minor
     groups:
       npm-dependencies:
         patterns:
@@ -19,6 +24,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    allow:
+      - dependency-type: all
+        update-types:
+          - version-update:semver-patch
+          - version-update:semver-minor
     groups:
       python-dependencies:
         patterns:
