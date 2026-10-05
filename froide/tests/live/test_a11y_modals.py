@@ -1,3 +1,5 @@
+import re
+
 from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -74,3 +76,23 @@ async def test_withdrawal_modal_send_message_moves_focus_to_message(
 
     await expect(dialog).to_be_hidden()
     await expect(page.locator('[name="sendmessage-message"]')).to_be_focused()
+
+
+@pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
+@pytest.mark.asyncio(loop_scope="session")
+async def test_share_mastodon_modal_stays_open_on_invalid_input(
+    page: Page, live_server, foirequest
+):
+    await go_to_request_page(page, live_server, foirequest)
+
+    await page.locator('[data-bs-target^="#share-mastodon-"]').click()
+    dialog = page.locator('.modal[id^="share-mastodon-"]')
+    await expect(dialog).to_be_visible()
+
+    # The instance field is required and still empty
+    await dialog.locator('button[type="submit"]').click()
+
+    # Bootstrap drops the class as soon as it starts to hide the modal
+    await expect(dialog).to_have_class(re.compile(r"\bshow\b"))
+    await expect(dialog.locator("input:invalid")).to_be_visible()
