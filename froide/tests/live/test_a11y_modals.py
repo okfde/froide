@@ -7,7 +7,7 @@ from playwright.async_api import Page, expect
 
 from froide.foirequest.tests.factories import FoiAttachmentFactory
 
-from .utils import do_login
+from .utils import do_login, go_to_request_page
 
 ATTACHMENT_NAME = "letter.pdf"
 
@@ -52,3 +52,25 @@ async def test_bs_modal(page: Page, live_server, attachment):
 
     await expect(dialog).to_be_hidden()
     await expect(trigger).to_be_focused()
+
+
+@pytest.mark.django_db
+@pytest.mark.xdist_group(name="sequential")
+@pytest.mark.asyncio(loop_scope="session")
+async def test_withdrawal_modal_send_message_moves_focus_to_message(
+    page: Page, live_server, foirequest
+):
+    await do_login(page, live_server)
+    await go_to_request_page(page, live_server, foirequest)
+
+    # Withdrawing the request opens the modal
+    await page.locator(".info-box__edit-button").click()
+    await page.locator('select[name="resolution"]').select_option("user_withdrew")
+    await page.locator("#set-status-submit").click()
+    dialog = page.locator("#withdrawalModal")
+    await expect(dialog).to_be_visible()
+
+    await dialog.get_by_role("button", name="Send message").click()
+
+    await expect(dialog).to_be_hidden()
+    await expect(page.locator('[name="sendmessage-message"]')).to_be_focused()
