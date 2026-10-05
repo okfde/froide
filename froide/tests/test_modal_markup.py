@@ -34,11 +34,27 @@ def has_one_close_button(modal: Tag):
     assert len(buttons) == 1, f"{modal['id']} has {len(buttons)} close buttons"
 
 
+def button_labels_contain_their_text(modal: Tag):
+    for button in modal.select("button[aria-label]"):
+        text = button.get_text(strip=True)
+        label = button["aria-label"]
+        assert text.lower() in label.lower(), (
+            f'{modal["id"]} has a button "{text}" that is announced as "{label}"'
+        )
+
+
+def has_no_document_role(modal: Tag):
+    # A leftover from Bootstrap 4
+    assert not modal.select('[role="document"]'), f"{modal['id']} has role=document"
+
+
 RULES = [
     has_accessible_name,
     title_is_h1,
     is_focusable,
     has_one_close_button,
+    button_labels_contain_their_text,
+    has_no_document_role,
 ]
 
 
