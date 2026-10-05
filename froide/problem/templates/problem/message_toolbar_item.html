@@ -17,7 +17,10 @@
                 {% trans "Report" %}
             {% endif %}
         {% else %}
-            {% if message.problemreports_unresolved_count %}<span class="fa fa-exclamation-circle"></span>{% endif %}
+            {% if message.problemreports_unresolved_count %}
+                <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+                <span class="visually-hidden">{% trans "Unresolved problem reports" %}:</span>
+            {% endif %}
             {% blocktranslate count counter=message.problemreports_count context "problem report count" trimmed %}
                 Problem
             {% plural %}
