@@ -1,6 +1,6 @@
 .alpha-message {
   $blue-box-shadow: inset 2px 0 0 $blue-400;
-  $message_box_shadow: 6px 6px 0px var(--#{$prefix}secondary-bg-subtle);
+  $message_box_shadow: 4px 4px 0px var(--#{$prefix}secondary-bg-subtle);
   $avatar_size_desktop: 2.75rem; // 44px
   $avatar_size_mobile: 2.25rem; // 36px
   $avatar_right_margin_mobile: $spacer * 0.5;
@@ -14,7 +14,7 @@
 
   display: flex;
   flex-direction: column;
-  margin-bottom: 1em;
+  margin-bottom: 8px;
   background-color: var(--#{$prefix}body-bg);
   @include media-breakpoint-up(md) {
     box-shadow: $message_box_shadow;
