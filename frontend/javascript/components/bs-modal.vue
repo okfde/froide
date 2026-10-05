@@ -76,7 +76,7 @@ defineExpose({
       :aria-labelledby="titleId"
       v-if="doRender"
     >
-      <div :class="'modal-dialog ' + dialogClasses" role="document">
+      <div :class="'modal-dialog ' + dialogClasses">
         <div :class="'modal-content ' + contentClasses">
           <div class="modal-header">
             <div :id="titleId" class="text-break">
