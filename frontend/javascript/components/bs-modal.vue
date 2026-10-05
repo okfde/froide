@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick, useId } from 'vue'
+import { inject, nextTick, onMounted, ref, useId } from 'vue'
 import { Modal } from 'bootstrap'
 
 const props = defineProps({
@@ -17,6 +17,8 @@ const props = defineProps({
   },
   keepAlive: Boolean
 })
+
+const i18n: any = inject('i18n')
 
 const modalEl = ref()
 const titleId = useId()
@@ -86,7 +88,7 @@ defineExpose({
               @click="hide"
               type="button"
               class="btn-close"
-              aria-label="Close"
+              :aria-label="i18n.close"
             ></button>
           </div>
           <div :class="'modal-body ' + bodyClasses">
