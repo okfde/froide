@@ -5885,6 +5885,13 @@ msgid "Problem"
 msgstr "Problem"
 
 #: froide/problem/templates/problem/message_toolbar_item.html
+msgctxt "problem report count"
+msgid "Problem"
+msgid_plural "Problems"
+msgstr[0] "Problem"
+msgstr[1] "Probleme"
+
+#: froide/problem/templates/problem/message_toolbar_item.html
 msgid "Problem reports"
 msgstr "Problemberichte"
 
@@ -5897,7 +5904,6 @@ msgid "Problem?"
 msgstr "Problem?"
 
 #: froide/problem/apps.py
-#: froide/problem/templates/problem/message_toolbar_item.html
 msgid "Problems"
 msgstr "Probleme"
 
