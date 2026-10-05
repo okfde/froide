@@ -1,12 +1,13 @@
 {% load i18n %}
 {% load markup %}
 {% load form_helper %}
-<a href="#"
-   data-bs-toggle="modal"
-   data-bs-target="#description-redact-{{ foirequest.pk }}">
+<button type="button"
+        class="btn btn-link p-0 align-baseline"
+        data-bs-toggle="modal"
+        data-bs-target="#description-redact-{{ foirequest.pk }}">
     <i class="fa fa-paint-brush"></i>
     {% trans "Redact" %}
-</a>
+</button>
 <div class="modal"
      data-teleport="body"
      tabindex="-1"
