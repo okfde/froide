@@ -56,6 +56,16 @@ def is_opened_by_buttons(modal: Tag):
         )
 
 
+def icons_are_hidden(modal: Tag):
+    page = modal.find_parent("html")
+    triggers = page.select(f'[data-bs-target="#{modal["id"]}"]')
+    for element in [modal, *triggers]:
+        for icon in element.select(".fa"):
+            assert icon.get("aria-hidden") == "true", (
+                f"{modal['id']} has an icon without aria-hidden: {icon}"
+            )
+
+
 RULES = [
     has_accessible_name,
     title_is_h1,
@@ -64,6 +74,7 @@ RULES = [
     button_labels_contain_their_text,
     has_no_document_role,
     is_opened_by_buttons,
+    icons_are_hidden,
 ]
 
 

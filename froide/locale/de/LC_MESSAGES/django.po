@@ -8535,6 +8535,7 @@ msgid "Unredact footer"
 msgstr "Ende der Nachricht entschwärzen"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
+#: froide/problem/templates/problem/message_toolbar_item.html
 msgid "Unresolved problem reports"
 msgstr "Ungelöste Problemberichte"
 

@@ -186,7 +186,7 @@
                             class="btn btn-danger"
                             data-bs-toggle="modal"
                             data-bs-target="#delete-team-modal">
-                        <i class="fa fa-ban"></i>
+                        <i class="fa fa-ban" aria-hidden="true"></i>
                         {% trans "Delete team" %}
                     </button>
                 </p>
@@ -211,7 +211,7 @@
                                 <form method="post" action="{% url 'team-delete' pk=object.pk %}">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger">
-                                        <i class="fa fa-ban"></i>
+                                        <i class="fa fa-ban" aria-hidden="true"></i>
                                         {% blocktrans with name=object.name %}Delete team “{{ name }}”{% endblocktrans %}
                                     </button>
                                 </form>
