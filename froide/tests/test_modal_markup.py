@@ -24,6 +24,11 @@ def title_is_h1(modal: Tag):
     assert title.name == "h1", f"{modal['id']} has a <{title.name}> as title"
 
 
+def is_focusable(modal: Tag):
+    # Without it, Bootstrap cannot move the focus into the modal when it opens
+    assert modal.get("tabindex") == "-1", f"{modal['id']} has no tabindex=-1"
+
+
 def has_one_close_button(modal: Tag):
     buttons = modal.select("button.btn-close[aria-label]")
     assert len(buttons) == 1, f"{modal['id']} has {len(buttons)} close buttons"
@@ -32,6 +37,7 @@ def has_one_close_button(modal: Tag):
 RULES = [
     has_accessible_name,
     title_is_h1,
+    is_focusable,
     has_one_close_button,
 ]
 
