@@ -48,6 +48,14 @@ def has_no_document_role(modal: Tag):
     assert not modal.select('[role="document"]'), f"{modal['id']} has role=document"
 
 
+def is_opened_by_buttons(modal: Tag):
+    page = modal.find_parent("html")
+    for trigger in page.select(f'[data-bs-target="#{modal["id"]}"]'):
+        assert trigger.name == "button", (
+            f"{modal['id']} is opened by a <{trigger.name}>, not a <button>"
+        )
+
+
 RULES = [
     has_accessible_name,
     title_is_h1,
@@ -55,6 +63,7 @@ RULES = [
     has_one_close_button,
     button_labels_contain_their_text,
     has_no_document_role,
+    is_opened_by_buttons,
 ]
 
 

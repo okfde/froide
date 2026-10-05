@@ -25,10 +25,10 @@ If there are multiple share buttons on a page, make sure to pass a unique id for
             {% endif %}
             {% if mastodon|default_if_none:True %}
                 {# on by default #}
-                <a href="#!"
-                   class="{% if not links %}btn btn-share-mastodon{% endif %}"
-                   data-bs-toggle="modal"
-                   data-bs-target="#share-mastodon-{{ modal_id }}">
+                <button type="button"
+                        class="btn {% if links %}btn-link p-0 align-baseline{% else %}btn-share-mastodon{% endif %}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#share-mastodon-{{ modal_id }}">
                     <svg viewBox="0 0 216.41 232.01"
                          xmlns="http://www.w3.org/2000/svg"
                          class="img-text">
@@ -37,7 +37,7 @@ If there are multiple share buttons on a page, make sure to pass a unique id for
                     {% if icons_only %}<span class="visually-hidden">{% endif %}
                         Mastodon
                         {% if icons_only %}</span>{% endif %}
-                </a>
+                </button>
                 <div class="modal fade"
                      id="share-mastodon-{{ modal_id }}"
                      tabindex="-1"
