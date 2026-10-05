@@ -6,6 +6,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      semver-minor-days: 7
+      semver-patch-days: 3
     allow:
       - dependency-type: all
         update-types:
@@ -24,6 +27,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      semver-minor-days: 7
+      semver-patch-days: 3
     allow:
       - dependency-type: all
         update-types:
