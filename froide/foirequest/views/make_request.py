@@ -209,7 +209,7 @@ class MakeRequestView(FormView):
                 ],
                 # Translators: not url
                 "requests": _("requests"),
-                "close": _("close"),
+                "close": _("Close"),
                 "back": _("Back"),
                 "remove": _("Remove"),
                 "stepNext": _("Next"),
