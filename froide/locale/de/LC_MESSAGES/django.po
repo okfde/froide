@@ -1578,6 +1578,7 @@ msgid "Client type"
 msgstr "Client-Typ"
 
 #: froide/foirequest/templates/foirequest/body/message/toolbar/resend.html
+#: froide/foirequest/templates/foirequest/snippets/description_redact.html
 #: froide/foirequest/templates/foirequest/snippets/message_edit.html
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
@@ -6314,6 +6315,10 @@ msgstr "„%(name)s“ schwärzen"
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
 msgid "Redact / unredact message"
 msgstr "Nachricht schwärzen / entschwärzen"
+
+#: froide/foirequest/templates/foirequest/snippets/description_redact.html
+msgid "Redact / unredact request text"
+msgstr "Anfragetext schwärzen / entschwärzen"
 
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
 msgid "Redact message text"
