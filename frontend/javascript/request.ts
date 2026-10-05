@@ -160,6 +160,17 @@ function initWriteMessageButtons(): void {
             }
           }
         }
+        // The button is in the withdrawal modal, which would pull the focus
+        // back in while it is still open
+        t.closest('.modal')?.addEventListener(
+          'hidden.bs.modal',
+          () => {
+            document
+              .querySelector<HTMLElement>('[name=sendmessage-message]')
+              ?.focus()
+          },
+          { once: true }
+        )
       })
     })
 }
