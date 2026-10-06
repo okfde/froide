@@ -90,14 +90,14 @@ class MyBaseListRequestView(BaseListRequestView):
             "label_getter": lambda x: x["object"].name,
         },
         "tags": {
-            "label": _("tag"),
+            "label": _("tags"),
             "query_param": "tag",
             "getter": lambda x: x["object"].slug,
             "model": Tag,
             "label_getter": lambda x: x["object"].name,
         },
         "project": {
-            "label": _("project"),
+            "label": _("projects"),
             "getter": lambda x: str(x["object"].pk),
             "model": FoiProject,
             "label_getter": lambda x: x["object"].title,
