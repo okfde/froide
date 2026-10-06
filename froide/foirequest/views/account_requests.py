@@ -54,7 +54,7 @@ class AccountRequestFilterSet(BaseFoiRequestFilterSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        project_qs = FoiProject.objects.filter(user=self.view.request.user)
+        project_qs = FoiProject.objects.get_for_user(self.view.request.user)
         self.filters["project"].field.queryset = project_qs
 
         for field in self.filters:
