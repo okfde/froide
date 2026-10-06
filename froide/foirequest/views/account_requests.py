@@ -98,9 +98,9 @@ class MyBaseListRequestView(BaseListRequestView):
         },
         "project": {
             "label": _("project"),
-            "getter": lambda x: x["object"].slug,
-            "model": Tag,
-            "label_getter": lambda x: x["object"].name,
+            "getter": lambda x: str(x["object"].pk),
+            "model": FoiProject,
+            "label_getter": lambda x: x["object"].title,
         },
     }
     search_url_name = "account-requests"
