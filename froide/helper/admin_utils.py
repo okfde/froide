@@ -1,4 +1,5 @@
 import datetime
+import inspect
 from collections import OrderedDict
 
 from django import forms
@@ -41,7 +42,9 @@ def make_choose_object_action(
         if isinstance(model_or_queryset_or_callable, models.QuerySet):
             model = model_or_queryset_or_callable.model
             filter_qs = model_or_queryset_or_callable
-        elif issubclass(model_or_queryset_or_callable, models.Model):
+        elif inspect.isclass(model_or_queryset_or_callable) and issubclass(
+            model_or_queryset_or_callable, models.Model
+        ):
             model = model_or_queryset_or_callable
             filter_qs = None
         else:
