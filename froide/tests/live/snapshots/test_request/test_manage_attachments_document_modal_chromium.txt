@@ -1,6 +1,7 @@
 incomplete:aria-prohibited-attr
 incomplete:aria-required-children
 violations:aria-dialog-name
+violations:button-name
 violations:color-contrast
 violations:heading-order
 violations:label
