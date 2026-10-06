@@ -11010,7 +11010,7 @@ msgstr "profil/"
 #: froide/foirequest/models/request.py
 #: froide/foirequest/views/account_requests.py
 msgid "project"
-msgstr "projekt"
+msgstr "Projekt"
 
 #. Translators: project URL
 #: froide/foirequest/urls/__init__.py
