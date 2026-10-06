@@ -256,7 +256,6 @@ def get_redact_context(foirequest, attachment):
             "publishWithoutRedaction": _("No redaction needed"),
             "removeAllRedaction": _("Remove all redaction"),
             "toggleText": _("Text only"),
-            "disableText": _("Hide text"),
             "redact": _("Redact"),
             "moveTool": pgettext("redact tool", "Move"),
             "cancel": _("Cancel"),
