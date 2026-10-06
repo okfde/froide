@@ -522,7 +522,6 @@ class DeliveryStatusInline(admin.TabularInline):
 
 class MessageTagsFilter(MultiFilterMixin, TaggitListFilter):
     tag_class = TaggedMessage
-    title = "Tags"
     parameter_name = "tag__slug"
     lookup_name = "__in"
     related_model = TaggedMessage

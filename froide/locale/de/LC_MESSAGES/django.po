@@ -11281,6 +11281,10 @@ msgctxt "slug"
 msgid "successful"
 msgstr "erfolgreich"
 
+#: froide/helper/admin_utils.py
+msgid "tag"
+msgstr "Schlagwort"
+
 #: froide/foirequest/urls/list_requests_urls.py
 msgctxt "url part"
 msgid "tag/<slug:tag>/"
@@ -11313,7 +11317,7 @@ msgid "tagged users"
 msgstr "getaggte Nutzer:innen"
 
 #: froide/document/views.py froide/foirequest/models/message.py
-#: froide/foirequest/views/account_requests.py froide/helper/admin_utils.py
+#: froide/foirequest/views/account_requests.py
 msgid "tags"
 msgstr "Schlagwörter"
 
@@ -14000,9 +14004,6 @@ msgstr "👋 Viel Erfolg!"
 #~ msgctxt "URL part"
 #~ msgid "successful"
 #~ msgstr "erfolgreich"
-
-#~ msgid "tag"
-#~ msgstr "Schlagwort"
 
 #~ msgctxt "URL part"
 #~ msgid "tag"

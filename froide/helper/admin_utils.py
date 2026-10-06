@@ -268,7 +268,7 @@ class TaggitListFilter(SimpleListFilter):
 
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
-    title = _("tags")
+    title = _("tag")
 
     # Parameter for the filter that will be used in the URL query.
     parameter_name = "tag"
