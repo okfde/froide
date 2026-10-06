@@ -1405,7 +1405,7 @@ msgstr "Auswahl prüfen"
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
 #, python-format
-msgid "Check the %(icon_text)s&nbsp;<b>Hide text</b> view to see if the underlying text is also gone. If the document does not load correctly, cancel and inform a site moderator."
+msgid "Check the %(icon_text)s&nbsp;<b>Text only</b> view to see if the underlying text is also gone. If the document does not load correctly, cancel and inform a site moderator."
 msgstr "Vergewissern Sie sich auch in der Ansicht %(icon_text)s&nbsp;<b>Nur Text</b>, dass das Dokument die Informationen nicht mehr enthält. Falls das Dokument nicht ordentlich lädt, brechen Sie ab und informieren Sie eine:n Moderator:in der Seite."
 
 #: froide/foirequestfollower/configuration.py
