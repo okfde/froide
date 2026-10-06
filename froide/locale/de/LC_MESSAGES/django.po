@@ -2980,7 +2980,7 @@ msgstr "Schlagwort einer Informationsfreiheitsanfrage"
 
 #: froide/foirequest/models/request.py
 msgid "FoI Request Tags"
-msgstr "Schlagworte einer Informationsfreiheitsanfrage"
+msgstr "Schlagwörter einer Informationsfreiheitsanfrage"
 
 #: froide/foirequest/templates/foirequest/list.html
 msgid "FoI Requests"
@@ -7608,7 +7608,7 @@ msgstr "Mit Schlagwörtern können Sie Ihre Anfragen organisieren und diese auch
 
 #: froide/foirequest/views/request_actions.py
 msgid "Tags have been set for this request."
-msgstr "Die Schlagworte dieser Anfrage wurden gespeichert."
+msgstr "Die Schlagwörter dieser Anfrage wurden gespeichert."
 
 #: froide/foirequest/views/message.py
 msgid "Take / Choose picture"
@@ -7959,7 +7959,7 @@ msgstr "Diese Dokumente werden der Anfrage hinzugefügt:"
 
 #: froide/document/forms.py
 msgid "These tags will be applied to all documents."
-msgstr "Diese Schlagworte werden den Dokumenten gegeben."
+msgstr "Diese Schlagwörter werden den Dokumenten gegeben."
 
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
 msgid "This PDF requires a password to open. Please provide the password here:"
@@ -10284,7 +10284,7 @@ msgstr "nach Status %(status)s"
 #: froide/document/feeds.py froide/foirequest/feeds.py
 #, python-format
 msgid "by tag %(tag)s"
-msgstr "nach Tag %(tag)s"
+msgstr "nach Schlagwort %(tag)s"
 
 #: froide/publicbody/templates/publicbody/jurisdiction.html
 #, python-format
@@ -11315,7 +11315,7 @@ msgstr "getaggte Nutzer:innen"
 #: froide/document/views.py froide/foirequest/models/message.py
 #: froide/foirequest/views/account_requests.py froide/helper/admin_utils.py
 msgid "tags"
-msgstr "Tags"
+msgstr "Schlagwörter"
 
 #: froide/team/models.py
 msgid "team"
