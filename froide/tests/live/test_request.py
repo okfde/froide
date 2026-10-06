@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 from django import forms
 from django.contrib.auth import get_user_model
@@ -562,13 +563,17 @@ async def test_make_request_captcha(
 @pytest.mark.asyncio(loop_scope="session")
 @override_settings(SERVE_MEDIA=True)
 async def test_manage_attachments_document_modal(
-    page: Page, live_server, dummy_user, check_a11y
+    page: Page, live_server, dummy_user, check_a11y, settings
 ):
+    # Use one-page PDF for faster document processing
+    test_path = Path(settings.MEDIA_ROOT) / "redaction-test-precision.pdf"
     req = factories.FoiRequestFactory(
         user=dummy_user, created_at=timezone.now(), status="resolved"
     )
     mes = factories.FoiMessageFactory(request=req)
-    att = factories.FoiAttachmentFactory(belongs_to=mes, approved=True)
+    att = factories.FoiAttachmentFactory(
+        belongs_to=mes, approved=True, file__from_path=test_path
+    )
     with mute_signals(signals.post_save):
         doc = att.create_document()
     assert doc is not None
