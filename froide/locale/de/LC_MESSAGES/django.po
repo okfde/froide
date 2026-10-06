@@ -1406,7 +1406,7 @@ msgstr "Auswahl prüfen"
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
 #, python-format
 msgid "Check the %(icon_text)s&nbsp;<b>Hide text</b> view to see if the underlying text is also gone. If the document does not load correctly, cancel and inform a site moderator."
-msgstr "Prüfen Sie auch in der Ansicht %(icon_text)s&nbsp;<b>Nur Text</b>, dass das Dokument die Informationen nicht mehr enthält. Falls das Dokument nicht ordentlich lädt, brechen Sie ab und informieren Sie eine:n Moderator:in der Seite."
+msgstr "Vergewissern Sie sich auch in der Ansicht %(icon_text)s&nbsp;<b>Nur Text</b>, dass das Dokument die Informationen nicht mehr enthält. Falls das Dokument nicht ordentlich lädt, brechen Sie ab und informieren Sie eine:n Moderator:in der Seite."
 
 #: froide/foirequestfollower/configuration.py
 msgid "Check your emails and click the confirmation link in order to follow this request."
@@ -3238,7 +3238,7 @@ msgstr "Zurück"
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
 #, python-format
 msgid "Go to each page of the PDF and locate the parts that need to be blacked out. While the %(icon_paint)s&nbsp;<b>paint tool</b> is active, draw rectangles with your finger, or by clicking and dragging your mouse. Use the %(icon_plus)s %(icon_minus)s buttons to zoom in and out. Switch to the %(icon_move)s&nbsp;<b>move tool</b> to pan the document. In many browsers, you can use the Alt key to toggle between paint and move tools."
-msgstr "Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, die geschwärzt werden müssen. Während das %(icon_paint)s&nbsp;<b>Pinsel-Werkzeug</b> aktiv ist, zeichnen sie mit ihrem Finger Rechtecke, oder, indem sie mit der Maus klicken und ziehen. Mit den Buttons %(icon_plus)s %(icon_minus)s können Sie rein- und raus-zoomen. Wechseln Sie zum %(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b> um sich im Dokument zu bewegen. In vielen Browsern können Sie mit der Alt-Taste zwischen dem Pinsel- und dem Bewegen-Werkzeug hin-und-her-schalten."
+msgstr "Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, die geschwärzt werden müssen. Solange das %(icon_paint)s&nbsp;<b>Pinsel-Werkzeug</b> aktiv ist, zeichnen Sie Rechtecke mit Ihrem Finger oder durch Klicken und Ziehen mit der Maus. Mit den Buttons %(icon_plus)s %(icon_minus)s können Sie rein- und rauszoomen. Wechseln Sie zum %(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b>, um sich im Dokument zu bewegen. In vielen Browsern können Sie mit der Alt-Taste zwischen dem Pinsel- und dem Bewegen-Werkzeug hin- und herschalten."
 
 #: froide/foirequest/views/make_request.py
 msgid "Go to next step"
