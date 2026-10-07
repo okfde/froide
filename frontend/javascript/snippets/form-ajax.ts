@@ -1,4 +1,5 @@
 import { Modal } from 'bootstrap'
+import { guardSubmit, unsetSubmitting } from '../lib/form-submit'
 interface IHTMLModalTriggerElement extends HTMLElement {
   Modal: any | null
 }
@@ -19,7 +20,12 @@ function submitFormsAjax(): void {
     form.addEventListener('submit', (e) => {
       e.preventDefault()
 
+      if (!guardSubmit(form, e)) {
+        return false
+      }
+
       if (!confirmForm(form)) {
+        unsetSubmitting(form)
         return false
       }
 
@@ -73,7 +79,7 @@ function submitFormsAjax(): void {
           return
         }
         if (form.dataset.container) {
-          unsetWorking(form)
+          unsetSubmitting(form)
           const container = document.querySelector(form.dataset.container)
           if (container != null) {
             container.innerHTML = responseData
@@ -96,35 +102,16 @@ function submitFormsAjax(): void {
           }
         }
       }
+      request.onerror = () => {
+        // Allow retrying when the request could not be made at all
+        unsetSubmitting(form)
+      }
       if (method.toLowerCase() !== 'get') {
         request.send(data)
       } else {
         request.send()
       }
-
-      setWorking(form)
     })
-  })
-}
-
-const SPINNER =
-  '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
-
-const setWorking = (form: HTMLFormElement): void => {
-  Array.from(form.querySelectorAll('button, input')).forEach((el) => {
-    if (el.getAttribute('type') === 'submit') {
-      el.innerHTML = `${SPINNER}${el.innerHTML}`
-    }
-    el.setAttribute('disabled', '')
-  })
-}
-
-const unsetWorking = (form: HTMLFormElement): void => {
-  Array.from(form.querySelectorAll('button, input')).forEach((el) => {
-    if (el.getAttribute('type') === 'submit') {
-      el.innerHTML = el.innerHTML.replace(SPINNER, '')
-    }
-    el.removeAttribute('disabled')
   })
 }
 

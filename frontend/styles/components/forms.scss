@@ -49,3 +49,17 @@
     border-color: var(--bs-primary);
   }
 }
+
+form[data-submitting] {
+  button[type='submit']::before {
+    @extend .spinner-border;
+    @extend .spinner-border-sm;
+
+    content: '';
+    margin-right: 0.25em;
+  }
+
+  button[type='submit'] {
+    cursor: progress;
+  }
+}
