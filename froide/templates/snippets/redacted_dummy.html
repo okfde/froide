@@ -19,10 +19,12 @@ Usage:
     {% include "snippets/redacted_dummy.html" with content=name label=label %}
 {% endcomment %}
 {% firstof label _("Only visible to you") as redaction_label %}
-<span class="redacted-dummy"
-      data-bs-toggle="tooltip"
-      title="{{ redaction_label }}">
-    <span class="visually-hidden">{{ redaction_label }}, {% translate "start" %}:</span>
-    {{ content }}
-    <span class="visually-hidden">{% translate "end of hidden text" %}</span>
-</span>
+{% spaceless %}
+    <span class="redacted-dummy"
+          data-bs-toggle="tooltip"
+          title="{{ redaction_label }}">
+        <span class="visually-hidden">{{ redaction_label }}, {% translate "start" %}:</span>
+        <span>{{ content }}</span>
+        <span class="visually-hidden">{% translate "end of hidden text" %}</span>
+    </span>
+{% endspaceless %}

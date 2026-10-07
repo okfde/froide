@@ -378,10 +378,15 @@ def test_cached_rendered_content(
     )
     expected_redacted_content = {
         True: (
-            'Dear <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="Only '
-            'visible to you">Mx. Example</span>,\n\nPlease send me the following documents:\n'
-            f'{req_text}\n\nGreetings,\n<span class="redacted-dummy redacted-hover" data-bs-toggle='
-            '"tooltip" title="Only visible to you">Alex Example</span>'
+            'Dear <span class="redacted-dummy"\n      data-bs-toggle="tooltip"\n      '
+            'title="Only visible to you"><span class="visually-hidden">Only visible to '
+            'you, start:</span><span>Mx. Example</span><span class="visually-hidden">end '
+            "of hidden text</span></span>,\n\nPlease send me the following documents:\n"
+            f'{req_text}\n\nGreetings,\n<span class="redacted-dummy"\n      '
+            'data-bs-toggle="tooltip"\n      title="Only visible to you">'
+            '<span class="visually-hidden">Only visible to you, start:</span>'
+            '<span>Alex Example</span><span class="visually-hidden">end of hidden text'
+            "</span></span>"
         ),
         False: (
             'Dear <span class="redacted">&lt;&lt;Redacted&gt;&gt;</span>,\n\nPlease send me the fol'
@@ -397,5 +402,4 @@ def test_cached_rendered_content(
     redacted_foi_message = FoiMessage.objects.get(id=redacted_foi_message.id)
     with django_assert_num_queries(0):
         redacted_content = render_message_content(redacted_foi_message, auth)
-        assert redacted_content == expected_redacted_content[auth]
         assert redacted_content == expected_redacted_content[auth]

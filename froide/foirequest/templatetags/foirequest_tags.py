@@ -264,8 +264,10 @@ def get_redacted_dummy_tags() -> tuple[SafeString, SafeString]:
     html = render_to_string(
         "snippets/redacted_dummy.html",
         {"content": REDACTED_DUMMY_SPLIT_TOKEN},
-    ).strip()
-    start_tag, end_tag = html.split(REDACTED_DUMMY_SPLIT_TOKEN)
+    )
+    start_tag, end_tag = (
+        part.strip() for part in html.split(REDACTED_DUMMY_SPLIT_TOKEN)
+    )
     return SafeString(start_tag), SafeString(end_tag)
 
 
