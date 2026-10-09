@@ -6,9 +6,9 @@
             {% if request.user.is_authenticated %}
                 {# name #}
                 {% if comment.is_requester and comment.user.private %}
-                    <span class="redacted-dummy redacted-hover"
-                          data-bs-toggle="tooltip"
-                          title="{% trans 'Name not public' %}">{% trans "Commentator" %}</span>
+                    {% translate "Commentator" as commentator_name %}
+                    {% translate "Name not public" as name_not_public_label %}
+                    {% include "snippets/redacted_dummy.html" with content=commentator_name label=name_not_public_label %}
                 {% elif not comment.user_name %}
                     {% trans "Commentator" %}
                 {% else %}

@@ -5286,9 +5286,7 @@ msgstr "Nur die geschwärzte Version eines Anhangs kann zu einem Dokument verarb
 msgid "Only visible if logged in"
 msgstr "Nur eingeloggt sichtbar"
 
-#: froide/foirequest/templates/foirequest/body/message/meta_container.html
-#: froide/foirequest/templates/foirequest/body/message/sender.html
-#: froide/foirequest/templatetags/foirequest_tags.py
+#: froide/templates/snippets/redacted_dummy.html
 msgid "Only visible to you"
 msgstr "Nur für Sie sichtbar"
 
@@ -10467,6 +10465,10 @@ msgstr "E-Mail"
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
+#: froide/templates/snippets/redacted_dummy.html
+msgid "end of hidden text"
+msgstr "Ende des versteckten Textes"
+
 #: froide/publicbody/jurisdiction_urls.py froide/publicbody/urls.py
 msgctxt "url part"
 msgid "entities/"
@@ -11257,6 +11259,10 @@ msgstr "Quellreferenz"
 #: froide/account/models.py
 msgid "staff status"
 msgstr "Mitarbeiter:innen-Status"
+
+#: froide/templates/snippets/redacted_dummy.html
+msgid "start"
+msgstr "Beginn"
 
 #: froide/foirequest/views/make_request.py froide/georegion/models.py
 msgid "state"

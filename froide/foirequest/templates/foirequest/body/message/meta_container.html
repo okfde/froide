@@ -12,9 +12,7 @@
                 {% if message.is_response %}
                     <span title="{{ message.sender_email }}">
                         {% if message.user_real_sender != message.sender_public_body.name %}
-                            <span class="redacted-dummy redacted-hover"
-                                  data-bs-toggle="tooltip"
-                                  title="{% trans "Only visible to you" %}">{{ message.user_real_sender }}</span>
+                            {% include "snippets/redacted_dummy.html" with content=message.user_real_sender %}
                             –
                         {% endif %}
                         {{ message.sender_public_body.name }}
@@ -51,9 +49,7 @@
                 {% else %}
                     {# user can read authenticated and message is not response #}
                     {% if object.user.private %}
-                        <span class="redacted-dummy redacted-hover"
-                              data-bs-toggle="tooltip"
-                              title="{% trans "Only visible to you" %}">{{ message.user_real_sender }}</span>
+                        {% include "snippets/redacted_dummy.html" with content=message.user_real_sender %}
                     {% else %}
                         <span>{{ message.user_real_sender }}</span>
                     {% endif %}
@@ -87,11 +83,7 @@
                             {% for recipient_type, name, email in additional_recipients %}
                                 <li>
                                     <strong>{{ recipient_type|title }}:</strong>
-                                    <span class="redacted-dummy redacted-hover"
-                                          data-bs-toggle="tooltip"
-                                          title="{% trans "Only visible to you" %}">
-                                        {{ name }} &lt;{{ email }}&gt;
-                                    </span>
+                                    {% include "snippets/redacted_dummy.html" with content=name|add:" <"|add:email|add:">" %}
                                 </li>
                             {% endfor %}
                         </ul>
@@ -131,9 +123,7 @@
                     <a href="{{ message.recipient_public_body.get_absolute_url }}">{{ message.recipient_public_body.name }}</a>
                 {% else %}
                     {% if object|can_read_foirequest_authenticated:request %}
-                        <span class="redacted-dummy redacted-hover"
-                              data-bs-toggle="tooltip"
-                              title="{% trans "Only visible to you" %}">{{ message.recipient }}</span>
+                        {% include "snippets/redacted_dummy.html" with content=message.recipient %}
                     {% else %}
                         <span class="redacted">{% translate "Recipient name" %}</span>
                     {% endif %}

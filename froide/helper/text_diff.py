@@ -12,16 +12,45 @@ CONTENT_CACHE_THRESHOLD = 5000
 
 
 def get_diff_chunks(content: str) -> List[str]:
+    """
+    Split text into words and the separators between them.
+
+    Separators are kept as their own chunks so the diff can align on word
+    boundaries instead of individual characters.
+
+    >>> get_diff_chunks("Hallo Max Mustermann!")
+    ['Hallo', ' ', 'Max', ' ', 'Mustermann', '!']
+    """
     return [x for x in SPLITTER_RE.split(content) if x]
 
 
 def is_diff_separator(s: str) -> bool:
+    """
+    Is this chunk a single separator character (space, comma, ...)?
+
+    >>> is_diff_separator(" "), is_diff_separator(","), is_diff_separator("Max")
+    (True, True, False)
+    """
     return bool(SPLITTER_MATCH_RE.match(s))
 
 
 def get_differences_by_chunk(
     content_a: str, content_b: str
 ) -> Iterator[Tuple[bool, str]]:
+    """
+    Compare two texts chunk-wise, yielding `content_a` in runs.
+
+    Yields ``(is_same, text)``, where the flag means *unchanged* — the opposite
+    of the flag `get_differences` yields.
+
+    Only `content_a` is ever yielded; `content_b` just decides which parts of it
+    count as changed. Swapping the arguments yields the other text.
+
+    >>> a = "Sehr geehrte Frau Meier, mein Name ist Max Mustermann."
+    >>> b = "Sehr geehrte Frau Meier, mein Name ist <<Name>>."
+    >>> list(get_differences_by_chunk(a, b))
+    [(True, 'Sehr geehrte Frau Meier, mein Name ist '), (False, 'Max Mustermann.')]
+    """
     a_list = get_diff_chunks(content_a)
     b_list = get_diff_chunks(content_b)
     matcher = SequenceMatcher(None, a_list, b_list, autojunk=False)
@@ -42,6 +71,26 @@ def get_differences_by_chunk(
 def get_differences(
     content_a: str, content_b: str, min_part_len: int = 3
 ) -> Iterator[Tuple[bool, str]]:
+    """
+    Group the chunk-wise diff into runs of changed and unchanged text.
+
+    Yields ``(is_changed, text)``, inverting the flag of
+    `get_differences_by_chunk`.
+
+    >>> a = "Kontakt: max@example.org oder Tel 030-12345"
+    >>> b = "Kontakt: <<email address>> oder Tel 030-12345"
+    >>> list(get_differences(a, b))
+    [(False, 'Kontakt: '), (True, 'max@example.org'), (False, ' oder Tel 030-12345')]
+
+    Unchanged runs shorter than `min_part_len` are swallowed by the surrounding
+    changed run, keeping neighbouring changes in one block instead of breaking
+    them apart at every space:
+
+    >>> list(get_differences("Max A Mustermann", "<<N>> A <<M>>"))
+    [(True, 'Max A Mustermann')]
+    >>> list(get_differences("Max A Mustermann", "<<N>> A <<M>>", min_part_len=0))
+    [(True, 'Max'), (False, ' A '), (True, 'Mustermann')]
+    """
     opened = False
     last_chunk = []
     for is_same, part in get_differences_by_chunk(content_a, content_b):
@@ -70,6 +119,17 @@ def get_tagged_differences(
     attrs: Optional[str] = None,
     min_part_len: int = 3,
 ) -> Iterator[SafeString]:
+    """
+    Yield the diff as HTML pieces, wrapping changed runs in `start_tag`/`end_tag`.
+
+    Text is escaped here, tags are not — hence the pieces are yielded separately
+    rather than concatenated by the caller.
+
+    >>> a = "Sehr geehrte Frau Meier, mein Name ist Max Mustermann."
+    >>> b = "Sehr geehrte Frau Meier, mein Name ist <<Name>>."
+    >>> list(get_tagged_differences(a, b, attrs='class="redacted"'))
+    ['Sehr geehrte Frau Meier, mein Name ist ', '<span class="redacted">', 'Max Mustermann.', '</span>']
+    """
     if attrs is None:
         attrs = ""
     start_tag = SafeString(start_tag.format(attrs=attrs))
@@ -92,6 +152,20 @@ def mark_differences(
     end_tag: str = "</span>",
     attrs: Optional[str] = None,
 ) -> SafeString:
+    """
+    Render the diff of two texts as one HTML string.
+
+    >>> a = "Sehr geehrte Frau Meier, mein Name ist Max Mustermann."
+    >>> b = "Sehr geehrte Frau Meier, mein Name ist <<Name>>."
+    >>> mark_differences(a, b, attrs='class="redacted"')
+    'Sehr geehrte Frau Meier, mein Name ist <span class="redacted">Max Mustermann.</span>'
+
+    Markup in the input is escaped, so it cannot break out of the span. Escaping
+    happens per run, so a tag boundary can end up inside an escaped sequence:
+
+    >>> mark_differences("a <b> c", "a <<x>> c", attrs='class="r"')
+    'a &lt;<span class="r">b&gt; c</span>'
+    """
     difference_tagger = get_tagged_differences(
         content_a, content_b, start_tag=start_tag, end_tag=end_tag, attrs=attrs
     )
