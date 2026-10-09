@@ -66,6 +66,7 @@ $fa-font-path: 'font-awesome/fonts';
 
 // Own components
 // FIXME: these are not really components
+@import 'components/accessibility';
 @import 'components/base';
 @import 'components/breadcrumb';
 @import 'components/buttons';

@@ -1,0 +1,9 @@
+// Visually hidden text labels something that is visible next to it, so it is
+// announced by screen readers but would only be noise in copied text.
+//
+// Where the hidden text is the content itself rather than a label for it, e.g.
+// the meaning of an icon in a table cell, add bootstrap's `user-select-auto`
+// to keep it copyable.
+.visually-hidden {
+  user-select: none;
+}
