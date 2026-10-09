@@ -8,7 +8,7 @@
                 class="btn btn-outline-redact"
                 data-bs-toggle="modal"
                 data-bs-target="#message-redact-{{ message.pk }}">
-            <i class="fa fa-paint-brush"></i>
+            <i class="fa fa-paint-brush" aria-hidden="true"></i>
             {% trans "Redact" %}
         </button>
     </div>
@@ -17,11 +17,12 @@
          tabindex="-1"
          role="dialog"
          data-redact="message"
-         id="message-redact-{{ message.pk }}">
-        <div class="modal-dialog modal-lg" role="document">
+         id="message-redact-{{ message.pk }}"
+         aria-labelledby="message-redact-{{ message.pk }}-title">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{% trans "Redact / unredact message" %}</h5>
+                    <h1 class="modal-title h5" id="message-redact-{{ message.pk }}-title">{% trans "Redact / unredact message" %}</h1>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"

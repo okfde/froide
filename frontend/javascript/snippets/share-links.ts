@@ -1,3 +1,5 @@
+import { Modal } from 'bootstrap'
+
 // TODO: Use proper i18n library
 const strings = {
   de: { error: 'Konnte Inhalt nicht teilen.' },
@@ -82,5 +84,9 @@ document
         '_blank'
       )
       localStorage.setItem(storageKey, instance.value)
+
+      // Closed only here, so the modal stays open while the input is invalid
+      const modal = form.closest<HTMLElement>('.modal')
+      if (modal !== null) Modal.getOrCreateInstance(modal).hide()
     })
   })

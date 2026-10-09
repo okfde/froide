@@ -1,20 +1,32 @@
 {% load i18n %}
 {% load markup %}
 {% load form_helper %}
-<a href="#"
-   data-bs-toggle="modal"
-   data-bs-target="#description-redact-{{ foirequest.pk }}">
-    <i class="fa fa-paint-brush"></i>
+<button type="button"
+        class="btn btn-link p-0 align-baseline"
+        data-bs-toggle="modal"
+        data-bs-target="#description-redact-{{ foirequest.pk }}">
+    <i class="fa fa-paint-brush" aria-hidden="true"></i>
     {% trans "Redact" %}
-</a>
+</button>
 <div class="modal"
      data-teleport="body"
      tabindex="-1"
      role="dialog"
      data-redact="description"
-     id="description-redact-{{ foirequest.pk }}">
-    <div class="modal-dialog modal-lg" role="document">
+     id="description-redact-{{ foirequest.pk }}"
+     aria-labelledby="description-redact-{{ foirequest.pk }}-title">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title h5"
+                    id="description-redact-{{ foirequest.pk }}-title">
+                    {% translate "Redact / unredact request text" %}
+                </h1>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="{% translate 'Close' %}"></button>
+            </div>
             <div class="modal-body container">
                 <p>{% trans "Click on the words you wish to redact or unredact." %}</p>
                 <form method="post"

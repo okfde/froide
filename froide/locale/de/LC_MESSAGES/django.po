@@ -1578,9 +1578,12 @@ msgid "Client type"
 msgstr "Client-Typ"
 
 #: froide/foirequest/templates/foirequest/body/message/toolbar/resend.html
+#: froide/foirequest/templates/foirequest/snippets/description_redact.html
 #: froide/foirequest/templates/foirequest/snippets/message_edit.html
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
-#: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
+#: froide/foirequest/templates/foirequest/snippets/withdrawal_popup.html
+#: froide/foirequest/views/attachment.py
+#: froide/foirequest/views/make_request.py froide/foirequest/views/message.py
 #: froide/follow/templates/follow/_email_follow_form.html
 #: froide/problem/templates/problem/message_toolbar_item.html
 #: froide/searchalert/templates/searchalert/_alert_form.html
@@ -6315,6 +6318,10 @@ msgstr "„%(name)s“ schwärzen"
 msgid "Redact / unredact message"
 msgstr "Nachricht schwärzen / entschwärzen"
 
+#: froide/foirequest/templates/foirequest/snippets/description_redact.html
+msgid "Redact / unredact request text"
+msgstr "Anfragetext schwärzen / entschwärzen"
+
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
 msgid "Redact message text"
 msgstr "Nachrichtentext schwärzen"
@@ -7278,6 +7285,10 @@ msgstr "Teilen Sie Ihre Anfrage"
 #: froide/foirequest/templates/foirequest/sent.html
 msgid "Share your request with others!"
 msgstr "Teilen Sie Ihre Anfrage mit anderen!"
+
+#: froide/templates/snippets/share_buttons.html
+msgid "Share!"
+msgstr "Teilen!"
 
 #: froide/templates/snippets/share_buttons.html
 msgid "Share…"
@@ -8530,6 +8541,7 @@ msgid "Unredact footer"
 msgstr "Ende der Nachricht entschwärzen"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
+#: froide/problem/templates/problem/message_toolbar_item.html
 msgid "Unresolved problem reports"
 msgstr "Ungelöste Problemberichte"
 
@@ -10345,10 +10357,6 @@ msgstr "Suche zurücksetzen"
 #: froide/foirequest/views/make_request.py
 msgid "clear selection"
 msgstr "Auswahl verwerfen"
-
-#: froide/foirequest/views/make_request.py
-msgid "close"
-msgstr "Schließen"
 
 #: froide/foirequest/admin.py
 #, python-format
@@ -13836,6 +13844,9 @@ msgstr "👋 Viel Erfolg!"
 #, fuzzy
 #~ msgid "clocked"
 #~ msgstr "Blockiert"
+
+#~ msgid "close"
+#~ msgstr "Schließen"
 
 #~ msgctxt "URL part"
 #~ msgid "confirm-follow"

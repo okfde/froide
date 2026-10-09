@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import { inject, nextTick, onMounted, ref, useId } from 'vue'
 import { Modal } from 'bootstrap'
 
 const props = defineProps({
@@ -18,8 +18,12 @@ const props = defineProps({
   keepAlive: Boolean
 })
 
+const i18n: any = inject('i18n')
+
 const modalEl = ref()
+const titleId = useId()
 let bsModal
+let returnFocusTo: Element | null = null
 
 // Current behavior is "keep-alive"-ish:
 // modal markup will be rendered on first show,
@@ -28,6 +32,7 @@ let bsModal
 const doRender = ref(false)
 
 const show = async () => {
+  returnFocusTo = document.activeElement
   if (!doRender.value) {
     doRender.value = true
     await nextTick()
@@ -45,6 +50,10 @@ const hide = () => {
 
 const initialize = () => {
   bsModal = new Modal(modalEl.value)
+  // Bootstrap only does this for modals that are opened by a data-bs-toggle trigger
+  modalEl.value.addEventListener('hidden.bs.modal', () => {
+    if (returnFocusTo instanceof HTMLElement) returnFocusTo.focus()
+  })
 }
 
 onMounted(() => {
@@ -66,19 +75,20 @@ defineExpose({
       class="modal"
       tabindex="-1"
       role="dialog"
+      :aria-labelledby="titleId"
       v-if="doRender"
     >
-      <div :class="'modal-dialog ' + dialogClasses" role="document">
+      <div :class="'modal-dialog ' + dialogClasses">
         <div :class="'modal-content ' + contentClasses">
           <div class="modal-header">
-            <div class="text-break">
+            <div :id="titleId" class="text-break">
               <slot name="header"></slot>
             </div>
             <button
               @click="hide"
               type="button"
               class="btn-close"
-              aria-label="Close"
+              :aria-label="i18n.close"
             ></button>
           </div>
           <div :class="'modal-body ' + bodyClasses">

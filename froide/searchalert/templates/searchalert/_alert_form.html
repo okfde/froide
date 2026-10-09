@@ -15,6 +15,7 @@
 {% block modal %}
     <div id="{{ form.id }}"
          class="modal fade"
+         tabindex="-1"
          role="dialog"
          aria-labelledby="{{ form.id }}-label"
          aria-hidden="true">
@@ -24,7 +25,7 @@
                   action="{% url "searchalert:subscribe" %}"
                   id="searchalert-form">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="{{ form.id }}-label">{% trans "Get updates for new search results via email" %}</h5>
+                    <h1 class="modal-title h5" id="{{ form.id }}-label">{% trans "Get updates for new search results via email" %}</h1>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
