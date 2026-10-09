@@ -552,7 +552,7 @@ class FoiRequest(models.Model):
 
     @property
     def project_number(self):
-        if self.project_order:
+        if self.project_order is not None:
             return self.project_order + 1
 
     @property
