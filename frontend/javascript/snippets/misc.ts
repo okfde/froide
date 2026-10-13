@@ -1,4 +1,5 @@
 import { Modal } from 'bootstrap'
+import { guardSubmits } from '../lib/form-submit'
 import { scrollToAnchor } from '../lib/misc'
 
 const runOnPage = (): void => {
@@ -15,6 +16,9 @@ const runOnPage = (): void => {
         }
       })
     })
+
+  /* Flag forms as submitting on submit, so they cannot be submitted twice */
+  guardSubmits()
 
   document.querySelectorAll<HTMLElement>('[data-teleport]').forEach((el) => {
     let location
