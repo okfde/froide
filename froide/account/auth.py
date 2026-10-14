@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 
-from mfa import settings
 from mfa.models import MFAKey
 
 from froide.helper.utils import get_redirect
@@ -96,6 +95,7 @@ def start_mfa_auth(request: HttpRequest, user: User, redirect_url: str) -> HttpR
     """
     Mirrors mfa.views.LoginView
     """
+    from mfa import settings
 
     request.session["mfa_user"] = {
         "pk": user.pk,
