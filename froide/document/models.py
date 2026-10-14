@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.db import models
 
 from filingcabinet.models import (
@@ -19,6 +20,8 @@ from froide.helper.auth import (
     get_write_queryset,
 )
 
+HAS_FOIREQUEST = apps.is_installed("froide.foirequest")
+
 
 class AuthQuerysetMixin:
     def get_authenticated_queryset(self, request):
@@ -33,20 +36,21 @@ class DocumentManager(AuthQuerysetMixin, FCDocumentManager):
 
 
 class Document(AbstractDocument):
-    original = models.ForeignKey(
-        "foirequest.FoiAttachment",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="original_document",
-    )
+    if HAS_FOIREQUEST:
+        original = models.ForeignKey(
+            "foirequest.FoiAttachment",
+            null=True,
+            blank=True,
+            on_delete=models.SET_NULL,
+            related_name="original_document",
+        )
 
-    foirequest = models.ForeignKey(
-        "foirequest.FoiRequest", null=True, blank=True, on_delete=models.SET_NULL
-    )
-    publicbody = models.ForeignKey(
-        "publicbody.PublicBody", null=True, blank=True, on_delete=models.SET_NULL
-    )
+        foirequest = models.ForeignKey(
+            "foirequest.FoiRequest", null=True, blank=True, on_delete=models.SET_NULL
+        )
+        publicbody = models.ForeignKey(
+            "publicbody.PublicBody", null=True, blank=True, on_delete=models.SET_NULL
+        )
     team = models.ForeignKey(
         "team.Team", null=True, blank=True, on_delete=models.SET_NULL
     )
@@ -129,7 +133,8 @@ class DocumentCollection(AbstractDocumentCollection):
     team = models.ForeignKey(
         "team.Team", null=True, blank=True, on_delete=models.SET_NULL
     )
-    foirequests = models.ManyToManyField("foirequest.FoiRequest", blank=True)
+    if HAS_FOIREQUEST:
+        foirequests = models.ManyToManyField("foirequest.FoiRequest", blank=True)
 
     allow_zip_download = models.BooleanField(default=True)
 

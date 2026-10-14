@@ -4,13 +4,16 @@ from __future__ import unicode_literals
 
 import django.db.models.deletion
 from django.db import migrations, models
+from django.apps import apps
 
 
 class Migration(migrations.Migration):
     dependencies = [
         ("document", "0008_auto_20180807_1452"),
-        ("foirequest", "0018_requestdraft_law_type"),
     ]
+    if apps.is_installed("froide.foirequest"):
+        dependencies += [("foirequest", "0018_requestdraft_law_type"),]
+
 
     operations = [
         migrations.AddField(
