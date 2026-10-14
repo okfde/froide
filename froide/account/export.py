@@ -307,7 +307,6 @@ class ExportCrossDomainMediaAuth(CrossDomainMediaAuth):
     """
 
     TOKEN_MAX_AGE_SECONDS = 60
-    SITE_URL = settings.SITE_URL
     DEBUG = False
 
     def is_media_public(self):
