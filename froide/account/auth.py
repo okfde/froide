@@ -12,7 +12,6 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 
 from mfa import settings
-from mfa.methods import fido2, totp
 from mfa.models import MFAKey
 
 from froide.helper.utils import get_redirect
@@ -52,6 +51,8 @@ def list_mfa_methods(user):
 
 
 def get_mfa_module_for_method(method: MFAMethod):
+    from mfa.methods import fido2, totp
+
     if method == MFAMethod.FIDO2:
         return fido2
     elif method == "TOTP":
