@@ -335,24 +335,15 @@
         </div>
       </div>
     </div>
-    <ConfirmNoRedaction
-      :i18n="config.i18n"
-      ref="confirmmodal"
-      @submit="submitRedactions"
-    />
   </div>
 </template>
 
 <script>
-import ConfirmNoRedaction from './confirm-no-redaction'
-
 import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.js?url'
 
 import Panzoom from '@panzoom/panzoom'
 
 import range from 'lodash.range'
-
-import { Modal } from 'bootstrap'
 
 import { toRaw } from 'vue'
 import { bustCache, getData } from '../../lib/api.js'
@@ -394,7 +385,6 @@ let resizeTimeout = false
 
 export default {
   name: 'PdfRedaction',
-  components: { ConfirmNoRedaction },
   props: {
     config: {
       type: Object,
@@ -1608,22 +1598,10 @@ export default {
       }
     },
     confirmNoRedactions(event) {
-      if (this.hasRedactions) {
-        event.preventDefault()
-        const modal = Modal.getOrCreateInstance(this.$refs.confirmmodal.$el)
-        modal.show()
-      }
       if (this.noRedirect) {
         event.preventDefault()
         this.redactOrApprove()
       }
-    },
-    submitRedactions() {
-      if (this.noRedirect) {
-        this.redactOrApprove()
-        return
-      }
-      document.getElementById('redaction-submit-form').submit()
     },
     updateMode(paint) {
       if (paint) {

@@ -917,10 +917,6 @@ msgstr "Sind diese Dokumente das Ergebnis Ihrer Anfrage und nicht bloß Korrespo
 msgid "Are we missing a public body?"
 msgstr "Fehlt uns eine Behörde?"
 
-#: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
-msgid "Are you sure that no redaction is needed?"
-msgstr "Sind Sie sicher, dass keine Schwärzungen nötig sind?"
-
 #: froide/foirequest/views/message.py
 msgid "Are you sure you want to approve the selected attachments?"
 msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge freigeben/öffentlich machen wollen?"
@@ -1582,7 +1578,6 @@ msgstr "Client-Typ"
 #: froide/foirequest/templates/foirequest/snippets/message_edit.html
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
 #: froide/foirequest/templates/foirequest/snippets/withdrawal_popup.html
-#: froide/foirequest/views/attachment.py
 #: froide/foirequest/views/make_request.py froide/foirequest/views/message.py
 #: froide/follow/templates/follow/_email_follow_form.html
 #: froide/problem/templates/problem/message_toolbar_item.html
@@ -9546,10 +9541,6 @@ msgstr "Sie haben vor kurzem eine Antwort auf Ihre Anfrage „%(title)s“ erhal
 msgid "You recently received replies to some of your requests."
 msgstr "Sie haben vor kurzem Antworten auf einige Ihrer Anfragen bei FragDenStaat.de erhalten."
 
-#: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
-msgid "You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?"
-msgstr "Sie haben Teile des Dokumentes geschwärzt, aber ausgewählt, dass keine Schwärzungen nötig sind. Sind Sie sich sicher?"
-
 #: froide/foirequest/templates/foirequest/header/header.html
 msgid "You request has been refused."
 msgstr "Ihre Anfrage wurde abgelehnt."
@@ -12142,6 +12133,9 @@ msgstr "👋 Viel Erfolg!"
 #~ msgid "Are we missing a public body? <a href=\"%(url)s\">Please let us know!</a>"
 #~ msgstr "Fehlt eine Behörde? <a href=\"%(url)s\">Lassen Sie es uns wissen!</a>"
 
+#~ msgid "Are you sure that no redaction is needed?"
+#~ msgstr "Sind Sie sicher, dass keine Schwärzungen nötig sind?"
+
 #, fuzzy
 #~ msgid "Are you sure to delete the application"
 #~ msgstr "Sind Sie sicher, dass Sie dieses Team löschen wollen?"
@@ -13658,6 +13652,9 @@ msgstr "👋 Viel Erfolg!"
 
 #~ msgid "You need to setup a default FOI Law object"
 #~ msgstr "Sie müssen mindestens ein Informationsgesetz-Objekt anlegen"
+
+#~ msgid "You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?"
+#~ msgstr "Sie haben Teile des Dokumentes geschwärzt, aber ausgewählt, dass keine Schwärzungen nötig sind. Sind Sie sich sicher?"
 
 #~ msgid "You should change your password now."
 #~ msgstr "Sie sollten Ihr Passwort jetzt ändern."
