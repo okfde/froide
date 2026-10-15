@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as filters
+from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, permissions, status, throttling, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -26,6 +27,7 @@ from ..serializers import (
     FoiRequestDetailSerializer,
     FoiRequestListSerializer,
     MakeRequestSerializer,
+    SetStatusSerializer,
 )
 from ..utils import check_throttle
 
@@ -180,6 +182,7 @@ class FoiRequestViewSet(
         "list": FoiRequestListSerializer,
         "update": FoiRequestListSerializer,
         "retrieve": FoiRequestDetailSerializer,
+        "set_status": SetStatusSerializer,
     }
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiRequestFilter
@@ -248,3 +251,22 @@ class FoiRequestViewSet(
 
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user, request=self.request)
+
+    @extend_schema(responses={status.HTTP_200_OK: FoiRequestListSerializer})
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="set-status",
+        url_name="set-status",
+        permission_classes=[permissions.IsAuthenticated, WriteFoiRequestPermission],
+    )
+    def set_status(self, request, pk=None):
+        foirequest = self.get_object()
+        context = dict(self.get_serializer_context(), foirequest=foirequest)
+        serializer = self.get_serializer_class()(data=request.data, context=context)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        serializer = FoiRequestListSerializer(
+            foirequest, context=self.get_serializer_context()
+        )
+        return Response(serializer.data)

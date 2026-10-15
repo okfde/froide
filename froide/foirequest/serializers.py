@@ -33,6 +33,7 @@ from .fields import (
     FoiRequestCostsField,
     FoiRequestRelatedField,
 )
+from .forms import FoiRequestStatusForm
 from .models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
 from .models.message import MESSAGE_KIND_USER_ALLOWED
 from .models.request import USER_ALLOWED_STATUS
@@ -261,6 +262,31 @@ class MakeRequestSerializer(serializers.Serializer):
     def create(self, validated_data):
         service = CreateRequestService(validated_data)
         return service.execute(validated_data["request"])
+
+
+class SetStatusSerializer(serializers.Serializer):
+    status = serializers.CharField()
+    resolution = serializers.CharField(required=False, allow_blank=True)
+    refusal_reason = serializers.CharField(required=False, allow_blank=True)
+    costs = serializers.DecimalField(max_digits=9, decimal_places=2, required=False)
+
+    def validate(self, attrs):
+        # reuse the web form, missing values default to the pre-filled form values
+        foirequest = self.context["foirequest"]
+        data = {
+            "resolution": foirequest.resolution,
+            "refusal_reason": foirequest.refusal_reason,
+            "costs": foirequest.costs,
+            **attrs,
+        }
+        self.form = FoiRequestStatusForm(data=data, foirequest=foirequest)
+        if not self.form.is_valid():
+            raise serializers.ValidationError(self.form.errors)
+        return attrs
+
+    def create(self, validated_data):
+        self.form.save(user=self.context["request"].user)
+        return self.context["foirequest"]
 
 
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
