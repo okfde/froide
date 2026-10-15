@@ -522,6 +522,23 @@ def test_send_message_with_oauth(client, send_message_request, get_oauth_header)
 
 
 @pytest.mark.django_db
+def test_reply_addresses_in_request_detail(
+    client, send_message_request, get_oauth_header
+):
+    foirequest = send_message_request
+    url = reverse("api:request-detail", kwargs={"pk": foirequest.pk})
+
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.json()["reply_addresses"] == []
+
+    response = client.get(url, HTTP_AUTHORIZATION=get_oauth_header("write:request"))
+    assert response.status_code == 200
+    emails = [a["email"] for a in response.json()["reply_addresses"]]
+    assert emails == [foirequest.public_body.email]
+
+
+@pytest.mark.django_db
 def test_send_message_scope_missing(client, send_message_request, get_oauth_header):
     foirequest = send_message_request
     url = reverse("api:request-send-message", kwargs={"pk": foirequest.pk})
