@@ -9126,6 +9126,10 @@ msgstr "Schreiben Sie einen öffentlichen Kommentar"
 msgid "Write a reminder to the public body!"
 msgstr "Schreiben Sie eine Erinnerung an die Behörde!"
 
+#: froide/settings.py
+msgid "Write comments on your behalf"
+msgstr "Kann Kommentare in Ihrem Namen schreiben"
+
 #: froide/foirequest/templates/foirequest/body/correspondence.html
 #: froide/foirequest/views/make_request.py
 msgid "Write message"
@@ -11148,7 +11152,7 @@ msgctxt "url part"
 msgid "request/"
 msgstr "anfrage/"
 
-#: froide/foirequest/signals.py
+#: froide/foirequest/signals.py froide/foirequest/tests/test_api_message.py
 #: froide/problem/templates/problem/message_toolbar_item.html
 msgid "requester"
 msgstr "Anfragesteller:in"
