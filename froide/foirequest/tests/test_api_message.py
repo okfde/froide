@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.core import mail
 from django.test import Client
 from django.urls import reverse
 from django.utils import timezone
@@ -467,3 +468,105 @@ def test_create_draft_message_with_oauth(client, dummy_user, get_oauth_header):
     assert response.status_code == 201, response.json()
     message_response = response.json()
     assert message_response["is_draft"]
+
+
+@pytest.fixture
+def send_message_request(dummy_user):
+    foirequest = factories.FoiRequestFactory.create(user=dummy_user)
+    factories.FoiMessageFactory.create(
+        request=foirequest,
+        sender_user=dummy_user,
+        is_response=False,
+        timestamp=timezone.now() - timedelta(days=1),
+    )
+    return foirequest
+
+
+def send_message_data(foirequest, **kwargs):
+    return {
+        "to": foirequest.public_body.email,
+        "subject": "Re: My request",
+        "message": "My custom reply",
+        **kwargs,
+    }
+
+
+@pytest.mark.django_db
+def test_send_message_with_oauth(client, send_message_request, get_oauth_header):
+    foirequest = send_message_request
+    url = reverse("api:request-send-message", kwargs={"pk": foirequest.pk})
+    auth_header = get_oauth_header("write:request send:message")
+
+    # recipient must be one of the allowed reply addresses
+    data = send_message_data(foirequest, to="someone@example.org")
+    response = client.post(
+        url, data=data, HTTP_AUTHORIZATION=auth_header, content_type="application/json"
+    )
+    assert response.status_code == 400
+    assert len(mail.outbox) == 0
+
+    response = client.post(
+        url,
+        data=send_message_data(foirequest),
+        HTTP_AUTHORIZATION=auth_header,
+        content_type="application/json",
+    )
+    assert response.status_code == 201, response.json()
+    message_response = response.json()
+    assert not message_response["is_response"]
+    assert message_response["kind"] == "email"
+    sent = [m for m in mail.outbox if m.to == [foirequest.public_body.email]]
+    assert len(sent) == 1
+    assert sent[0].subject == "Re: My request [#%s]" % foirequest.pk
+    assert sent[0].body.startswith("My custom reply")
+
+
+@pytest.mark.django_db
+def test_send_message_scope_missing(client, send_message_request, get_oauth_header):
+    foirequest = send_message_request
+    url = reverse("api:request-send-message", kwargs={"pk": foirequest.pk})
+    for scopes in ("write:request write:message", "write:request"):
+        response = client.post(
+            url,
+            data=send_message_data(foirequest),
+            HTTP_AUTHORIZATION=get_oauth_header(scopes),
+            content_type="application/json",
+        )
+        assert response.status_code == 403
+        AccessToken.objects.all().delete()
+    assert len(mail.outbox) == 0
+
+
+@pytest.mark.django_db
+def test_send_message_not_own_request(client, get_oauth_header):
+    foirequest = factories.FoiRequestFactory.create()
+    factories.FoiMessageFactory.create(request=foirequest)
+    response = client.post(
+        reverse("api:request-send-message", kwargs={"pk": foirequest.pk}),
+        data=send_message_data(foirequest),
+        HTTP_AUTHORIZATION=get_oauth_header("write:request send:message"),
+        content_type="application/json",
+    )
+    assert response.status_code == 404
+    assert len(mail.outbox) == 0
+
+
+@pytest.mark.django_db
+def test_send_message_throttled(
+    client, send_message_request, get_oauth_header, settings
+):
+    foirequest = send_message_request
+    froide_config = dict(settings.FROIDE_CONFIG)
+    froide_config["message_throttle"] = [(1, 60)]
+    settings.FROIDE_CONFIG = froide_config
+    url = reverse("api:request-send-message", kwargs={"pk": foirequest.pk})
+    auth_header = get_oauth_header("write:request send:message")
+
+    for expected_status in (201, 429):
+        response = client.post(
+            url,
+            data=send_message_data(foirequest),
+            HTTP_AUTHORIZATION=auth_header,
+            content_type="application/json",
+        )
+        assert response.status_code == expected_status

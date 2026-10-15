@@ -35,6 +35,7 @@ class FoiRequestScope:
     WRITE_REQUEST = "write:request"
     MAKE_REQUEST = "make:request"
     WRITE_MESSAGE = "write:message"
+    SEND_MESSAGE = "send:message"
 
 
 def get_request_for_user(user, path: str):
