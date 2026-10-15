@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from froide.foirequest.utils import postal_date
@@ -14,10 +15,12 @@ from ..auth import (
 from ..models import FoiMessage, FoiRequest
 from ..permissions import (
     OnlyPostalMessagesWritable,
+    WriteCommentScopePermission,
     WriteFoiRequestPermission,
     WriteMessageScopePermission,
 )
 from ..serializers import (
+    CreateCommentSerializer,
     FoiMessageSerializer,
     optimize_message_queryset,
 )
@@ -113,3 +116,18 @@ class FoiMessageViewSet(
             message, context=self.get_serializer_context()
         )
         return Response(serializer.data)
+
+    @action(
+        detail=True,
+        methods=["post"],
+        permission_classes=[WriteCommentScopePermission],
+        serializer_class=CreateCommentSerializer,
+    )
+    def comment(self, request, pk=None):
+        # commenting needs read access only, not write access to the request
+        message = get_object_or_404(get_read_foimessage_queryset(request), pk=pk)
+        context = dict(self.get_serializer_context(), message=message)
+        serializer = CreateCommentSerializer(data=request.data, context=context)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
