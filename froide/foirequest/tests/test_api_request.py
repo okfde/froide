@@ -356,6 +356,38 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
             )
         self.assertEqual(response.status_code, 429)
 
+    def test_request_creation_address(self):
+        self.access_token.scope = "read:user make:request"
+        self.access_token.save()
+        address = "Mustergasse 1\n12345 Musterstadt"
+        self.test_user.address = ""
+        self.test_user.save()
+
+        data = {
+            "subject": "No address",
+            "body": "Testing",
+            "publicbodies": [self.pb.pk],
+        }
+        response, result = self.api_post(self.request_list_url, data)
+        self.assertEqual(response.status_code, 201)
+        message = FoiRequest.objects.get(title="No address").messages[0]
+        self.assertNotIn("Post Address:", message.plaintext)
+        self.assertNotIn(address, message.plaintext)
+
+        data = {
+            "subject": "With address",
+            "body": "Testing",
+            "publicbodies": [self.pb.pk],
+            "address": address,
+        }
+        response, result = self.api_post(self.request_list_url, data)
+        self.assertEqual(response.status_code, 201)
+        message = FoiRequest.objects.get(title="With address").messages[0]
+        self.assertIn("Post Address:", message.plaintext)
+        self.assertIn(address, message.plaintext)
+        self.test_user.refresh_from_db()
+        self.assertEqual(self.test_user.address, address)
+
     def test_foiattachment_upload(self):
         mes = factories.FoiMessageFactory.create(request=self.req, kind="post")
         mes_url = reverse("api:message-detail", kwargs={"pk": mes.pk})
