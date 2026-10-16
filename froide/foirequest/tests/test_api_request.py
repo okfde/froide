@@ -364,6 +364,72 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         proof.save_with_file(ContentFile(JPEG_BYTES))
         return proof
 
+    def test_request_creation_with_proof(self):
+        self.access_token.scope = "read:user make:request"
+        self.access_token.save()
+        proof = self._make_proof(self.test_user)
+
+        mail.outbox = []
+        response, result = self.api_post(
+            self.request_list_url,
+            {
+                "subject": "Proof-Test",
+                "body": "Testing",
+                "publicbodies": [self.pb.pk],
+                "proof": proof.pk,
+            },
+        )
+        self.assertEqual(response.status_code, 201)
+        new_req = FoiRequest.objects.get(title="Proof-Test")
+        message = new_req.foimessage_set.get()
+        self.assertIn("testproof.jpg", message.plaintext)
+        with_proof = [m for m in mail.outbox if m.attachments]
+        self.assertEqual(len(with_proof), 1)
+        filename, content, mimetype = with_proof[0].attachments[0]
+        self.assertEqual(filename, "testproof.jpg")
+        self.assertEqual(content, JPEG_BYTES)
+        self.assertEqual(mimetype, "image/jpeg")
+
+    def test_request_creation_with_foreign_proof(self):
+        self.access_token.scope = "read:user make:request"
+        self.access_token.save()
+        proof = self._make_proof(self.dev_user)
+
+        old_count = FoiRequest.objects.all().count()
+        mail.outbox = []
+        response, result = self.api_post(
+            self.request_list_url,
+            {
+                "subject": "Foreign-Proof-Test",
+                "body": "Testing",
+                "publicbodies": [self.pb.pk],
+                "proof": proof.pk,
+            },
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("proof", result)
+        self.assertEqual(old_count, FoiRequest.objects.all().count())
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_request_creation_without_proof(self):
+        self.access_token.scope = "read:user make:request"
+        self.access_token.save()
+        self._make_proof(self.test_user)
+
+        mail.outbox = []
+        response, result = self.api_post(
+            self.request_list_url,
+            {
+                "subject": "No-Proof-Test",
+                "body": "Testing",
+                "publicbodies": [self.pb.pk],
+            },
+        )
+        self.assertEqual(response.status_code, 201)
+        new_req = FoiRequest.objects.get(title="No-Proof-Test")
+        self.assertNotIn("testproof", new_req.foimessage_set.get().plaintext)
+        self.assertFalse([m for m in mail.outbox if m.attachments])
+
     def test_proof_list(self):
         proof_url = reverse("api:proof-list")
         own = self._make_proof(self.test_user, name="ID card")

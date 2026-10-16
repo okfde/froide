@@ -5124,6 +5124,9 @@ components:
           items:
             type: string
             maxLength: 255
+        proof:
+          type: integer
+          nullable: true
       required:
       - body
       - publicbodies
