@@ -1,0 +1,30 @@
+{% load i18n %}
+{% comment %}
+Marks content that is shown to the current user but hidden from the public.
+
+The content stays readable, the grey background signals that others do not see
+it. For content that is actually removed, use `class="redacted"` instead.
+
+The redactions in a message body are generated from a text diff, which wraps
+runs of arbitrary length. `mark_redacted` therefore renders this template with
+`content` set to a split token and uses the two halves as its tags, so that
+template and diff produce the same markup.
+
+Parameters:
+    content  the value to mark
+    label    optional, replaces the default "Only visible to you"
+
+Usage:
+    {% include "snippets/redacted_dummy.html" with content=message.recipient %}
+    {% include "snippets/redacted_dummy.html" with content=name label=label %}
+{% endcomment %}
+{% firstof label _("Only visible to you") as redaction_label %}
+{% spaceless %}
+    <span class="redacted-dummy"
+          data-bs-toggle="tooltip"
+          title="{{ redaction_label }}">
+        <span class="visually-hidden">{{ redaction_label }}, {% translate "start" %}:</span>
+        <span>{{ content }}</span>
+        <span class="visually-hidden">{% translate "end of hidden text" %}</span>
+    </span>
+{% endspaceless %}
