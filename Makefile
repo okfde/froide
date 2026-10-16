@@ -13,7 +13,8 @@ htmlcov:
 	$(RUN) coverage html
 
 backend_dependencies:
-	uv sync --upgrade-package django-filingcabinet
+	# Upgrade django-filingcabinet in uv.lock, but keep its editable install in the venv
+	uv sync --all-extras --inexact --no-install-package django-filingcabinet --upgrade-package django-filingcabinet
 
 frontend_dependencies:
 	pnpm update @okfde/filingcabinet
