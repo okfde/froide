@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.views import PermissionDenied
 from taggit.serializers import TaggitSerializer, TagListSerializerField
 
+from froide.account.forms import AddressForm
 from froide.document.api_views import DocumentSerializer
 from froide.helper.text_diff import get_differences
 from froide.publicbody.models import PublicBody
@@ -251,6 +252,21 @@ class MakeRequestSerializer(serializers.Serializer):
     tags = serializers.ListField(
         required=False, child=serializers.CharField(max_length=255)
     )
+    address = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        max_length=300,
+        help_text=(
+            "Postal address of the requester. If given, it is saved to the "
+            "user's profile and included in the request message."
+        ),
+    )
+
+    def validate_address(self, value):
+        form = AddressForm(data={"address": value}, request=self.context["request"])
+        if not form.is_valid():
+            raise serializers.ValidationError(form.errors["address"])
+        return form.cleaned_data["address"]
 
     def validate_reference(self, value):
         cleaned_reference = clean_reference(value)
@@ -259,6 +275,13 @@ class MakeRequestSerializer(serializers.Serializer):
         return cleaned_reference
 
     def create(self, validated_data):
+        address = validated_data.get("address")
+        if address:
+            form = AddressForm(
+                data={"address": address}, request=validated_data["request"]
+            )
+            form.is_valid()
+            form.save(user=validated_data["user"])
         service = CreateRequestService(validated_data)
         return service.execute(validated_data["request"])
 
