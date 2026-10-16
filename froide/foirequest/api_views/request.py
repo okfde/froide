@@ -3,13 +3,17 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as filters
+from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, permissions, status, throttling, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from taggit.models import Tag
 
 from froide.campaign.models import Campaign
-from froide.foirequest.permissions import WriteFoiRequestPermission
+from froide.foirequest.permissions import (
+    SendMessageScopePermission,
+    WriteFoiRequestPermission,
+)
 from froide.helper.search.api_views import ESQueryMixin
 
 from ..auth import (
@@ -21,11 +25,13 @@ from ..auth import (
 )
 from ..documents import FoiRequestDocument
 from ..filters import FoiRequestFilterSet
-from ..models import FoiRequest
+from ..models import FoiMessage, FoiRequest
 from ..serializers import (
+    FoiMessageSerializer,
     FoiRequestDetailSerializer,
     FoiRequestListSerializer,
     MakeRequestSerializer,
+    SendMessageSerializer,
 )
 from ..utils import check_throttle
 
@@ -167,6 +173,14 @@ class MakeRequestThrottle(throttling.BaseThrottle):
         return not bool(check_throttle(request.user, FoiRequest))
 
 
+class SendMessageThrottle(throttling.BaseThrottle):
+    def allow_request(self, request, view):
+        foirequest = view.get_object()
+        if not foirequest.should_apply_throttle():
+            return True
+        return not bool(check_throttle(foirequest.user, FoiMessage))
+
+
 class FoiRequestViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
@@ -180,6 +194,7 @@ class FoiRequestViewSet(
         "list": FoiRequestListSerializer,
         "update": FoiRequestListSerializer,
         "retrieve": FoiRequestDetailSerializer,
+        "send_message": SendMessageSerializer,
     }
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiRequestFilter
@@ -248,3 +263,21 @@ class FoiRequestViewSet(
 
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user, request=self.request)
+
+    @extend_schema(responses={status.HTTP_201_CREATED: FoiMessageSerializer})
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="send-message",
+        url_name="send-message",
+        permission_classes=[SendMessageScopePermission, WriteFoiRequestPermission],
+        throttle_classes=[SendMessageThrottle],
+    )
+    def send_message(self, request, pk=None):
+        foirequest = self.get_object()
+        context = dict(self.get_serializer_context(), foirequest=foirequest)
+        serializer = self.get_serializer_class()(data=request.data, context=context)
+        serializer.is_valid(raise_exception=True)
+        message = serializer.save()
+        data = FoiMessageSerializer(message, context=self.get_serializer_context()).data
+        return Response(data, status=status.HTTP_201_CREATED)

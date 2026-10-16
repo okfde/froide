@@ -7095,6 +7095,10 @@ msgstr "Nachricht an Behörde senden"
 msgid "Send messages"
 msgstr "Nachrichten versenden"
 
+#: froide/settings.py
+msgid "Send messages to public bodies on your behalf"
+msgstr "Nachrichten in Ihrem Namen an Behörden senden"
+
 #: froide/guide/admin.py
 msgid "Send notification about selected guidance items"
 msgstr "Sende Benachrichtigung zu ausgewählten Beratungshinweisen"
