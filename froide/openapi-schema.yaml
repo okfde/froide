@@ -2403,6 +2403,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemReport'
           description: ''
+  /api/v1/proof/:
+    get:
+      operationId: proof_list
+      description: |-
+        List the metadata of the authenticated user's own proofs.
+
+        Returns id, name and upload time only, never the proof file itself.
+        The ids can be passed as ``proof`` when making a request.
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - proof
+      security:
+      - oauth2:
+        - make:request
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProofList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedProofList'
+          description: ''
   /api/v1/publicbody/:
     get:
       operationId: publicbody_list
@@ -5554,6 +5598,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProblemReport'
+    PaginatedProofList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Proof'
     PaginatedPublicBodyListList:
       type: object
       required:
@@ -5996,6 +6063,24 @@ components:
         * `info_wrong` - Published information is wrong.
         * `bounce_publicbody` - You received a bounce mail from the public body.
         * `mail_inauthentic` - Received mail does not pass authenticity checks.
+    Proof:
+      type: object
+      description: Metadata of a stored proof. Never includes the file or its key.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - name
+      - timestamp
     PublicBody:
       type: object
       properties:
