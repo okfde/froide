@@ -98,6 +98,26 @@ $btn-font-weight: 600;
 $btn-box-shadow: 0 0 0 transparent; // shadow only when focused or active
 $badge-font-weight: 400;
 
+$btn-hover-bg-shade-amount: 50%;
+$btn-active-bg-shade-amount: 50%;
+
+// Focus: Two-tone focus ring
+$focus-ring-inner-width: 0.125rem;
+$focus-ring-width: 0.3125rem;
+$focus-ring-opacity: 1;
+$focus-ring-inner-color: $white;
+$focus-ring-color: $blue-800;
+$focus-ring-box-shadow:
+  0 0 0 $focus-ring-inner-width $focus-ring-inner-color,
+  0 0 0 $focus-ring-width $focus-ring-color;
+
+// Dark mode swaps the two tones so the sandwich keeps working
+$focus-ring-inner-color-dark: $blue-800;
+$focus-ring-color-dark: $white;
+$focus-ring-box-shadow-dark:
+  0 0 0 $focus-ring-inner-width $focus-ring-inner-color-dark,
+  0 0 0 $focus-ring-width $focus-ring-color-dark;
+
 $link-decoration: none;
 $link-hover-decoration: underline;
 
