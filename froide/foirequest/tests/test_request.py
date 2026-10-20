@@ -1756,12 +1756,30 @@ def test_redact_attachment(world, client):
     "froide.helper.redaction.redact_file",
     mock.Mock(side_effect=Exception("PDF Redaction Error")),
 )
+@pytest.mark.parametrize(
+    "redacted_kwargs,keeps_link",
+    [({"file": ""}, False), ({}, True)],
+    ids=["new-redacted-version", "existing-redacted-version"],
+)
 @pytest.mark.django_db
-def test_failed_redaction_allows_new_redaction(foi_message):
+def test_failed_redaction_allows_new_redaction(
+    foi_message, redacted_kwargs, keeps_link
+):
+    """
+    Make sure that after a failed redaction, the original attachment is in a
+    state that can be redacted again.
+
+    new-redacted-version: first redaction, the empty redacted attachment is
+        removed and the original can be approved and redacted again.
+    existing-redacted-version: retry on an attachment that already has a
+        redacted version, which stays linked, so the original can't be
+        approved (made public) but can be redacted again.
+    """
+
     redacted = factories.FoiAttachmentFactory.create(
         belongs_to=foi_message,
         is_redacted=True,
-        file="",
+        **redacted_kwargs,
     )
     original = factories.FoiAttachmentFactory.create(
         belongs_to=foi_message,
@@ -1773,7 +1791,8 @@ def test_failed_redaction_allows_new_redaction(foi_message):
     redact_attachment_task(original.id, redacted.id, {"pages": []})
 
     original.refresh_from_db()
-    assert original.redacted_id is None
+    assert original.redacted_id == (redacted.id if keeps_link else None)
+    assert original.can_approve == (not keeps_link)
     assert original.can_redact
 
 
