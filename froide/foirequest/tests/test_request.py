@@ -37,6 +37,7 @@ from froide.foirequest.models import (
 )
 from froide.foirequest.models.message import MessageKind
 from froide.foirequest.signals import email_left_queue
+from froide.foirequest.tasks import redact_attachment_task
 from froide.foirequest.tests import factories
 from froide.foirequest.utils import possible_reply_addresses
 from froide.helper.content_urls import get_content_url
@@ -1749,6 +1750,83 @@ def test_redact_attachment(world, client):
     assert new_att.is_redacted
     assert not new_att.approved
     assert new_att.file == ""
+
+
+@mock.patch(
+    "froide.helper.redaction.redact_file",
+    mock.Mock(side_effect=Exception("PDF Redaction Error")),
+)
+@pytest.mark.parametrize(
+    "redacted_kwargs,keeps_link",
+    [({"file": ""}, False), ({}, True)],
+    ids=["new-redacted-version", "existing-redacted-version"],
+)
+@pytest.mark.django_db
+def test_failed_redaction_allows_new_redaction(
+    foi_message, redacted_kwargs, keeps_link
+):
+    """
+    Make sure that after a failed redaction, the original attachment is in a
+    state that can be redacted again.
+
+    new-redacted-version: first redaction, the empty redacted attachment is
+        removed and the original can be approved and redacted again.
+    existing-redacted-version: retry on an attachment that already has a
+        redacted version, which stays linked, so the original can't be
+        approved (made public) but can be redacted again.
+    """
+
+    redacted = factories.FoiAttachmentFactory.create(
+        belongs_to=foi_message,
+        is_redacted=True,
+        **redacted_kwargs,
+    )
+    original = factories.FoiAttachmentFactory.create(
+        belongs_to=foi_message,
+        redacted=redacted,
+        approved=False,
+        can_approve=False,
+    )
+
+    redact_attachment_task(original.id, redacted.id, {"pages": []})
+
+    original.refresh_from_db()
+    assert original.redacted_id == (redacted.id if keeps_link else None)
+    assert original.can_approve == (not keeps_link)
+    assert original.can_redact
+
+
+@mock.patch(
+    "froide.helper.redaction.redact_file",
+    mock.Mock(side_effect=Exception("PDF Redaction Error")),
+)
+@pytest.mark.django_db
+def test_failed_redaction_keeps_existing_redacted_version_approvable(foi_message):
+    """
+    Make sure that after a failed retry, the existing redacted version is no
+    longer pending and can be approved again.
+    """
+
+    # State as left behind by the redact_attachment view
+    redacted = factories.FoiAttachmentFactory.create(
+        belongs_to=foi_message,
+        is_redacted=True,
+        approved=False,
+        can_approve=False,
+        pending=True,
+    )
+    original = factories.FoiAttachmentFactory.create(
+        belongs_to=foi_message,
+        redacted=redacted,
+        approved=False,
+        can_approve=False,
+    )
+
+    redact_attachment_task(original.id, redacted.id, {"pages": []})
+
+    redacted.refresh_from_db()
+    assert not redacted.pending
+    assert redacted.can_approve
 
 
 @pytest.mark.django_db
