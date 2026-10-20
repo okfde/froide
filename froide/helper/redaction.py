@@ -120,7 +120,14 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
         raise PDFException(e, "decrypt") from None
 
     page_instructions = instructions.get("pages", [])
-    assert num_pages == len(page_instructions)
+    if num_pages != len(page_instructions):
+        raise PDFException(
+            ValueError(
+                "PDF has %s pages, but got instructions for %s pages"
+                % (num_pages, len(page_instructions))
+            ),
+            "page_count",
+        )
 
     page_image_numbers = [
         page_idx + 1
