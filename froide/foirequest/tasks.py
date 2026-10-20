@@ -433,6 +433,11 @@ def redact_attachment_task(att_id, target_id, instructions):
 
         if not target.file:
             target.delete()
+        elif target != attachment:
+            # Existing redacted version, reset state set by redact view
+            target.can_approve = True
+            target.pending = False
+            target.save()
         return
 
     logger.info("Redaction successful %s", attachment.id)

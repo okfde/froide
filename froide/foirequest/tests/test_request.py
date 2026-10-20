@@ -1796,6 +1796,39 @@ def test_failed_redaction_allows_new_redaction(
     assert original.can_redact
 
 
+@mock.patch(
+    "froide.helper.redaction.redact_file",
+    mock.Mock(side_effect=Exception("PDF Redaction Error")),
+)
+@pytest.mark.django_db
+def test_failed_redaction_keeps_existing_redacted_version_approvable(foi_message):
+    """
+    Make sure that after a failed retry, the existing redacted version is no
+    longer pending and can be approved again.
+    """
+
+    # State as left behind by the redact_attachment view
+    redacted = factories.FoiAttachmentFactory.create(
+        belongs_to=foi_message,
+        is_redacted=True,
+        approved=False,
+        can_approve=False,
+        pending=True,
+    )
+    original = factories.FoiAttachmentFactory.create(
+        belongs_to=foi_message,
+        redacted=redacted,
+        approved=False,
+        can_approve=False,
+    )
+
+    redact_attachment_task(original.id, redacted.id, {"pages": []})
+
+    redacted.refresh_from_db()
+    assert not redacted.pending
+    assert redacted.can_approve
+
+
 @pytest.mark.django_db
 def test_extend_deadline(world, client):
     foirequest = FoiRequest.objects.all()[0]
