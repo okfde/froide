@@ -420,7 +420,7 @@ def redact_attachment_task(att_id, target_id, instructions):
     if pdf_bytes is None:
         logger.info("Redaction failed %s", attachment.id)
         # Redaction has failed, remove empty attachment
-        if attachment.redacted:
+        if attachment.redacted and not target.file:
             attachment.redacted = None
             attachment.can_approve = True
         if attachment.is_redacted:
