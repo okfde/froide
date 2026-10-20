@@ -73,15 +73,30 @@ def redact_file(pdf_file, instructions):
         shutil.rmtree(outpath)
 
 
+def copy_pdf(pdf_file, outpath):
+    filename = os.path.join(outpath, "rewritten.pdf")
+    shutil.copyfile(pdf_file.name, filename)
+    return open(filename, "rb")
+
+
 def try_redacting_file(pdf_file, outpath, instructions):
     tries = 0
     while True:
         try:
-            rewritten_pdf_file = rewrite_pdf(pdf_file, instructions)
+            # Rewrite a copy, as rewriting happens in place
+            rewritten_pdf_file = rewrite_pdf(copy_pdf(pdf_file, outpath), instructions)
             if rewritten_pdf_file is None:
                 # Possibly encrypted with password, let's just try it anyway
                 rewritten_pdf_file = pdf_file
-            return _redact_file(rewritten_pdf_file, outpath, instructions)
+            try:
+                return _redact_file(rewritten_pdf_file, outpath, instructions)
+            except PDFException as e:
+                if e.reason != "page_count" or rewritten_pdf_file is pdf_file:
+                    raise
+                # Rewriting can change the page count, fall back to the
+                # unrewritten file the instructions are based on
+                logger.warning("Rewritten PDF: %s", e.exc)
+                return _redact_file(pdf_file, outpath, instructions)
         except PDFException as e:
             tries += 1
             if tries > 2:
