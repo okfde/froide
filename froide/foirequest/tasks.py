@@ -422,6 +422,7 @@ def redact_attachment_task(att_id, target_id, instructions):
         # Redaction has failed, remove empty attachment
         if attachment.redacted:
             attachment.redacted = None
+            attachment.can_approve = True
         if attachment.is_redacted:
             if instructions["auto_approve"]:
                 attachment.approve_and_save()
