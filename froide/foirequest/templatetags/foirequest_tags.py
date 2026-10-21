@@ -265,8 +265,10 @@ def get_redacted_dummy_tags() -> tuple[SafeString, SafeString]:
         "snippets/redacted_dummy.html",
         {"content": REDACTED_DUMMY_SPLIT_TOKEN},
     )
+    # Collapse whitespace: newlines inside a tag would turn into <br> when the
+    # text is rendered with `linebreaks`, however the template is formatted.
     start_tag, end_tag = (
-        part.strip() for part in html.split(REDACTED_DUMMY_SPLIT_TOKEN)
+        " ".join(part.split()) for part in html.split(REDACTED_DUMMY_SPLIT_TOKEN)
     )
     return SafeString(start_tag), SafeString(end_tag)
 
