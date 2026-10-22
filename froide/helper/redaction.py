@@ -98,10 +98,13 @@ def try_redacting_file(pdf_file, outpath, instructions):
             pdf_file = next_pdf_file
 
 
-def _redact_file(pdf_file, outpath, instructions, tries=0):
-    dpi = 300
-    load_invisible_font()
-    output = PdfWriter()
+def _redact_file(pdf_file, outpath, instructions):
+    pdf_reader = read_pdf(pdf_file, instructions)
+    check_page_count(pdf_reader, instructions)
+    return write_redacted_pdf(pdf_reader, pdf_file, outpath, instructions)
+
+
+def read_pdf(pdf_file, instructions):
     try:
         pdf_reader = PdfReader(pdf_file, strict=False)
     except (PdfReadError, ValueError, OSError) as e:
@@ -113,14 +116,24 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
         pdf_reader.decrypt(instructions["password"])
 
     try:
-        num_pages = len(pdf_reader.pages)
+        len(pdf_reader.pages)
     except KeyError as e:  # catch KeyError '/Pages'
         raise PDFException(e, "rewrite") from None
     except PdfReadError as e:
         raise PDFException(e, "decrypt") from None
 
+    return pdf_reader
+
+
+def check_page_count(pdf_reader, instructions):
+    assert len(pdf_reader.pages) == len(instructions.get("pages", []))
+
+
+def write_redacted_pdf(pdf_reader, pdf_file, outpath, instructions):
+    dpi = 300
+    load_invisible_font()
+    output = PdfWriter()
     page_instructions = instructions.get("pages", [])
-    assert num_pages == len(page_instructions)
 
     page_image_numbers = [
         page_idx + 1
