@@ -5,20 +5,23 @@ from rest_framework.response import Response
 
 from froide.foirequest.auth import is_foirequest_moderator
 from froide.foirequest.models import FoiRequest
+from froide.helper.auth import is_crew
 
 from .models import ProblemReport
 
 
 def get_problem_reports(request):
-    extra_filter = {}
+    qs = ProblemReport.objects.all()
+
     if not request.user.has_perm("foirequest.see_private"):
-        extra_filter.update(
-            {"message__request__visibility": FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC}
+        qs = qs.filter(
+            message__request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         )
 
-    return ProblemReport.objects.filter(
-        resolved=False, escalated__isnull=True, **extra_filter
-    ).select_related("message")
+    if not is_crew(request.user):
+        qs = qs.filter(escalated__isnull=True)
+
+    return qs.select_related("message")
 
 
 class ProblemReportSerializer(serializers.HyperlinkedModelSerializer):
