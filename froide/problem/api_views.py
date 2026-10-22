@@ -11,7 +11,7 @@ from .models import ProblemReport
 
 
 def get_problem_reports(request):
-    qs = ProblemReport.objects.all()
+    qs = ProblemReport.objects.filter(resolved=False)
 
     if not request.user.has_perm("foirequest.see_private"):
         qs = qs.filter(
