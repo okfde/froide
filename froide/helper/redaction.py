@@ -92,9 +92,7 @@ def try_redacting_file(pdf_file, outpath, instructions):
                 raise Exception("PDF Redaction Error") from None
             next_pdf_file = None
             if e.reason == "rewrite":
-                next_pdf_file = rewrite_pdf(pdf_file, instructions)
-                if next_pdf_file is None:
-                    next_pdf_file = rewrite_hard_pdf(pdf_file, instructions)
+                next_pdf_file = rewrite_hard_pdf(pdf_file, instructions)
             elif e.reason == "decrypt":
                 next_pdf_file = decrypt_pdf(pdf_file, instructions)
             if next_pdf_file is None:
