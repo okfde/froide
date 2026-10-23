@@ -1,12 +1,15 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
 import pytest
 
+from froide.account.factories import UserFactory
+from froide.foirequest.forms.project import AssignProjectForm
 from froide.foirequest.models import FoiProject, FoiRequest
 from froide.foirequest.models.message import FoiMessage
 from froide.foirequest.tasks import create_project_messages, create_project_requests
@@ -205,3 +208,210 @@ def test_project_mass_mail(project_with_requests, faker):
     assert project_with_requests.user.email not in out_mails
     pb_mails = set(project_foireqs.values_list("public_body__email", flat=True))
     assert out_mails == pb_mails
+
+
+def make_project(user, request_count):
+    project = factories.FoiProjectFactory.create(
+        user=user, site=Site.objects.get_current(), request_count=request_count
+    )
+    for order in range(request_count):
+        req = factories.FoiRequestFactory.create(
+            user=user, project=project, project_order=order
+        )
+        project.publicbodies.add(req.public_body)
+    return project
+
+
+def move_via_web_form(client, requests, project):
+    for req in requests:
+        req.refresh_from_db()
+        form = AssignProjectForm(
+            data={"project": project.id if project else ""},
+            user=req.user,
+            instance=req,
+        )
+        assert form.is_valid(), form.errors
+        form.save()
+
+
+def login_staff_user(client, permission):
+    user = UserFactory.create(is_staff=True)
+    user.user_permissions.add(
+        Permission.objects.get(
+            content_type__app_label="foirequest", codename=permission
+        )
+    )
+    client.force_login(user)
+
+
+def move_via_admin_add_action(client, requests, project):
+    login_staff_user(client, "change_foirequest")
+    url = reverse("admin:foirequest_foirequest_changelist")
+    response = client.post(
+        url,
+        {
+            "action": "add_to_project",
+            "_selected_action": [req.id for req in requests],
+            "obj": project.id,
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == url
+
+
+def move_via_admin_merge_action(client, requests, project):
+    login_staff_user(client, "change_foiproject")
+    url = reverse("admin:foirequest_foiproject_changelist")
+    response = client.post(
+        url,
+        {
+            "action": "move_requests",
+            "_selected_action": list({req.project_id for req in requests}),
+            "obj": project.id,
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == url
+
+
+def move_via_admin_remove_action(client, requests, project):
+    assert project is None
+    login_staff_user(client, "change_foirequest")
+    url = reverse("admin:foirequest_foirequest_changelist")
+    response = client.post(
+        url,
+        {
+            "action": "remove_from_project",
+            "_selected_action": [req.id for req in requests],
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == url
+
+
+def assert_project_consistent(project):
+    project.refresh_from_db()
+    requests = list(project.foirequest_set.order_by("project_order"))
+    assert [req.project_order for req in requests] == list(range(len(requests)))
+    assert project.request_count == len(requests)
+    assert set(project.publicbodies.all()) == {req.public_body for req in requests}
+
+
+def assert_moved_to_end(project, moved_requests):
+    count = project.foirequest_set.count()
+    for req in moved_requests:
+        req.refresh_from_db()
+        assert req.project == project
+    assert {req.project_order for req in moved_requests} == set(
+        range(count - len(moved_requests), count)
+    )
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("move", [move_via_web_form])
+def test_move_request_to_other_project(user, client, move):
+    old_project = make_project(user, 3)
+    new_project = make_project(user, 3)
+    req = old_project.foirequest_set.get(project_order=0)
+
+    move(client, [req], new_project)
+
+    assert_moved_to_end(new_project, [req])
+    assert_project_consistent(old_project)
+    assert_project_consistent(new_project)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("move", [move_via_web_form, move_via_admin_add_action])
+def test_move_request_without_project_into_project(user, client, move):
+    new_project = make_project(user, 3)
+    req = factories.FoiRequestFactory.create(user=user)
+
+    move(client, [req], new_project)
+
+    assert_moved_to_end(new_project, [req])
+    assert_project_consistent(new_project)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("move", [move_via_web_form, move_via_admin_merge_action])
+def test_move_all_requests_to_other_project(user, client, move):
+    old_project = make_project(user, 3)
+    new_project = make_project(user, 3)
+    requests = list(old_project.foirequest_set.all())
+
+    move(client, requests, new_project)
+
+    assert_moved_to_end(new_project, requests)
+    assert_project_consistent(old_project)
+    assert_project_consistent(new_project)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("move", [move_via_web_form, move_via_admin_remove_action])
+def test_remove_request_from_project(user, client, move):
+    old_project = make_project(user, 3)
+    req = old_project.foirequest_set.get(project_order=0)
+
+    move(client, [req], None)
+
+    req.refresh_from_db()
+    assert req.project is None
+    assert req.project_order is None
+    assert_project_consistent(old_project)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("move", [move_via_web_form])
+def test_move_request_to_same_project_keeps_number(user, client, move):
+    project = make_project(user, 3)
+    req = project.foirequest_set.get(project_order=0)
+
+    move(client, [req], project)
+
+    req.refresh_from_db()
+    assert req.project == project
+    assert req.project_order == 0
+    assert_project_consistent(project)
+
+
+@pytest.mark.django_db
+def test_project_numbers_start_at_one(user):
+    project = make_project(user, 3)
+
+    requests = project.foirequest_set.order_by("project_order")
+
+    assert [req.project_number for req in requests] == [1, 2, 3]
+
+
+@pytest.mark.django_db
+def test_recalculate_order_keeps_older_request_first_for_duplicate_numbers(user):
+    project = make_project(user, 0)
+    # Insert the newer request first. Postgres usually returns fresh rows in
+    # insertion order, so without a tiebreak newer would come before older.
+    newer = factories.FoiRequestFactory.create(
+        id=100002, user=user, project=project, project_order=0
+    )
+    older = factories.FoiRequestFactory.create(
+        id=100001, user=user, project=project, project_order=0
+    )
+
+    project.recalculate_order()
+
+    requests = project.foirequest_set.order_by("project_order")
+    assert [req.id for req in requests] == [older.id, newer.id]
+
+
+@pytest.mark.django_db
+def test_update_publicbodies_removes_public_bodies_of_removed_requests(user):
+    project = make_project(user, 3)
+    req = project.foirequest_set.get(project_order=0)
+    req.project = None
+    req.save()
+
+    project.update_publicbodies()
+
+    assert req.public_body not in project.publicbodies.all()
+    assert set(project.publicbodies.all()) == {
+        remaining.public_body for remaining in project.foirequest_set.all()
+    }
