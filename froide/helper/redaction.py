@@ -81,7 +81,11 @@ def try_redacting_file(pdf_file, outpath, instructions):
             if rewritten_pdf_file is None:
                 # Possibly encrypted with password, let's just try it anyway
                 rewritten_pdf_file = pdf_file
-            return _redact_file(rewritten_pdf_file, outpath, instructions)
+            pdf_reader = read_pdf(rewritten_pdf_file, instructions)
+            check_page_count(pdf_reader, instructions)
+            return write_redacted_pdf(
+                pdf_reader, rewritten_pdf_file, outpath, instructions
+            )
         except PDFException as e:
             tries += 1
             if tries > 2:
@@ -96,12 +100,6 @@ def try_redacting_file(pdf_file, outpath, instructions):
             if next_pdf_file is None:
                 raise Exception("PDF Rewrite Error") from None
             pdf_file = next_pdf_file
-
-
-def _redact_file(pdf_file, outpath, instructions):
-    pdf_reader = read_pdf(pdf_file, instructions)
-    check_page_count(pdf_reader, instructions)
-    return write_redacted_pdf(pdf_reader, pdf_file, outpath, instructions)
 
 
 def read_pdf(pdf_file, instructions):
