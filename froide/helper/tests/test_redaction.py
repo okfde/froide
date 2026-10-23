@@ -79,6 +79,20 @@ def fail_rendering_until_repaired(monkeypatch):
     return repair
 
 
+def write_unreadable_once():
+    # Fake Ghostscript that claims success but writes an unreadable file on
+    # its first run (the original), and leaves later inputs unchanged
+    runs = []
+
+    def rewrite(filename, password=None):
+        if not runs:
+            Path(filename).write_bytes(b"this is not a PDF")
+        runs.append(filename)
+        return filename
+
+    return rewrite
+
+
 def write_without_page_count(path, password=None):
     writer = PdfWriter(clone_from=CROPBOX_PDF)
     del writer.root_object["/Pages"][NameObject("/Count")]
@@ -210,24 +224,33 @@ def test_redaction_of_broken_file_fails(
         redact(pdf_path, make_page_instructions(1), password=password)
 
 
-@pytest.mark.parametrize(
-    "cairo_repairs",
-    [
-        pytest.param(True, id="pdftocairo-not-tried"),
-        pytest.param(False, id="pdftocairo-fails"),
-    ],
-)
-def test_redaction_fails_when_rendering_fails(monkeypatch, cairo_repairs):
-    repair = fail_rendering_until_repaired(monkeypatch)
-    # Ghostscript succeeds, so the PDF can be read and only rendering fails
-    fake_tools(
-        monkeypatch,
-        gs=keep_unchanged,
-        cairo=repair if cairo_repairs else fail_rewrite,
-    )
+def test_redaction_falls_back_when_ghostscript_output_is_unreadable(monkeypatch):
+    # Ghostscript claims success, but its output can't be read.
+    # Another tool (currently pdftocairo) provides a readable file.
+    fake_tools(monkeypatch, gs=write_unreadable_once(), cairo=repair_with(CROPBOX_PDF))
 
-    # Currently fails in both cases: after a rendering error only Ghostscript
-    # is retried, so pdftocairo is never called
+    reader = redact(CROPBOX_PDF, make_page_instructions(1))
+
+    assert len(reader.pages) == 1
+
+
+def test_redaction_succeeds_when_pdftocairo_makes_pdf_renderable(monkeypatch):
+    repair_rendering = fail_rendering_until_repaired(monkeypatch)
+    # Ghostscript succeeds, so the PDF can be read and only rendering fails.
+    # pdftocairo repairs the file, so rendering works afterwards.
+    fake_tools(monkeypatch, gs=keep_unchanged, cairo=repair_rendering)
+
+    reader = redact(CROPBOX_PDF, make_page_instructions(1, redacted_pages=[0]))
+
+    assert len(reader.pages) == 1
+
+
+def test_redaction_fails_when_pdftocairo_cannot_make_pdf_renderable(monkeypatch):
+    fail_rendering_until_repaired(monkeypatch)
+    # Ghostscript succeeds, so the PDF can be read and only rendering fails.
+    # pdftocairo fails too, so no tool is left that could help.
+    fake_tools(monkeypatch, gs=keep_unchanged, cairo=fail_rewrite)
+
     with pytest.raises(Exception, match="PDF .* Error"):
         redact(CROPBOX_PDF, make_page_instructions(1, redacted_pages=[0]))
 
