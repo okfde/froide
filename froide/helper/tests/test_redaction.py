@@ -79,18 +79,9 @@ def fail_rendering_until_repaired(monkeypatch):
     return repair
 
 
-def write_unreadable_once():
-    # Fake Ghostscript that claims success but writes an unreadable file on
-    # its first run (the original), and leaves later inputs unchanged
-    runs = []
-
-    def rewrite(filename, password=None):
-        if not runs:
-            Path(filename).write_bytes(b"this is not a PDF")
-        runs.append(filename)
-        return filename
-
-    return rewrite
+def write_unreadable(filename, password=None):
+    Path(filename).write_bytes(b"this is not a PDF")
+    return filename
 
 
 def write_without_page_count(path, password=None):
@@ -227,7 +218,7 @@ def test_redaction_of_broken_file_fails(
 def test_redaction_falls_back_when_ghostscript_output_is_unreadable(monkeypatch):
     # Ghostscript claims success, but its output can't be read.
     # Another tool (currently pdftocairo) provides a readable file.
-    fake_tools(monkeypatch, gs=write_unreadable_once(), cairo=repair_with(CROPBOX_PDF))
+    fake_tools(monkeypatch, gs=write_unreadable, cairo=repair_with(CROPBOX_PDF))
 
     reader = redact(CROPBOX_PDF, make_page_instructions(1))
 
