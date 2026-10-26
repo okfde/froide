@@ -52,9 +52,8 @@ def decrypt_pdf(pdf_file, instructions):
 
 
 class PDFException(Exception):
-    def __init__(self, exc, reason):
+    def __init__(self, exc):
         self.exc = exc
-        self.reason = reason
 
 
 def redact_file(pdf_file, instructions):
@@ -74,37 +73,28 @@ def redact_file(pdf_file, instructions):
 
 
 def try_redacting_file(pdf_file, outpath, instructions):
-    tries = 0
-    while True:
+    # None means the file as is (possibly encrypted with password)
+    for rewrite in (rewrite_pdf, None, rewrite_hard_pdf, decrypt_pdf):
+        if rewrite is None:
+            candidate = pdf_file
+        else:
+            candidate = rewrite(pdf_file, instructions)
+            if candidate is None:
+                continue
         try:
-            rewritten_pdf_file = rewrite_pdf(pdf_file, instructions)
-            if rewritten_pdf_file is None:
-                # Possibly encrypted with password, let's just try it anyway
-                rewritten_pdf_file = pdf_file
-            pdf_reader = read_pdf(rewritten_pdf_file, instructions)
+            pdf_reader = read_pdf(candidate, instructions)
             check_page_count(pdf_reader, instructions)
-            return write_redacted_pdf(
-                pdf_reader, rewritten_pdf_file, outpath, instructions
-            )
-        except PDFException as e:
-            tries += 1
-            if tries > 2:
-                raise Exception("PDF Redaction Error") from None
-            next_pdf_file = None
-            if e.reason == "rewrite":
-                next_pdf_file = rewrite_hard_pdf(pdf_file, instructions)
-            elif e.reason == "decrypt":
-                next_pdf_file = decrypt_pdf(pdf_file, instructions)
-            if next_pdf_file is None:
-                raise Exception("PDF Rewrite Error") from None
-            pdf_file = next_pdf_file
+            return write_redacted_pdf(pdf_reader, candidate, outpath, instructions)
+        except PDFException:
+            continue
+    raise Exception("PDF Rewrite Error")
 
 
 def read_pdf(pdf_file, instructions):
     try:
         pdf_reader = PdfReader(pdf_file, strict=False)
     except (PdfReadError, ValueError, OSError) as e:
-        raise PDFException(e, "rewrite") from None
+        raise PDFException(e) from None
 
     if pdf_reader.is_encrypted:
         if not instructions.get("password"):
@@ -113,10 +103,8 @@ def read_pdf(pdf_file, instructions):
 
     try:
         len(pdf_reader.pages)
-    except KeyError as e:  # catch KeyError '/Pages'
-        raise PDFException(e, "rewrite") from None
-    except PdfReadError as e:
-        raise PDFException(e, "decrypt") from None
+    except (KeyError, PdfReadError) as e:  # KeyError: missing /Pages or /Count
+        raise PDFException(e) from None
 
     return pdf_reader
 
@@ -155,7 +143,7 @@ def write_redacted_pdf(pdf_reader, pdf_file, outpath, instructions):
             else:
                 page = get_redacted_page(image_filename, instr, dpi)
         except (WandError, DelegateError, ValueError) as e:
-            raise PDFException(e, "rewrite") from None
+            raise PDFException(e) from None
 
         output.add_page(page)
 
