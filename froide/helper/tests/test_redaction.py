@@ -114,6 +114,16 @@ def encrypted_pdf(tmp_path):
 
 
 @pytest.fixture
+def owner_password_only_pdf(tmp_path):
+    writer = PdfWriter(clone_from=CROPBOX_PDF)
+    # Restricts permissions only, anyone can open it without a password
+    writer.encrypt(user_password="", owner_password="owner", algorithm="AES-256")
+    path = tmp_path / "owner-password-only.pdf"
+    writer.write(path)
+    return path
+
+
+@pytest.fixture
 def pdf_without_page_count(tmp_path):
     return write_without_page_count(tmp_path / "without-count.pdf")
 
@@ -168,6 +178,15 @@ def test_redaction_of_encrypted_pdf_with_password(encrypted_pdf):
     assert reader.pages[0].extract_text()
 
 
+def test_redaction_of_owner_password_only_pdf_without_password(
+    owner_password_only_pdf,
+):
+    reader = redact(owner_password_only_pdf, make_page_instructions(1))
+
+    assert not reader.is_encrypted
+    assert reader.pages[0].extract_text()
+
+
 def test_redaction_of_unreadable_file_fails(garbage_pdf):
     with pytest.raises(Exception, match="PDF Rewrite Error"):
         redact(garbage_pdf, make_page_instructions(1))
@@ -206,27 +225,29 @@ def test_redaction_falls_back_when_ghostscript_fails(
     assert reader.pages[0].extract_text()
 
 
-@pytest.mark.parametrize(
-    "pdf_fixture,password,tools",
-    [
-        pytest.param(
-            "garbage_pdf",
-            None,
-            {"gs": keep_unchanged, "cairo": keep_unchanged, "qpdf": keep_unchanged},
-            id="unreadable-tools-change-nothing",
-        ),
-        pytest.param("encrypted_pdf", None, {}, id="encrypted-without-password"),
-        pytest.param("encrypted_pdf", "wrong", {}, id="encrypted-wrong-password"),
-    ],
-)
-def test_redaction_of_broken_file_fails(
-    request, monkeypatch, pdf_fixture, password, tools
-):
-    pdf_path = request.getfixturevalue(pdf_fixture)
-    fake_tools(monkeypatch, **tools)
+def test_redaction_fails_when_tools_change_nothing(monkeypatch, garbage_pdf):
+    fake_tools(
+        monkeypatch, gs=keep_unchanged, cairo=keep_unchanged, qpdf=keep_unchanged
+    )
 
     with pytest.raises(Exception, match="PDF .* Error"):
-        redact(pdf_path, make_page_instructions(1), password=password)
+        redact(garbage_pdf, make_page_instructions(1))
+
+
+@pytest.mark.parametrize(
+    "password",
+    [
+        pytest.param(None, id="missing-password"),
+        pytest.param("wrong", id="wrong-password"),
+    ],
+)
+def test_redaction_of_encrypted_pdf_without_right_password_fails(
+    encrypted_pdf, password
+):
+    # Real tools: no tool can get past a missing or wrong password, so give up
+    # right away. Ghostscript would exit successfully with a blank page.
+    with pytest.raises(Exception, match="PDF Password Error"):
+        redact(encrypted_pdf, make_page_instructions(1), password=password)
 
 
 def test_redaction_falls_back_when_ghostscript_output_is_unreadable(monkeypatch):
