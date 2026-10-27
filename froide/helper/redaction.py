@@ -52,18 +52,27 @@ def redact_file(pdf_file, instructions):
 
 
 def try_redacting_file(original, outpath, instructions):
+    """
+    Redact the first candidate file that can be read, has the expected
+    number of pages and can be rendered.
+    """
     password = instructions.get("password")
     check_password(original, password)
-    # None means the file as is (possibly encrypted with password)
+
     for rewrite in (
+        # Ghostscript
         rewrite_pdf_in_place,
+        # the original as is (possibly encrypted with password)
         None,
+        # qpdf, only rebuilds the structure
         decrypt_pdf_in_place,
+        # pdftocairo, redraws every page, so it is the last resort
         rewrite_hard_pdf_in_place,
     ):
         candidate = make_candidate(original, outpath, rewrite, password)
         if candidate is None:
             continue
+
         try:
             pdf_reader = read_pdf(candidate, instructions)
             check_page_count(pdf_reader, instructions)
@@ -71,6 +80,7 @@ def try_redacting_file(original, outpath, instructions):
         except PDFCandidateError:
             logger.info("Redaction candidate failed", exc_info=True)
             continue
+
     raise PDFRedactionError("PDF Redaction Error")
 
 
