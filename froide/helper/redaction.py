@@ -56,12 +56,9 @@ def try_redacting_file(original, outpath, instructions):
         rewrite_hard_pdf_in_place,
         decrypt_pdf_in_place,
     ):
-        if rewrite is None:
-            candidate = original
-        else:
-            candidate = rewrite(original, password=password)
-            if candidate is None:
-                continue
+        candidate = make_candidate(original, outpath, rewrite, password)
+        if candidate is None:
+            continue
         try:
             pdf_reader = read_pdf(candidate, instructions)
             check_page_count(pdf_reader, instructions)
@@ -69,6 +66,15 @@ def try_redacting_file(original, outpath, instructions):
         except PDFException:
             continue
     raise Exception("PDF Rewrite Error")
+
+
+def make_candidate(original, outpath, rewrite, password):
+    # Run the tool on a fresh copy, so every tool starts from the original
+    if rewrite is None:
+        return original
+    candidate = os.path.join(outpath, "candidate.pdf")
+    shutil.copyfile(original, candidate)
+    return rewrite(candidate, password=password)
 
 
 def read_pdf(pdf_path, instructions):

@@ -217,8 +217,8 @@ def test_redaction_of_broken_file_fails(
 
 def test_redaction_falls_back_when_ghostscript_output_is_unreadable(monkeypatch):
     # Ghostscript claims success, but its output can't be read.
-    # Another tool (currently pdftocairo) provides a readable file.
-    fake_tools(monkeypatch, gs=write_unreadable, cairo=repair_with(CROPBOX_PDF))
+    # The original is still readable and gets redacted instead.
+    fake_tools(monkeypatch, gs=write_unreadable)
 
     reader = redact(CROPBOX_PDF, make_page_instructions(1))
 
