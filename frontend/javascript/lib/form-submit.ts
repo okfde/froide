@@ -24,7 +24,7 @@ const strings = {
     submitting: 'Submitting…'
   }
 }
-const lang = document.documentElement.lang === 'de' ? 'de' : 'en'
+const lang = document.documentElement.lang.startsWith('de') ? 'de' : 'en' // works for de-AT, de-CH, etc. as well
 const i18n = strings[lang]
 
 const isSubmitting = (form: HTMLFormElement): boolean =>
@@ -78,20 +78,14 @@ const unsetSubmitting = (form: HTMLFormElement): void => {
   }
 }
 
-let guarding = false
-
 /*
  * Guard all `form.disable-submit` and `form.ajaxified` forms against double
  * submission, including forms added later. The listener is on the document in
  * the capture phase, so it runs before any submit listener on the form itself:
  * while a form is being submitted, further submits are cancelled and do not
- * reach those listeners. Safe to call more than once.
+ * reach those listeners.
  */
 const guardSubmits = (): void => {
-  if (guarding) {
-    return
-  }
-  guarding = true
   document
     .querySelectorAll<HTMLFormElement>(GUARDED_FORMS)
     .forEach(addStatusRegion)
@@ -103,6 +97,7 @@ const guardSubmits = (): void => {
         return
       }
       if (isSubmitting(form)) {
+        // we are already submitting this form, so cancel the second submit
         e.preventDefault()
         e.stopImmediatePropagation()
         return

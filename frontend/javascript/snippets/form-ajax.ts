@@ -1,5 +1,5 @@
 import { Modal } from 'bootstrap'
-import { guardSubmits, unsetSubmitting } from '../lib/form-submit'
+import { unsetSubmitting } from '../lib/form-submit'
 interface IHTMLModalTriggerElement extends HTMLElement {
   Modal: any | null
 }
@@ -15,7 +15,6 @@ const confirmForm = (form: HTMLElement): boolean => {
 }
 
 function submitFormsAjax(): void {
-  guardSubmits()
   // Listen on the document, so forms added later (e.g. by an ajax response)
   // are handled too
   document.addEventListener('submit', (e) => {
