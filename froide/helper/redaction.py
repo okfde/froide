@@ -154,7 +154,10 @@ def write_redacted_pdf(pdf_reader, pdf_path, outpath, instructions):
     def get_page_iterator(page_instructions, image_generator):
         for page_idx, instr in enumerate(page_instructions):
             if instr["rects"]:
-                image_filename = next(image_generator)[1]
+                # filingcabinet runs pdftoppm and skips pages it fails on
+                image_page, image_filename = next(image_generator, (None, None))
+                if image_page != page_idx + 1:
+                    raise PDFCandidateError(f"Cannot render page {page_idx + 1}")
                 yield page_idx, instr, image_filename
             else:
                 yield page_idx, instr, None
