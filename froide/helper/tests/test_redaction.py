@@ -132,6 +132,20 @@ def garbage_pdf(tmp_path):
     return path
 
 
+@pytest.fixture
+def duplicate_info_pdf(tmp_path):
+    # A trailer whose first /Info points at the catalog makes Ghostscript
+    # report "circular reference to indirect object"
+    writer = PdfWriter(clone_from=ROTATED_PDF)
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    root = b"/Root %d 0 R" % writer.root_object.indirect_reference.idnum
+    duplicate_info = root.replace(b"/Root", b"/Info")
+    path = tmp_path / "duplicate-info.pdf"
+    path.write_bytes(buffer.getvalue().replace(root, root + b" " + duplicate_info, 1))
+    return path
+
+
 @pytest.mark.parametrize("pdf_path,num_pages", [(CROPBOX_PDF, 1), (ROTATED_PDF, 4)])
 def test_redaction_keeps_page_count(pdf_path, num_pages):
     reader = redact(pdf_path, make_page_instructions(num_pages))
@@ -246,23 +260,26 @@ def test_redaction_fails_when_pdftocairo_cannot_make_pdf_renderable(monkeypatch)
         redact(CROPBOX_PDF, make_page_instructions(1, redacted_pages=[0]))
 
 
-@pytest.mark.parametrize(
-    "pdf_path,num_pages,tools",
-    [
-        pytest.param(CROPBOX_PDF, 2, {}, id="too-many-instructions"),
-        # Ghostscript claims success but returns fewer pages
-        pytest.param(
-            ROTATED_PDF,
-            4,
-            {"gs": repair_with(CROPBOX_PDF)},
-            id="ghostscript-loses-pages",
-        ),
-    ],
-)
-def test_redaction_fails_on_page_count_mismatch(
-    monkeypatch, pdf_path, num_pages, tools
-):
-    fake_tools(monkeypatch, **tools)
+def test_redaction_falls_back_when_ghostscript_loses_pages(monkeypatch):
+    # Ghostscript claims success but returns fewer pages.
+    # The original has the right page count and gets redacted instead.
+    fake_tools(monkeypatch, gs=repair_with(CROPBOX_PDF))
 
-    with pytest.raises(AssertionError):
-        redact(pdf_path, make_page_instructions(num_pages))
+    reader = redact(ROTATED_PDF, make_page_instructions(4))
+
+    assert len(reader.pages) == 4
+
+
+def test_redaction_of_pdf_with_duplicate_info_keeps_all_pages(duplicate_info_pdf):
+    # Real tools: Ghostscript 10.02 turns this file into a single blank page,
+    # 10.08 keeps all pages. Either way all pages must end up redacted.
+    reader = redact(duplicate_info_pdf, make_page_instructions(4))
+
+    assert len(reader.pages) == 4
+
+
+def test_redaction_fails_on_page_count_mismatch(monkeypatch):
+    fake_tools(monkeypatch)
+
+    with pytest.raises(Exception, match="PDF .* Error"):
+        redact(CROPBOX_PDF, make_page_instructions(2))
