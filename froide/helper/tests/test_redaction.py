@@ -2,7 +2,7 @@ import io
 from pathlib import Path
 
 import pytest
-from pypdf import PdfReader, PdfWriter
+from pypdf import PageObject, PdfReader, PdfWriter
 from pypdf.generic import NameObject
 from wand.exceptions import WandError
 
@@ -77,6 +77,31 @@ def fail_rendering_until_repaired(monkeypatch):
     monkeypatch.setattr(redaction, "get_images_from_pdf", get_images)
     monkeypatch.setattr(redaction, "get_redacted_page", render)
     return repair
+
+
+def skip_page_image_until_repaired(monkeypatch, failing_page):
+    # Like filingcabinet, skip the image of the page pdftoppm fails on, until
+    # the returned fake pdftocairo has repaired the file. Returns the image
+    # filenames used for redacted pages, in order.
+    repaired = []
+    rendered = []
+
+    def get_images(pdf_reader, filename, pages):
+        for page in pages:
+            if repaired or page != failing_page:
+                yield page, f"page-{page}.png"
+
+    def render(image_filename, instr, dpi):
+        rendered.append(image_filename)
+        return PageObject.create_blank_page(width=100, height=100)
+
+    def repair(filename, password=None):
+        repaired.append(filename)
+        return filename
+
+    monkeypatch.setattr(redaction, "get_images_from_pdf", get_images)
+    monkeypatch.setattr(redaction, "get_redacted_page", render)
+    return repair, rendered
 
 
 def write_unreadable(filename, password=None):
@@ -279,6 +304,31 @@ def test_redaction_fails_when_pdftocairo_cannot_make_pdf_renderable(monkeypatch)
 
     with pytest.raises(PDFRedactionError, match="PDF Redaction Error"):
         redact(CROPBOX_PDF, make_page_instructions(1, redacted_pages=[0]))
+
+
+def test_redaction_succeeds_when_pdftocairo_makes_page_image_renderable(monkeypatch):
+    repair, rendered = skip_page_image_until_repaired(monkeypatch, failing_page=1)
+    # pdftoppm fails on page 1, so the image of page 2 must not be used for it.
+    # pdftocairo repairs the file, so every page gets its own image afterwards.
+    fake_tools(monkeypatch, gs=keep_unchanged, cairo=repair)
+
+    redact(ROTATED_PDF, make_page_instructions(4, redacted_pages=[0, 1]))
+
+    assert rendered == ["page-1.png", "page-2.png"]
+
+
+def test_redaction_fails_when_pdftocairo_cannot_make_page_image_renderable(
+    monkeypatch,
+):
+    _, rendered = skip_page_image_until_repaired(monkeypatch, failing_page=1)
+    # pdftoppm fails on page 1 and pdftocairo fails too, so no tool is left
+    # that could help
+    fake_tools(monkeypatch, gs=keep_unchanged, cairo=fail_rewrite)
+
+    with pytest.raises(PDFRedactionError, match="PDF Redaction Error"):
+        redact(ROTATED_PDF, make_page_instructions(4, redacted_pages=[0, 1]))
+
+    assert rendered == []
 
 
 def test_redaction_falls_back_when_ghostscript_loses_pages(monkeypatch):
