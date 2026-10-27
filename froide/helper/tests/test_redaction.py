@@ -7,7 +7,7 @@ from pypdf.generic import NameObject
 from wand.exceptions import WandError
 
 from froide.helper import redaction
-from froide.helper.redaction import redact_file
+from froide.helper.redaction import PDFRedactionError, redact_file
 
 TESTDATA = Path(__file__).parent.parent.parent / "tests/testdata"
 CROPBOX_PDF = TESTDATA / "redaction-test-cropbox.pdf"
@@ -188,7 +188,7 @@ def test_redaction_of_owner_password_only_pdf_without_password(
 
 
 def test_redaction_of_unreadable_file_fails(garbage_pdf):
-    with pytest.raises(Exception, match="PDF Rewrite Error"):
+    with pytest.raises(PDFRedactionError, match="PDF Redaction Error"):
         redact(garbage_pdf, make_page_instructions(1))
 
 
@@ -230,7 +230,7 @@ def test_redaction_fails_when_tools_change_nothing(monkeypatch, garbage_pdf):
         monkeypatch, gs=keep_unchanged, cairo=keep_unchanged, qpdf=keep_unchanged
     )
 
-    with pytest.raises(Exception, match="PDF .* Error"):
+    with pytest.raises(PDFRedactionError, match="PDF Redaction Error"):
         redact(garbage_pdf, make_page_instructions(1))
 
 
@@ -246,7 +246,7 @@ def test_redaction_of_encrypted_pdf_without_right_password_fails(
 ):
     # Real tools: no tool can get past a missing or wrong password, so give up
     # right away. Ghostscript would exit successfully with a blank page.
-    with pytest.raises(Exception, match="PDF Password Error"):
+    with pytest.raises(PDFRedactionError, match="PDF Password Error"):
         redact(encrypted_pdf, make_page_instructions(1), password=password)
 
 
@@ -277,7 +277,7 @@ def test_redaction_fails_when_pdftocairo_cannot_make_pdf_renderable(monkeypatch)
     # pdftocairo fails too, so no tool is left that could help.
     fake_tools(monkeypatch, gs=keep_unchanged, cairo=fail_rewrite)
 
-    with pytest.raises(Exception, match="PDF .* Error"):
+    with pytest.raises(PDFRedactionError, match="PDF Redaction Error"):
         redact(CROPBOX_PDF, make_page_instructions(1, redacted_pages=[0]))
 
 
@@ -302,5 +302,5 @@ def test_redaction_of_pdf_with_duplicate_info_keeps_all_pages(duplicate_info_pdf
 def test_redaction_fails_on_page_count_mismatch(monkeypatch):
     fake_tools(monkeypatch)
 
-    with pytest.raises(Exception, match="PDF .* Error"):
+    with pytest.raises(PDFRedactionError, match="PDF Redaction Error"):
         redact(CROPBOX_PDF, make_page_instructions(2))

@@ -27,9 +27,13 @@ from wand.image import Image
 logger = logging.getLogger(__name__)
 
 
-class PDFException(Exception):
-    def __init__(self, exc):
-        self.exc = exc
+class PDFRedactionError(Exception):
+    pass
+
+
+class PDFCandidateError(Exception):
+    # This candidate file can't be redacted, try the next one
+    pass
 
 
 def redact_file(pdf_file, instructions):
@@ -64,9 +68,10 @@ def try_redacting_file(original, outpath, instructions):
             pdf_reader = read_pdf(candidate, instructions)
             check_page_count(pdf_reader, instructions)
             return write_redacted_pdf(pdf_reader, candidate, outpath, instructions)
-        except PDFException:
+        except PDFCandidateError:
+            logger.info("Redaction candidate failed", exc_info=True)
             continue
-    raise Exception("PDF Rewrite Error")
+    raise PDFRedactionError("PDF Redaction Error")
 
 
 def check_password(original, password):
@@ -85,7 +90,7 @@ def check_password(original, password):
 
     # Files with only an owner password open with an empty user password
     if pdf_reader.decrypt(password or "") == PasswordType.NOT_DECRYPTED:
-        raise Exception("PDF Password Error")
+        raise PDFRedactionError("PDF Password Error")
 
 
 def make_candidate(original, outpath, rewrite, password):
@@ -101,7 +106,7 @@ def read_pdf(pdf_path, instructions):
     try:
         pdf_reader = PdfReader(pdf_path, strict=False)
     except (PdfReadError, ValueError, OSError) as e:
-        raise PDFException(e) from None
+        raise PDFCandidateError("Cannot read PDF") from e
 
     if pdf_reader.is_encrypted:
         pdf_reader.decrypt(instructions.get("password") or "")
@@ -109,7 +114,7 @@ def read_pdf(pdf_path, instructions):
     try:
         len(pdf_reader.pages)
     except (KeyError, PdfReadError) as e:  # KeyError: missing /Pages or /Count
-        raise PDFException(e) from None
+        raise PDFCandidateError("Cannot count pages") from e
 
     return pdf_reader
 
@@ -118,8 +123,8 @@ def check_page_count(pdf_reader, instructions):
     num_pages = len(pdf_reader.pages)
     num_instructions = len(instructions.get("pages", []))
     if num_pages != num_instructions:
-        raise PDFException(
-            ValueError(f"PDF has {num_pages} pages, expected {num_instructions}")
+        raise PDFCandidateError(
+            f"PDF has {num_pages} pages, expected {num_instructions}"
         )
 
 
@@ -153,7 +158,7 @@ def write_redacted_pdf(pdf_reader, pdf_path, outpath, instructions):
             else:
                 page = get_redacted_page(image_filename, instr, dpi)
         except (WandError, DelegateError, ValueError) as e:
-            raise PDFException(e) from None
+            raise PDFCandidateError(f"Cannot render page {page_idx + 1}") from e
 
         output.add_page(page)
 
