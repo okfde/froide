@@ -97,7 +97,12 @@ def read_pdf(pdf_path, instructions):
 
 
 def check_page_count(pdf_reader, instructions):
-    assert len(pdf_reader.pages) == len(instructions.get("pages", []))
+    num_pages = len(pdf_reader.pages)
+    num_instructions = len(instructions.get("pages", []))
+    if num_pages != num_instructions:
+        raise PDFException(
+            ValueError(f"PDF has {num_pages} pages, expected {num_instructions}")
+        )
 
 
 def write_redacted_pdf(pdf_reader, pdf_path, outpath, instructions):
