@@ -27,30 +27,6 @@ from wand.image import Image
 logger = logging.getLogger(__name__)
 
 
-def rewrite_pdf(pdf_file, instructions):
-    password = instructions.get("password")
-    pdf_file_name = rewrite_pdf_in_place(pdf_file.name, password=password)
-    if pdf_file_name is None:
-        return None
-    return open(pdf_file_name, "rb")
-
-
-def rewrite_hard_pdf(pdf_file, instructions):
-    password = instructions.get("password")
-    pdf_file_name = rewrite_hard_pdf_in_place(pdf_file.name, password=password)
-    if pdf_file_name is None:
-        return None
-    return open(pdf_file_name, "rb")
-
-
-def decrypt_pdf(pdf_file, instructions):
-    password = instructions.get("password")
-    pdf_file_name = decrypt_pdf_in_place(pdf_file.name, password=password)
-    if pdf_file_name is None:
-        return None
-    return open(pdf_file_name, "rb")
-
-
 class PDFException(Exception):
     def __init__(self, exc):
         self.exc = exc
@@ -61,24 +37,29 @@ def redact_file(pdf_file, instructions):
         # Limit to around a gigabyte for a 24 bit (3 bpp) image
         PILImage.MAX_IMAGE_PIXELS = int(1024 * 1024 * 1024 // 1 // 3)
         outpath = tempfile.mkdtemp()
-        copied_filename = os.path.join(outpath, "original.pdf")
-        with open(copied_filename, "wb") as f:
+        original = os.path.join(outpath, "original.pdf")
+        with open(original, "wb") as f:
             f.write(pdf_file.read())
-        with open(copied_filename, "rb") as f:
-            output_file = try_redacting_file(f, outpath, instructions)
+        output_file = try_redacting_file(original, outpath, instructions)
         with open(output_file, "rb") as f:
             return f.read()
     finally:
         shutil.rmtree(outpath)
 
 
-def try_redacting_file(pdf_file, outpath, instructions):
+def try_redacting_file(original, outpath, instructions):
+    password = instructions.get("password")
     # None means the file as is (possibly encrypted with password)
-    for rewrite in (rewrite_pdf, None, rewrite_hard_pdf, decrypt_pdf):
+    for rewrite in (
+        rewrite_pdf_in_place,
+        None,
+        rewrite_hard_pdf_in_place,
+        decrypt_pdf_in_place,
+    ):
         if rewrite is None:
-            candidate = pdf_file
+            candidate = original
         else:
-            candidate = rewrite(pdf_file, instructions)
+            candidate = rewrite(original, password=password)
             if candidate is None:
                 continue
         try:
@@ -90,9 +71,9 @@ def try_redacting_file(pdf_file, outpath, instructions):
     raise Exception("PDF Rewrite Error")
 
 
-def read_pdf(pdf_file, instructions):
+def read_pdf(pdf_path, instructions):
     try:
-        pdf_reader = PdfReader(pdf_file, strict=False)
+        pdf_reader = PdfReader(pdf_path, strict=False)
     except (PdfReadError, ValueError, OSError) as e:
         raise PDFException(e) from None
 
@@ -113,7 +94,7 @@ def check_page_count(pdf_reader, instructions):
     assert len(pdf_reader.pages) == len(instructions.get("pages", []))
 
 
-def write_redacted_pdf(pdf_reader, pdf_file, outpath, instructions):
+def write_redacted_pdf(pdf_reader, pdf_path, outpath, instructions):
     dpi = 300
     load_invisible_font()
     output = PdfWriter()
@@ -124,7 +105,7 @@ def write_redacted_pdf(pdf_reader, pdf_file, outpath, instructions):
         for page_idx, instr in enumerate(page_instructions)
         if instr["rects"]
     ]
-    image_generator = get_images_from_pdf(pdf_reader, pdf_file.name, page_image_numbers)
+    image_generator = get_images_from_pdf(pdf_reader, pdf_path, page_image_numbers)
 
     def get_page_iterator(page_instructions, image_generator):
         for page_idx, instr in enumerate(page_instructions):
