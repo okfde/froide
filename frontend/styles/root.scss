@@ -4,7 +4,12 @@
   --shadow-blue: #{transparentize($blue-30, 0.85)};
   --shadow-gray: #{transparentize($gray-300, 0.6)};
   --shadow-yellow: #{transparentize($yellow-300, 0.85)};
-  
+
+  // Two-tone focus ring, see $focus-ring-box-shadow in variables.scss
+  --#{$prefix}focus-ring-inner-width: #{$focus-ring-inner-width};
+  --#{$prefix}focus-ring-inner-color: #{$focus-ring-inner-color};
+  --#{$prefix}focus-ring-box-shadow: #{$focus-ring-box-shadow};
+
   @each $name, $value in $froide-theme-light {
     $bg: map.get($value, "bg");
     --froide-#{$name}-bg: #{$bg};
@@ -21,6 +26,11 @@
   --shadow-blue: #{transparentize($blue-700, 0.85)};
   --shadow-gray: #{transparentize($gray-700, 0.6)};
   --shadow-yellow: #{transparentize($yellow-300, 0.85)};
+
+  // Swap the ring's two tones for dark backgrounds
+  --#{$prefix}focus-ring-inner-color: #{$focus-ring-inner-color-dark};
+  --#{$prefix}focus-ring-color: #{$focus-ring-color-dark};
+  --#{$prefix}focus-ring-box-shadow: #{$focus-ring-box-shadow-dark};
 
   @each $name, $value in $froide-theme-dark {
     $bg: map.get($value, "bg");
