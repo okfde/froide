@@ -181,8 +181,8 @@ def test_redaction_of_unreadable_file_fails(garbage_pdf):
         pytest.param(
             "garbage_pdf",
             None,
-            {"cairo": repair_with(CROPBOX_PDF)},
-            id="pdftocairo-repair",
+            {"qpdf": repair_with(CROPBOX_PDF)},
+            id="qpdf-repair",
         ),
         # pypdf counts the pages of unencrypted files by walking the page tree
         pytest.param("pdf_without_page_count", None, {}, id="missing-page-count"),
@@ -190,7 +190,7 @@ def test_redaction_of_unreadable_file_fails(garbage_pdf):
         pytest.param(
             "encrypted_pdf_without_page_count",
             "secret",
-            {"cairo": repair_with(CROPBOX_PDF)},
+            {"qpdf": repair_with(CROPBOX_PDF)},
             id="encrypted-missing-page-count",
         ),
     ],

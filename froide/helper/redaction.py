@@ -53,8 +53,8 @@ def try_redacting_file(original, outpath, instructions):
     for rewrite in (
         rewrite_pdf_in_place,
         None,
-        rewrite_hard_pdf_in_place,
         decrypt_pdf_in_place,
+        rewrite_hard_pdf_in_place,
     ):
         candidate = make_candidate(original, outpath, rewrite, password)
         if candidate is None:
