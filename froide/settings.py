@@ -516,6 +516,7 @@ class Base(Configuration):
             "make:request": _("Make requests on your behalf"),
             "write:request": _("Edit requests"),
             "write:message": _("Add and edit messages"),
+            "send:message": _("Send messages to public bodies on your behalf"),
             "write:attachment": _("Add and edit attachments"),
             "follow:request": _("Follow/Unfollow requests"),
             "read:document": _("Read your (private) documents"),

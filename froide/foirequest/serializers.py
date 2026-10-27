@@ -33,11 +33,12 @@ from .fields import (
     FoiRequestCostsField,
     FoiRequestRelatedField,
 )
+from .forms import SendMessageForm
 from .models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
 from .models.message import MESSAGE_KIND_USER_ALLOWED
 from .models.request import USER_ALLOWED_STATUS
 from .services import CreateRequestService
-from .utils import postal_date
+from .utils import possible_reply_addresses, postal_date
 from .validators import clean_reference
 
 
@@ -222,9 +223,10 @@ class FoiRequestDetailSerializer(FoiRequestListSerializer):
     public_body = PublicBodySerializer(read_only=True)
     law = FoiLawSerializer(read_only=True)
     messages = serializers.SerializerMethodField()
+    reply_addresses = serializers.SerializerMethodField()
 
     class Meta(FoiRequestListSerializer.Meta):
-        fields = FoiRequestListSerializer.Meta.fields + ("messages",)
+        fields = FoiRequestListSerializer.Meta.fields + ("messages", "reply_addresses")
 
     def get_messages(self, obj):
         qs = optimize_message_queryset(
@@ -233,6 +235,15 @@ class FoiRequestDetailSerializer(FoiRequestListSerializer):
         return FoiMessageSerializer(
             qs, read_only=True, many=True, context=self.context
         ).data
+
+    def get_reply_addresses(self, obj):
+        # the choices of the "to" field of the send message form
+        if not can_write_foirequest(obj, self.context["request"]):
+            return []
+        return [
+            {"email": email, "label": label}
+            for email, label in possible_reply_addresses(obj)
+        ]
 
 
 class MakeRequestSerializer(serializers.Serializer):
@@ -261,6 +272,24 @@ class MakeRequestSerializer(serializers.Serializer):
     def create(self, validated_data):
         service = CreateRequestService(validated_data)
         return service.execute(validated_data["request"])
+
+
+class SendMessageSerializer(serializers.Serializer):
+    to = serializers.CharField()
+    subject = serializers.CharField(max_length=230)
+    message = serializers.CharField()
+    send_address = serializers.BooleanField(required=False, default=False)
+    address = serializers.CharField(required=False, allow_blank=True, max_length=300)
+
+    def validate(self, attrs):
+        # reuse the web form so validation and message handler hooks stay identical
+        self.form = SendMessageForm(data=attrs, foirequest=self.context["foirequest"])
+        if not self.form.is_valid():
+            raise serializers.ValidationError(self.form.errors)
+        return attrs
+
+    def create(self, validated_data):
+        return self.form.save(user=self.context["request"].user)
 
 
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
