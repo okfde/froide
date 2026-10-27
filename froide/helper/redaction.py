@@ -13,7 +13,7 @@ from filingcabinet.pdf_utils import (
     rewrite_hard_pdf_in_place,
     rewrite_pdf_in_place,
 )
-from pypdf import PdfReader, PdfWriter
+from pypdf import PasswordType, PdfReader, PdfWriter
 from pypdf.errors import PdfReadError
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
@@ -49,6 +49,7 @@ def redact_file(pdf_file, instructions):
 
 def try_redacting_file(original, outpath, instructions):
     password = instructions.get("password")
+    check_password(original, password)
     # None means the file as is (possibly encrypted with password)
     for rewrite in (
         rewrite_pdf_in_place,
@@ -68,6 +69,25 @@ def try_redacting_file(original, outpath, instructions):
     raise Exception("PDF Rewrite Error")
 
 
+def check_password(original, password):
+    """
+    No tool can get past a missing or wrong password, so stop before running
+    any. Ghostscript would even exit successfully with a blank page.
+    """
+    try:
+        pdf_reader = PdfReader(original, strict=False)
+    except (PdfReadError, ValueError, OSError):
+        # Leave broken files to the tools
+        return
+
+    if not pdf_reader.is_encrypted:
+        return
+
+    # Files with only an owner password open with an empty user password
+    if pdf_reader.decrypt(password or "") == PasswordType.NOT_DECRYPTED:
+        raise Exception("PDF Password Error")
+
+
 def make_candidate(original, outpath, rewrite, password):
     # Run the tool on a fresh copy, so every tool starts from the original
     if rewrite is None:
@@ -84,9 +104,7 @@ def read_pdf(pdf_path, instructions):
         raise PDFException(e) from None
 
     if pdf_reader.is_encrypted:
-        if not instructions.get("password"):
-            raise Exception("PDF Rewrite Error")
-        pdf_reader.decrypt(instructions["password"])
+        pdf_reader.decrypt(instructions.get("password") or "")
 
     try:
         len(pdf_reader.pages)
