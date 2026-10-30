@@ -69,11 +69,8 @@ def try_redacting_file(original, outpath, instructions):
         # pdftocairo, redraws every page, so it is the last resort
         rewrite_hard_pdf_in_place,
     ):
-        candidate = make_candidate(original, outpath, rewrite_tool, password)
-        if candidate is None:
-            continue
-
         try:
+            candidate = make_candidate(original, outpath, rewrite_tool, password)
             pdf_reader = read_pdf(candidate, instructions)
             check_page_count(pdf_reader, instructions)
             return write_redacted_pdf(pdf_reader, candidate, outpath, instructions)
@@ -109,7 +106,11 @@ def make_candidate(original, outpath, rewrite_tool, password):
         return original
     candidate = os.path.join(outpath, "candidate.pdf")
     shutil.copyfile(original, candidate)
-    return rewrite_tool(candidate, password=password)
+    rewritten_pdf = rewrite_tool(candidate, password=password)
+    if rewritten_pdf is None:
+        raise PDFCandidateError("Failed to rewrite PDF")
+
+    return rewritten_pdf
 
 
 def read_pdf(pdf_path, instructions):
