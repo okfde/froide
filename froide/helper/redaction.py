@@ -13,7 +13,7 @@ from filingcabinet.pdf_utils import (
     rewrite_hard_pdf_in_place,
     rewrite_pdf_in_place,
 )
-from pypdf import PdfReader, PdfWriter
+from pypdf import PasswordType, PdfReader, PdfWriter
 from pypdf.errors import PdfReadError
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
@@ -27,34 +27,13 @@ from wand.image import Image
 logger = logging.getLogger(__name__)
 
 
-def rewrite_pdf(pdf_file, instructions):
-    password = instructions.get("password")
-    pdf_file_name = rewrite_pdf_in_place(pdf_file.name, password=password)
-    if pdf_file_name is None:
-        return None
-    return open(pdf_file_name, "rb")
+class PDFRedactionError(Exception):
+    pass
 
 
-def rewrite_hard_pdf(pdf_file, instructions):
-    password = instructions.get("password")
-    pdf_file_name = rewrite_hard_pdf_in_place(pdf_file.name, password=password)
-    if pdf_file_name is None:
-        return None
-    return open(pdf_file_name, "rb")
-
-
-def decrypt_pdf(pdf_file, instructions):
-    password = instructions.get("password")
-    pdf_file_name = decrypt_pdf_in_place(pdf_file.name, password=password)
-    if pdf_file_name is None:
-        return None
-    return open(pdf_file_name, "rb")
-
-
-class PDFException(Exception):
-    def __init__(self, exc, reason):
-        self.exc = exc
-        self.reason = reason
+class PDFCandidateError(Exception):
+    # This candidate file can't be redacted, try the next one
+    pass
 
 
 def redact_file(pdf_file, instructions):
@@ -62,77 +41,124 @@ def redact_file(pdf_file, instructions):
         # Limit to around a gigabyte for a 24 bit (3 bpp) image
         PILImage.MAX_IMAGE_PIXELS = int(1024 * 1024 * 1024 // 1 // 3)
         outpath = tempfile.mkdtemp()
-        copied_filename = os.path.join(outpath, "original.pdf")
-        with open(copied_filename, "wb") as f:
+        original = os.path.join(outpath, "original.pdf")
+        with open(original, "wb") as f:
             f.write(pdf_file.read())
-        with open(copied_filename, "rb") as f:
-            output_file = try_redacting_file(f, outpath, instructions)
+        output_file = try_redacting_file(original, outpath, instructions)
         with open(output_file, "rb") as f:
             return f.read()
     finally:
         shutil.rmtree(outpath)
 
 
-def try_redacting_file(pdf_file, outpath, instructions):
-    tries = 0
-    while True:
+def try_redacting_file(original, outpath, instructions):
+    """
+    Redact the first candidate file that can be read, has the expected
+    number of pages and can be rendered.
+    """
+    password = instructions.get("password")
+    check_password(original, password)
+
+    for rewrite_tool in (
+        # Ghostscript
+        rewrite_pdf_in_place,
+        # the original as is (possibly encrypted with password)
+        None,
+        # qpdf, only rebuilds the structure
+        decrypt_pdf_in_place,
+        # pdftocairo, redraws every page, so it is the last resort
+        rewrite_hard_pdf_in_place,
+    ):
         try:
-            rewritten_pdf_file = rewrite_pdf(pdf_file, instructions)
-            if rewritten_pdf_file is None:
-                # Possibly encrypted with password, let's just try it anyway
-                rewritten_pdf_file = pdf_file
-            return _redact_file(rewritten_pdf_file, outpath, instructions)
-        except PDFException as e:
-            tries += 1
-            if tries > 2:
-                raise Exception("PDF Redaction Error") from None
-            next_pdf_file = None
-            if e.reason == "rewrite":
-                next_pdf_file = rewrite_pdf(pdf_file, instructions)
-                if next_pdf_file is None:
-                    next_pdf_file = rewrite_hard_pdf(pdf_file, instructions)
-            elif e.reason == "decrypt":
-                next_pdf_file = decrypt_pdf(pdf_file, instructions)
-            if next_pdf_file is None:
-                raise Exception("PDF Rewrite Error") from None
-            pdf_file = next_pdf_file
+            candidate = make_candidate(original, outpath, rewrite_tool, password)
+            pdf_reader = read_pdf(candidate, instructions)
+            check_page_count(pdf_reader, instructions)
+            return write_redacted_pdf(pdf_reader, candidate, outpath, instructions)
+        except PDFCandidateError:
+            logger.info("Redaction candidate failed", exc_info=True)
+            continue
+
+    raise PDFRedactionError("PDF Redaction Error")
 
 
-def _redact_file(pdf_file, outpath, instructions, tries=0):
+def check_password(original, password):
+    """
+    No tool can get past a missing or wrong password, so stop before running
+    any. Ghostscript would even exit successfully with a blank page.
+    """
+    try:
+        pdf_reader = PdfReader(original, strict=False)
+    except (PdfReadError, ValueError, OSError):
+        # Leave broken files to the tools
+        return
+
+    if not pdf_reader.is_encrypted:
+        return
+
+    # Files with only an owner password open with an empty user password
+    if pdf_reader.decrypt(password or "") == PasswordType.NOT_DECRYPTED:
+        raise PDFRedactionError("PDF Password Error")
+
+
+def make_candidate(original, outpath, rewrite_tool, password):
+    # Run the tool on a fresh copy, so every tool starts from the original
+    if rewrite_tool is None:
+        return original
+    candidate = os.path.join(outpath, "candidate.pdf")
+    shutil.copyfile(original, candidate)
+    rewritten_pdf = rewrite_tool(candidate, password=password)
+    if rewritten_pdf is None:
+        raise PDFCandidateError("Failed to rewrite PDF")
+
+    return rewritten_pdf
+
+
+def read_pdf(pdf_path, instructions):
+    try:
+        pdf_reader = PdfReader(pdf_path, strict=False)
+    except (PdfReadError, ValueError, OSError) as e:
+        raise PDFCandidateError("Cannot read PDF") from e
+
+    if pdf_reader.is_encrypted:
+        pdf_reader.decrypt(instructions.get("password") or "")
+
+    try:
+        len(pdf_reader.pages)
+    except (KeyError, PdfReadError) as e:  # KeyError: missing /Pages or /Count
+        raise PDFCandidateError("Cannot count pages") from e
+
+    return pdf_reader
+
+
+def check_page_count(pdf_reader, instructions):
+    num_pages = len(pdf_reader.pages)
+    num_instructions = len(instructions.get("pages", []))
+    if num_pages != num_instructions:
+        raise PDFCandidateError(
+            f"PDF has {num_pages} pages, expected {num_instructions}"
+        )
+
+
+def write_redacted_pdf(pdf_reader, pdf_path, outpath, instructions):
     dpi = 300
     load_invisible_font()
     output = PdfWriter()
-    try:
-        pdf_reader = PdfReader(pdf_file, strict=False)
-    except (PdfReadError, ValueError, OSError) as e:
-        raise PDFException(e, "rewrite") from None
-
-    if pdf_reader.is_encrypted:
-        if not instructions.get("password"):
-            raise Exception("PDF Rewrite Error")
-        pdf_reader.decrypt(instructions["password"])
-
-    try:
-        num_pages = len(pdf_reader.pages)
-    except KeyError as e:  # catch KeyError '/Pages'
-        raise PDFException(e, "rewrite") from None
-    except PdfReadError as e:
-        raise PDFException(e, "decrypt") from None
-
     page_instructions = instructions.get("pages", [])
-    assert num_pages == len(page_instructions)
 
     page_image_numbers = [
         page_idx + 1
         for page_idx, instr in enumerate(page_instructions)
         if instr["rects"]
     ]
-    image_generator = get_images_from_pdf(pdf_reader, pdf_file.name, page_image_numbers)
+    image_generator = get_images_from_pdf(pdf_reader, pdf_path, page_image_numbers)
 
     def get_page_iterator(page_instructions, image_generator):
         for page_idx, instr in enumerate(page_instructions):
             if instr["rects"]:
-                image_filename = next(image_generator)[1]
+                # filingcabinet runs pdftoppm and skips pages it fails on
+                image_page, image_filename = next(image_generator, (None, None))
+                if image_page != page_idx + 1:
+                    raise PDFCandidateError(f"Cannot render page {page_idx + 1}")
                 yield page_idx, instr, image_filename
             else:
                 yield page_idx, instr, None
@@ -146,7 +172,7 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
             else:
                 page = get_redacted_page(image_filename, instr, dpi)
         except (WandError, DelegateError, ValueError) as e:
-            raise PDFException(e, "rewrite") from None
+            raise PDFCandidateError(f"Cannot render page {page_idx + 1}") from e
 
         output.add_page(page)
 
