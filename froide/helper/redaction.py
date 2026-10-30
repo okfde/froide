@@ -59,7 +59,7 @@ def try_redacting_file(original, outpath, instructions):
     password = instructions.get("password")
     check_password(original, password)
 
-    for rewrite in (
+    for rewrite_tool in (
         # Ghostscript
         rewrite_pdf_in_place,
         # the original as is (possibly encrypted with password)
@@ -69,7 +69,7 @@ def try_redacting_file(original, outpath, instructions):
         # pdftocairo, redraws every page, so it is the last resort
         rewrite_hard_pdf_in_place,
     ):
-        candidate = make_candidate(original, outpath, rewrite, password)
+        candidate = make_candidate(original, outpath, rewrite_tool, password)
         if candidate is None:
             continue
 
@@ -103,13 +103,13 @@ def check_password(original, password):
         raise PDFRedactionError("PDF Password Error")
 
 
-def make_candidate(original, outpath, rewrite, password):
+def make_candidate(original, outpath, rewrite_tool, password):
     # Run the tool on a fresh copy, so every tool starts from the original
-    if rewrite is None:
+    if rewrite_tool is None:
         return original
     candidate = os.path.join(outpath, "candidate.pdf")
     shutil.copyfile(original, candidate)
-    return rewrite(candidate, password=password)
+    return rewrite_tool(candidate, password=password)
 
 
 def read_pdf(pdf_path, instructions):
