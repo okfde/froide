@@ -99,7 +99,7 @@ class AlertRegistry:
     def register(self, configuration: AlertConfiguration):
         if configuration.key in self.entries:
             raise ValueError(
-                "%s registered twice with alert registry!" % configuration.slug
+                "%s registered twice with alert registry!" % configuration.key
             )
 
         self.entries[configuration.key] = configuration
