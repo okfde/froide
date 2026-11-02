@@ -381,29 +381,25 @@ class FoiAttachment(models.Model):
     def reset_after_failed_redaction(
         self, target: "FoiAttachment", instructions: dict
     ) -> None:
-        # The redact view creates an empty target if there's no redacted version yet
-        is_first_redaction = not target.file
-
-        if is_first_redaction:
+        if not target.file:
+            # First redaction: remove the empty target created by the redact view
             self.redacted = None
             self.can_approve = True
-
-        if self.is_redacted:
+            target.delete()
+        elif target == self:
+            # Redaction of an already redacted attachment
             if instructions.get("auto_approve"):
                 self.approve_and_save()
             self.can_approve = True
+        else:
+            # Retry: keep the existing redacted version, reset state set by redact view
+            target.can_approve = True
+            target.pending = False
+            target.save()
 
         self.pending = False
         self.save()
         FoiAttachment.attachment_available.send(sender=self)
-
-        if is_first_redaction:
-            target.delete()
-        elif target != self:
-            # Existing redacted version, reset state set by redact view
-            target.can_approve = True
-            target.pending = False
-            target.save()
 
     def remove_file_and_delete(self):
         if self.file:
