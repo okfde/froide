@@ -1830,6 +1830,40 @@ def test_failed_redaction_keeps_existing_redacted_version_approvable(foi_message
     assert redacted.can_approve
 
 
+@mock.patch(
+    "froide.helper.redaction.redact_file",
+    mock.Mock(side_effect=Exception("PDF Redaction Error")),
+)
+@pytest.mark.parametrize(
+    "auto_approve", [False, True], ids=["no-auto-approve", "auto-approve"]
+)
+@pytest.mark.django_db
+def test_failed_redaction_of_redacted_attachment(foi_message, auto_approve):
+    """
+    Make sure that after failing to redact an already redacted attachment, it
+    is no longer pending and can be approved again. It only gets approved if
+    auto approval was requested.
+    """
+
+    # State as left behind by the redact_attachment view
+    redacted = factories.FoiAttachmentFactory.create(
+        belongs_to=foi_message,
+        is_redacted=True,
+        approved=False,
+        can_approve=False,
+        pending=True,
+    )
+
+    redact_attachment_task(
+        redacted.id, redacted.id, {"pages": [], "auto_approve": auto_approve}
+    )
+
+    redacted.refresh_from_db()
+    assert not redacted.pending
+    assert redacted.can_approve
+    assert redacted.approved == auto_approve
+
+
 @pytest.mark.django_db
 def test_extend_deadline(world, client):
     foirequest = FoiRequest.objects.all()[0]
