@@ -415,23 +415,8 @@ def redact_attachment_task(att_id, target_id, instructions):
         pdf_bytes = redact_file(attachment.file, instructions)
     except Exception:
         logger.error("PDF redaction error", exc_info=True)
-        pdf_bytes = None
-
-    if pdf_bytes is None:
         logger.info("Redaction failed %s", attachment.id)
-        # Redaction has failed, remove empty attachment
-        if attachment.redacted:
-            attachment.redacted = None
-        if attachment.is_redacted:
-            if instructions["auto_approve"]:
-                attachment.approve_and_save()
-            attachment.can_approve = True
-        attachment.pending = False
-        attachment.save()
-        FoiAttachment.attachment_available.send(sender=attachment)
-
-        if not target.file:
-            target.delete()
+        attachment.reset_after_failed_redaction(target, instructions)
         return
 
     logger.info("Redaction successful %s", attachment.id)
