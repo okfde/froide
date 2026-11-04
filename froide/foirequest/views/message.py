@@ -245,10 +245,6 @@ def edit_postal_message(request, foirequest, message_id):
             "hasPassword": _(
                 "The original document is protected with a password. The password is getting removed on publication."
             ),
-            "confirmNoRedactionTitle": _("Are you sure that no redaction is needed?"),
-            "confirmNoRedactionsText": _(
-                "You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?"
-            ),
             "close": _("Close"),
             # from upload_attachments
             "attachmentName": _("Name of attachment to create"),
@@ -933,10 +929,6 @@ def upload_attachments(request, foirequest, message_id):
             "removePasswordAndPublish": _("Remove password and publish"),
             "hasPassword": _(
                 "The original document is protected with a password. The password is getting removed on publication."
-            ),
-            "confirmNoRedactionTitle": _("Are you sure that no redaction is needed?"),
-            "confirmNoRedactionsText": _(
-                "You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?"
             ),
             "close": _("Close"),
             "error": _("Error"),
