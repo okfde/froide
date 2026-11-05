@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.utils.decorators import decorator_from_middleware, method_decorator
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
-from django.utils.translation import pgettext
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, TemplateView
 
@@ -33,7 +32,6 @@ from ..forms import RequestForm
 from ..models import FoiProject, FoiRequest, RequestDraft
 from ..services import CreateRequestService, SaveDraftService
 from ..utils import check_throttle
-from ..validators import PLACEHOLDER_MARKER
 
 csrf_middleware_class = import_string(
     getattr(
@@ -190,259 +188,11 @@ class MakeRequestView(FormView):
                     urlencode({"next": self.request.get_full_path()}),
                 ),
             },
-            "i18n": {
-                "publicBodiesFound": [
-                    _("one public body found"),
-                    _("{count} public bodies found").format(count="${count}"),
-                ],
-                "publicBodiesChosen": [
-                    _("one public body chosen"),
-                    _("{count} public bodies chosen").format(count="${count}"),
-                ],
-                "publicBodiesCount": [
-                    _("one public body"),
-                    _("{count} public bodies").format(count="${count}"),
-                ],
-                "requestCount": [
-                    pgettext("js", "one request"),
-                    _("{count} requests").format(count="${count}"),
-                ],
-                # Translators: not url
-                "requests": _("requests"),
-                "close": _("Close"),
-                "back": _("Back"),
-                "remove": _("Remove"),
-                "stepNext": _("Next"),
-                "stepSkip": _("Skip"),
-                "step": _("Step"),
-                "introduction": _("Introduction"),
-                "similarRequests": _("Similar requests"),
-                "findSimilarRequests": _("Find similar requests"),
-                "currentlyChosen": _("Currently chosen:"),
-                "requestVisibility": _("Public visibility of the request"),
-                "previewAndSubmit": _("Preview & submit"),
-                "address": _("Address"),
-                "account": pgettext("Make request breadcrumbs/stepper", "Account"),
-                "writeMessage": _("Write message"),
-                "submitRequest": _("Submit request"),
-                "makeRequest": _("Make request"),
-                "makeRequestToPublicBody": _("Make request to {name}").format(
-                    name="${name}"
-                ),
-                "makeRequestYourself": _("Make a request yourself"),
-                "writeRequest": _("Write the request"),
-                "recipientPb": _("Receiving public body"),
-                "introText": _(
-                    "Access information by filing a request to a public body. We'll guide you through the process."
-                ),
-                "letsGo": _("Let's go!"),
-                "orCampaign": _(
-                    "Or send a pre-written request with just one click, by participating in one of our campaigns:"
-                ),
-                "whatCanIRequest": _("What can I request?"),
-                "whatCanINotRequest": _("What can’t I request?"),
-                "search": _("Search"),
-                "searchArchive": _("Search our archives:"),
-                "doYouAlreadyHaveAccount": _("Do you already have an account?"),
-                "thisFormRemembers": _(
-                    "This form remembers your inputs, as long as stay in the same tab."
-                ),
-                "writingRequestTo": _("You are writing a request to"),
-                "toMultiPublicBodies": _("To: {count} public bodies").format(
-                    count="${count}"
-                ),
-                "selectPublicBodies": _("Select public bodies"),
-                "continue": _("continue"),
-                "continueWithSelected": _("Continue with selected"),
-                "selectAll": [_("select one"), _("select all")],
-                "selectingAll": _("Selecting all public bodies, please wait..."),
-                "name": _("Name"),
-                "filterPlaceholder": _("Filter…"),
-                "level": pgettext("Publicbody filter", "Level"),
-                "location": pgettext("Publicbody filter", "Location"),
-                "groupBy_state": _("state"),
-                "jurisdictionPlural": [
-                    _("Jurisdiction"),
-                    _("Jurisdictions"),
-                ],
-                "topicPlural": [
-                    _("Topic"),
-                    _("Topics"),
-                ],
-                "classificationPlural": [
-                    _("Classification"),
-                    _("Classifications"),
-                ],
-                "containingGeoregionsPlural": [
-                    _("Part of administrative region"),
-                    _("Part of administrative regions"),
-                ],
-                "administrativeUnitKind": _("Type of administrative unit"),
-                "toPublicBody": _("To: {name}").format(name="${name}"),
-                "change": _("Change"),
-                "searchPlaceholder": _("Search..."),
-                "clearSearchResults": _("clear search"),
-                "clearSelection": _("clear selection"),
-                "reallyClearSelection": _(
-                    "Are you sure you want to discard your current selection?"
-                ),
-                "loadMore": _("load more..."),
-                "loading": _("Loading..."),
-                "next": _("next"),
-                "previous": _("previous"),
-                "choosePublicBody": _("Choose public body"),
-                "checkSelection": _("Check selection"),
-                "checkRequest": _("Check request"),
-                "goNextStep": _("Go to next step"),
-                "batchRequestDraftOnly": _(
-                    "You have been allowed to make one project request to "
-                    "these public bodies, but you do not have permission "
-                    "to select your own."
-                ),
-                "subject": _("Subject"),
-                "defaultLetterStart": _("Please send me the following information:"),
-                "warnFullText": _(
-                    "Watch out! You are requesting information across jurisdictions! "
-                    "If you write the full text, we cannot customize it according to "
-                    "applicable laws. Instead you have to write the text to be "
-                    "jurisdiction agnostic."
-                ),
-                "replacePlaceholderMarker": _(
-                    _(
-                        "Please replace all placeholder values marked by “{marker}”."
-                    ).format(marker=PLACEHOLDER_MARKER)
-                ),
-                "resetFullText": _("Reset text to template version"),
-                "savedFullTextChanges": _("Your previous customized text"),
-                "saveAsDraft": _("Save as draft"),
-                "reviewRequest": _("Review request"),
-                "reviewTitle": _("Review your request and submit"),
-                "reviewEdit": _("Edit"),
-                "reviewFrom": _("From"),
-                "reviewTo": _("To"),
-                "reviewPublicbodies": _("public bodies"),
-                "greeting": _("Dear Sir or Madam"),
-                "kindRegards": _("Kind regards"),
-                "yourFirstName": _("Your first name"),
-                "yourLastName": _("Your last name"),
-                "yourEmail": _("Your email address"),
-                "yourAddress": _("Your postal address"),
-                "giveName": _("Please fill out your name below, or in the next step"),
-                "similarExist": _(
-                    "Please make sure the information is not already requested or public"
-                ),
-                "moreSimilarRequests": _("Search for more similar requests"),
-                "relevantResources": _("Relevant resources"),
-                "officialWebsite": _("Official website: "),
-                "noSubject": _("Please add a subject."),
-                "noBody": _("Please describe the information you want to request!"),
-                "dontAddClosing": _(
-                    "Do not add a closing, it is added automatically at the end of the letter."
-                ),
-                "dontAddGreeting": _(
-                    "Do not add a greeting, it is added automatically at the start of the letter."
-                ),
-                "dontInsertName": _(
-                    "Do not insert your name, we will add it automatically at the end of the letter."
-                ),
-                "enterMeaningfulSubject": _(
-                    "Please enter a subject which describes the information you are requesting."
-                ),
-                "pleaseFollowAddressFormat": _(
-                    "Please enter an address in the following format:\n%(format)s",
-                )
-                % {"format": _("Street address,\nPost Code, City")},
-                "includeProof": _("Attach a proof of identity"),
-                "addMoreAuthorities": _("Add more authorities"),
-                # mimic Django's default messages, but use magic {count} parameter
-                # "Ensure this value has at least %(limit_value)d characters (it has %(show_value)d)."
-                "valueMinLength": [
-                    _("Ensure this value has at least {count} character.").format(
-                        count="${count}"
-                    ),
-                    _("Ensure this value has at least {count} characters.").format(
-                        count="${count}"
-                    ),
-                ],
-                "valueMaxLength": [
-                    _("Ensure this value has at most {count} character.").format(
-                        count="${count}"
-                    ),
-                    _("Ensure this value has at most {count} characters.").format(
-                        count="${count}"
-                    ),
-                ],
-                "results": [
-                    pgettext("js", "One result"),
-                    _("{count} results").format(count="${count}"),
-                ],
-                "searchResults": _("Search results"),
-                "createAccount": _("Create account"),
-                "createAccountPreamble": _(
-                    "You need to create an account at {site_name} so you will be able to manage your request."
-                ).format(site_name=settings.SITE_NAME),
-                "skipIntroHowto": _(
-                    "Skip this part next time and start at “Choose public body” (optional)"
-                ),
-                "error": _("Error"),
-                "none": _("None chosen"),
-                "toPb": _("To:"),
-                "to": _("to"),
-                "requestTo": _("Request to:"),
-                "correct": _("Correct"),
-                "fixPlaceholder": _("Fix placeholders automatically"),
-                "updatePostalAddress": _("Update my postal address"),
-                "subjectMeaningful": _("Please write a meaningful subject"),
-                "containsPlaceholderMarker": _(
-                    "The body contains an illegal placeholder ({placeholder})."
-                ).format(placeholder="${placeholder}"),
-                "pagination": _("Pagination"),
-                "publicbody": _("Public body"),
-                "requestBody": _("Request body"),
-                "request": _("request"),
-                "visibility": _("Visibility"),
-                "notConfirmed": _("Not confirmed"),
-                "notAgreed": _("Not agreed"),
-                "publishNow": _("Publish request now"),
-                "publishLater": _("Publish request later"),
-                "help": _("Help"),
-                "privacy": _("Privacy"),
-                "privacyMoreInfo": _("More information about privacy on this website"),
-                "nameRedact": _("My name must be <strong>redacted</strong>"),
-                "namePlainText": _(
-                    "My name may appear on the website in <strong>plain text</strong>"
-                ),
-                "email": _("Email"),
-                "notSentToPb": _("(not sent to public body)"),
-                "terms": _("Terms of Use"),
-                "searchToPbName": _("to %(name)s") % {"name": "${name}"},
-                "searchToProject": _("to %(name)s and %(count)s other public bodies")
-                % {
-                    "name": "${name}",
-                    "count": "${count}",
-                },
-                "notYetSet": _("Not yet set"),
-                "searchSelectThisPb": _("Select this public body"),
-                "dateRange": _("Date range"),
-                "dateRangeFrom": _("From"),
-                "dateRangeTo": _("Until"),
-                "campaign": _("Campaign"),
-                "noCampaign": _("No campaign"),
-                "toggleCollapse": _("Toggle collapse"),
-                "searchText": pgettext("Search input", "Text"),
-                "login": pgettext("Make request", "Log in"),
-                "searchRequests": _("Search requests"),
-                "showEntireMessage": _("Show entire message"),
-                "proof": _("Proof of identity"),
-                "hasProofs": _("You have provided a proof of your identity"),
-                "hasNoProofs": _(
-                    "You're not providing a proof of your identity (only required in rare cases)"
-                ),
-            },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],
                 "closings": [_("Kind Regards")],
             },
+            "siteName": settings.SITE_NAME,
             "fixtures": {
                 "georegion_kind": [
                     [str(k), str(v)]
@@ -461,9 +211,7 @@ class MakeRequestView(FormView):
                 ctx[key].update(pb_ctx[key])
             else:
                 ctx[key] = pb_ctx[key]
-        proof_form = self.get_proof_form()
-        if proof_form:
-            ctx["proof_config"] = proof_form.get_js_context()
+
         return ctx
 
     def get_form_config_initial(self):

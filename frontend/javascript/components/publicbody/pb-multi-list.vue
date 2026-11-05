@@ -46,14 +46,13 @@ import { mapMutations } from 'vuex'
 import { SET_STEP_REQUEST, ADD_PUBLICBODY_ID } from '../../store/mutation_types'
 
 import PBListMixin from './lib/pb-list-mixin'
-import I18nMixin from '../../lib/i18n-mixin'
 
 import PbMultiItem from './pb-multi-item'
 
 export default {
   name: 'PbMultiList',
   props: ['name', 'scope', 'config'],
-  mixins: [PBListMixin, I18nMixin],
+  mixins: [PBListMixin],
   methods: {
     selectAll() {
       this.searchResults.forEach((r) => {

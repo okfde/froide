@@ -3,12 +3,12 @@
     <table class="table table-striped table-hover">
       <thead>
         <tr>
-          <th>{{ i18n.kind }}</th>
-          <th>{{ i18n.date }}</th>
-          <th>{{ i18n.message }}</th>
-          <th>{{ i18n.description }}</th>
+          <th>{{ gettext('Kind') }}</th>
+          <th>{{ gettext('Date') }}</th>
+          <th>{{ gettext('Message') }}</th>
+          <th>{{ gettext('Description') }}</th>
           <th class="action-column">
-            {{ i18n.action }}
+            {{ pgettext('action to take in moderation table', 'Action') }}
           </th>
         </tr>
       </thead>
@@ -30,6 +30,7 @@
 
 <script>
 import { postData } from '../../lib/api.js'
+import { translateMixin } from 'vuepo/vue'
 
 import ModerationProblem from './moderation-problem.vue'
 
@@ -38,6 +39,7 @@ const getUrl = (templ, objId) => templ.replace(/0/, objId)
 
 export default {
   name: 'ModerationProblems',
+  mixins: [translateMixin],
   components: {
     ModerationProblem
   },
@@ -49,9 +51,6 @@ export default {
   },
   inject: ['config', 'csrfToken'],
   computed: {
-    i18n() {
-      return this.config.i18n
-    },
     filteredReports() {
       return this.reports.filter((r) => {
         if (this.filter.mine) {
@@ -72,7 +71,11 @@ export default {
   methods: {
     claim(reportId) {
       if (!this.canClaim) {
-        window.alert(this.i18n.maxClaimCount)
+        window.alert(
+          this.gettext(
+            'You cannot work on more than 5 issues at the same time.'
+          )
+        )
         return
       }
       postData(

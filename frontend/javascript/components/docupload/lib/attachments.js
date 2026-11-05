@@ -67,7 +67,7 @@ const createDocument = (attachment) => {
     .catch((err) => {
       // TODO where do these land in post-upload?
       store.messages.push({
-        body: err.detail || config.i18n.error || 'Error',
+        body: err.detail || config.i18n.value.error || 'Error',
         color: 'danger'
       })
     })
@@ -87,7 +87,7 @@ const updateDocument = (attachment, { title, description }) => {
     })
     .catch((err) => {
       store.messages.push({
-        body: err.detail || config.i18n.error || 'Error',
+        body: err.detail || config.i18n.value.error || 'Error',
         color: 'danger'
       })
     })

@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-auto col-lg-2 order-lg-2">
       <div class="sidebar">
-        <h2 class="h5">{{ i18n.activeModerators }}</h2>
+        <h2 class="h5">{{ gettext('Active moderators') }}</h2>
         <ul>
           <li v-for="moderator in namedModerators" :key="moderator.id">
             {{ moderator.name }}
@@ -20,7 +20,7 @@
             href="#problemreports"
             @click="tab = 'problemreports'"
           >
-            {{ i18n.problemReports }}
+            {{ gettext('problem reports') }}
             <span class="badge text-bg-secondary">{{
               problemreportsCount
             }}</span>
@@ -33,7 +33,7 @@
             href="#publicbodies"
             @click="tab = 'publicbodies'"
           >
-            {{ i18n.publicBodyChangeProposals }}
+            {{ gettext('public bodies') }}
             <span class="badge text-bg-secondary">{{ publicbodiesCount }}</span>
           </a>
         </li>
@@ -44,7 +44,7 @@
             href="#unclassified"
             @click="tab = 'unclassified'"
           >
-            {{ i18n.unclassifiedRequests }}
+            {{ gettext('unclassified requests') }}
             <span class="badge text-bg-secondary">{{ unclassifiedCount }}</span>
           </a>
         </li>
@@ -55,7 +55,7 @@
             href="#attachments"
             @click="tab = 'attachments'"
           >
-            {{ i18n.attachments }}
+            {{ gettext('Attachments') }}
             <span class="badge text-bg-secondary">{{ attachmentsCount }}</span>
           </a>
         </li>
@@ -86,6 +86,7 @@
 <script>
 import Room from '../../lib/websocket.ts'
 import { getData } from '../../lib/api.js'
+import { translateMixin } from 'vuepo/vue'
 
 import ModerationProblems from './moderation-problems.vue'
 import ModerationPublicbodies from './moderation-publicbodies.vue'
@@ -98,6 +99,7 @@ const showMaxCount = (l) => `${l}${l >= MAX_OBJECTS ? '+' : ''}`
 
 export default {
   name: 'ModerationDashboard',
+  mixins: [translateMixin],
   components: {
     ModerationProblems,
     ModerationPublicbodies,
@@ -161,9 +163,6 @@ export default {
     }
   },
   computed: {
-    i18n() {
-      return this.config.i18n
-    },
     namedModerators() {
       return this.moderators.filter((m) => m.name !== null)
     },

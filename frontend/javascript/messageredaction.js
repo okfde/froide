@@ -1,14 +1,20 @@
+import { vuepo } from 'vuepo:client'
+import { createGettext } from 'vuepo/vue'
 import { createAppWithProps } from './lib/vue-helper'
 
 import MessageRedaction from './components/messageredaction/message-redaction.vue'
 import DescriptionRedaction from './components/messageredaction/description-redaction.vue'
 
+const gettext = createGettext(vuepo)
+
 function createMessageRedaction(selector) {
-  createAppWithProps(selector, MessageRedaction).mount(selector)
+  createAppWithProps(selector, MessageRedaction).use(gettext).mount(selector)
 }
 
 function createDescriptionRedaction(selector) {
-  createAppWithProps(selector, DescriptionRedaction).mount(selector)
+  createAppWithProps(selector, DescriptionRedaction)
+    .use(gettext)
+    .mount(selector)
 }
 
 document.querySelectorAll('[data-redact="message"]').forEach((el) => {

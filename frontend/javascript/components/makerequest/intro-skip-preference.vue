@@ -11,7 +11,11 @@
       @change="togglePreference"
     />
     <label for="skip_intro_howto" class="form-check-label">
-      {{ i18n.skipIntroHowto }}
+      {{
+        gettext(
+          'Skip this part next time and start at “Choose public body” (optional)'
+        )
+      }}
     </label>
   </div>
   <BsToast v-if="error" color="danger" @dismiss="error = null">
@@ -22,13 +26,14 @@
 </template>
 
 <script setup>
-import { inject, ref } from 'vue'
+import { ref } from 'vue'
+import { useGettext } from 'vuepo/vue'
 
 import { userpreferenceUpdate } from '../../api'
 
 import BsToast from '../bs-toast.vue'
 
-const i18n = inject('i18n')
+const { gettext } = useGettext()
 
 const props = defineProps({
   config: {
@@ -51,7 +56,7 @@ const togglePreference = () => {
   }).catch((err) => {
     console.error('toggle preference error', err)
     preferenceSkipIntroHowto.value = fromValue
-    error.value = `${i18n.error} ${err?.message || ''}`
+    error.value = `${gettext('Error')} ${err?.message || ''}`
   })
 }
 </script>

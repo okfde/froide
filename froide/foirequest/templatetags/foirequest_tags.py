@@ -485,12 +485,6 @@ def render_message_redact_button(message):
         "show_button": bool(message.plaintext or message.subject),
         "js_config": json.dumps(
             {
-                "i18n": {
-                    "subject": _("Subject"),
-                    "message": _("Message"),
-                    "messageLoading": _("Message is loading..."),
-                    "blockedRedaction": _("This word needs to stay redacted."),
-                },
                 "settings": {
                     "blockedPatterns": blocked_patterns,
                 },
@@ -503,16 +497,7 @@ def render_message_redact_button(message):
 def render_description_redact_button(request):
     return {
         "foirequest": request,
-        "js_config": json.dumps(
-            {
-                "i18n": {
-                    "subject": _("Subject"),
-                    "message": _("Message"),
-                    "messageLoading": _("Message is loading..."),
-                    "blockedRedaction": _("This word needs to stay redacted."),
-                },
-            }
-        ),
+        "js_config": json.dumps({}),
     }
 
 

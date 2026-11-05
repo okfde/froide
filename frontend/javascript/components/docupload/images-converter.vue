@@ -1,11 +1,12 @@
 <script setup>
-import { inject } from 'vue'
+import { t } from 'vuepo'
+import { useGettext } from 'vuepo/vue'
 import { useAttachments } from './lib/attachments'
 import ImageDocumentPagesSortable from './image-document-pages-sortable.vue'
 
 const { attachments, convertImage } = useAttachments()
 
-const i18n = inject('i18n')
+const { gettext, ngettext } = useGettext()
 
 const emit = defineEmits(['converted'])
 
@@ -16,7 +17,7 @@ const convertImagesClick = (idx) => {
     })
     .catch((err) => {
       console.error(err)
-      window.alert(`${i18n.value.error}: ${err.message}`)
+      window.alert(`${gettext('Error')}: ${err.message}`)
     })
 }
 </script>
@@ -25,21 +26,31 @@ const convertImagesClick = (idx) => {
   <div v-for="(image, idx) in attachments.images" :key="idx">
     <div class="card my-3">
       <div class="card-header">
-        {{ i18n._('newDocumentPageCount', { count: image.pages.length }) }}
+        {{
+          ngettext(
+            'New document with one page',
+            t`New document with ${count} pages`,
+            image.pages.length
+          )
+        }}
       </div>
       <div class="card-body">
         <p class="text-body-secondary">
-          {{ i18n.imageDocumentExplanation }}
+          {{
+            gettext(
+              'Here you can combine your uploaded images to a PDF document. You can rearrange the pages and split it into multiple documents. You can redact the PDF in the next step.'
+            )
+          }}
         </p>
         <label class="form-label" :for="'imagesConverterName' + idx">{{
-          i18n.attachmentName
+          gettext('Name of attachment to create')
         }}</label>
         <input
           type="text"
           :id="'imagesConverterName' + idx"
           v-model="image.name"
           class="form-control"
-          :placeholder="i18n.documentTitlePlaceholder"
+          :placeholder="gettext('e.g. Letter from date')"
         />
         <div class="position-relative">
           <ImageDocumentPagesSortable :idx="idx" show-rotate show-split />
@@ -51,14 +62,14 @@ const convertImagesClick = (idx) => {
             @click="convertImagesClick(idx)"
             :disabled="attachments.isConverting"
           >
-            {{ i18n.convertImages }}
+            {{ gettext('Convert images to document') }}
           </button>
           <span
             v-show="image.isConverting"
             class="spinner-border spinner-border-sm ms-3"
             role="status"
           >
-            <span class="sr-only">{{ i18n.loading }}</span>
+            <span class="sr-only">{{ gettext('Loading...') }}</span>
           </span>
         </div>
       </div>

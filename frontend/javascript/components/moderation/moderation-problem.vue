@@ -14,7 +14,7 @@
         v-if="!report.is_requester && !report.auto_submitted"
         class="badge text-bg-secondary"
       >
-        {{ i18n.isNotRequester }}
+        {{ gettext('not requester') }}
       </span>
     </td>
     <td>{{ reportMessageSubjectTruncated }}</td>
@@ -30,7 +30,7 @@
         class="btn btn-outline-secondary btn-sm"
         target="_blank"
       >
-        {{ i18n.toMessage }}
+        {{ gettext('to message') }}
       </a>
 
       <a
@@ -39,17 +39,17 @@
         :href="publicBodyLink"
         target="_blank"
       >
-        {{ i18n.toPublicBody }}
+        {{ gettext('to public body') }}
       </a>
 
       <div v-if="resolving" class="card mt-2">
         <div class="card-body">
           <label v-if="!report.auto_submitted" class="d-block">
-            <p>{{ i18n.resolutionDescription }}</p>
+            <p>{{ gettext('Please write a nice message to the user.') }}</p>
             <textarea v-model="resolution" class="form-control" />
           </label>
           <button class="btn btn-success mt-1" @click="resolve">
-            {{ i18n.markResolved }}
+            {{ gettext('Mark resolved') }}
           </button>
         </div>
       </div>
@@ -57,11 +57,13 @@
       <div v-if="escalating" class="card mt-2">
         <div class="card-body">
           <label class="d-block">
-            <p>{{ i18n.escalationDescription }}</p>
+            <p>
+              {{ gettext('Please describe to admins what should be done.') }}
+            </p>
             <textarea v-model="escalation" class="form-control" />
           </label>
           <button class="btn btn-warning mt-1" @click="escalate">
-            {{ i18n.escalate }}
+            {{ gettext('Escalate') }}
           </button>
         </div>
       </div>
@@ -73,7 +75,7 @@
         :disabled="!canClaim"
         @click="claim"
       >
-        {{ i18n.claim }}
+        {{ gettext('Claim') }}
       </button>
       <template v-if="claimedByOther">
         <small :class="{ 'text-danger': longClaim }">
@@ -85,13 +87,13 @@
       <template v-if="claimedByMe">
         <div class="btn-group-vertical btn-group-sm">
           <button class="btn btn-success" @click="startResolving">
-            {{ i18n.resolve }}…
+            {{ gettext('Resolve') }}…
           </button>
           <button class="btn btn-warning" @click="startEscalating">
-            {{ i18n.escalate }}…
+            {{ gettext('Escalate') }}…
           </button>
           <button class="btn btn-secondary" @click="unclaim">
-            {{ i18n.unclaim }}
+            {{ gettext('Cancel') }}
           </button>
         </div>
       </template>
@@ -100,6 +102,8 @@
 </template>
 
 <script>
+import { translateMixin } from 'vuepo/vue'
+
 const EMOJI_MAPPING = {
   message_not_delivered: '📭',
   bounce_publicbody: '🤖',
@@ -136,6 +140,7 @@ const formatDate = (val) => {
 
 export default {
   name: 'ModerationRow',
+  mixins: [translateMixin],
   props: {
     report: {
       type: Object,
@@ -158,9 +163,6 @@ export default {
     }
   },
   computed: {
-    i18n() {
-      return this.config.i18n
-    },
     showPublicBodyLink() {
       return (
         this.report.kind === 'message_not_delivered' &&
@@ -202,8 +204,8 @@ export default {
     },
     claimedMinutesAgo() {
       if (this.report.claimed) {
-        return this.i18n.claimedMinutesAgo.replace(
-          /\{min\}/,
+        return this.gettext('Claimed for {min} min.').replace(
+          '{min}',
           this.claimedMinutes
         )
       }

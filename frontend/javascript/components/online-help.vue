@@ -1,12 +1,13 @@
 <script lang="ts" setup>
-import { inject, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useGettext } from 'vuepo/vue'
 import BsModal from './bs-modal.vue'
 
 const props = defineProps({
   path: { type: String, default: '' }
 })
 
-const i18n: any = inject('i18n')
+const { gettext } = useGettext()
 
 const container = ref<HTMLDivElement>()
 const contents = ref('')
@@ -91,11 +92,13 @@ defineExpose({ show })
     "
   >
     <template #header>
-      <h1 class="h5 modal-title">{{ i18n.help }}</h1>
+      <h1 class="h5 modal-title">{{ gettext('Help') }}</h1>
     </template>
     <template #body>
       <span v-if="isFetching" class="spinner spinner-border" role="status">
-        <span class="visually-hidden">{{ i18n.attachmentsLoading }}</span>
+        <span class="visually-hidden">{{
+          gettext('Attachments are loading...')
+        }}</span>
       </span>
       <div v-show="!isFetching" ref="container" />
     </template>

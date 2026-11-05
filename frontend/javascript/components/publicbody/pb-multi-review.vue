@@ -3,16 +3,12 @@
     <div class="row mt-3 mb-3">
       <div class="col-auto">
         <h2>
-          {{ i18n._('publicBodiesCount', { count: publicBodies.length }) }}
+          {{ publicBodiesCount(publicBodies.length) }}
         </h2>
       </div>
     </div>
 
-    <PbSummary
-      :scope="scope"
-      :i18n="i18n"
-      :dimensions="summaryDimensions"
-    ></PbSummary>
+    <PbSummary :scope="scope" :dimensions="summaryDimensions"></PbSummary>
 
     <div class="row mb-2">
       <div class="col-auto ms-auto">
@@ -22,7 +18,7 @@
           class="btn btn-sm hover-btn-danger"
         >
           <i class="fa fa-ban" aria-hidden="true"></i>
-          {{ i18n.clearSelection }}
+          {{ gettext('clear selection') }}
         </button>
       </div>
     </div>
@@ -30,7 +26,6 @@
     <PbTable
       :name="name"
       :scope="scope"
-      :i18n="i18n"
       :headers="headers"
       :options="chosenOptions"
       :rows="publicBodies"
@@ -46,7 +41,7 @@
           :disabled="!stepCanContinue(scope)"
           @click="$emit('stepNext')"
         >
-          {{ i18n.stepNext || i18n.continue }}
+          {{ gettext('Next') }}
         </button>
       </div>
     </div>
@@ -55,6 +50,8 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+import { t } from 'vuepo'
+import { translateMixin } from 'vuepo/vue'
 import { SET_STEP_SELECT_PUBLICBODY } from '../../store/mutation_types'
 
 import PBChooserMixin from './lib/pb-chooser-mixin'
@@ -66,9 +63,9 @@ import PbSummary from './pb-summary'
 
 export default {
   name: 'PbMultiReview',
-  mixins: [PBChooserMixin, PBListMixin],
+  mixins: [translateMixin, PBChooserMixin, PBListMixin],
   emits: ['stepNext'],
-  props: ['name', 'scope', 'i18n'],
+  props: ['name', 'scope'],
   components: {
     PbTable,
     PbSummary
@@ -87,6 +84,9 @@ export default {
     ...mapGetters(['stepCanContinue'])
   },
   methods: {
+    publicBodiesCount(count) {
+      return this.ngettext('one public body', t`${count} public bodies`, count)
+    },
     ...mapMutations({
       setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY
     })

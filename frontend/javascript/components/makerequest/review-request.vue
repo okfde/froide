@@ -5,12 +5,13 @@
     <ReviewRequestLine
       v-if="!hidePublicbodyChooser"
       :step="STEPS.SELECT_PUBLICBODY"
-      :i18n="i18n"
-      :title="i18n.publicbody"
+      :title="gettext('Public body')"
       :invalid="needCorrectionPublicbody"
     >
       <template #contents>
-        <span v-if="!hasPublicbodies" class="text-danger">{{ i18n.none }}</span>
+        <span v-if="!hasPublicbodies" class="text-danger">{{
+          gettext('None chosen')
+        }}</span>
         <ReviewPublicbody
           v-else
           :config="config"
@@ -21,16 +22,14 @@
     </ReviewRequestLine>
 
     <ReviewRequestLine
-      :i18n="i18n"
-      :title="i18n.subject"
+      :title="gettext('Subject')"
       :invalid="needCorrectionSubject"
       :step="STEPS.WRITE_REQUEST"
-      :contents="subject || i18n.subject"
+      :contents="subject || gettext('Subject')"
     />
 
     <ReviewRequestLine
-      :i18n="i18n"
-      :title="i18n.requestBody"
+      :title="gettext('Request body')"
       :invalid="needCorrectionBody"
       :step="STEPS.WRITE_REQUEST"
     >
@@ -61,91 +60,88 @@
 
     <ReviewRequestLine
       v-if="needCorrectionConfirm"
-      :i18n="i18n"
-      :title="i18n.request"
+      :title="gettext('request')"
       :invalid="needCorrectionConfirm"
-      :contents="i18n.notConfirmed"
+      :contents="gettext('Not confirmed')"
       :step="STEPS.WRITE_REQUEST"
     />
 
     <ReviewRequestLine
       v-if="!hidePublic"
-      :i18n="i18n"
-      :title="i18n.visibility"
+      :title="gettext('Visibility')"
       :step="STEPS.REQUEST_PUBLIC"
     >
       <template #contents>
-        {{ requestPublic === 'True' ? i18n.publishNow : i18n.publishLater }}
+        {{
+          requestPublic === 'True'
+            ? gettext('Publish request now')
+            : gettext('Publish request later')
+        }}
         <a
           v-if="config.url.helpRequestPublic"
           :href="config.url.helpRequestPublic"
           @click.prevent="
             $emit('onlinehelpClick', config.url.helpRequestPublic)
           "
-          >{{ i18n.help }}</a
+          >{{ gettext('Help') }}</a
         >
       </template>
     </ReviewRequestLine>
 
     <ReviewRequestLine
       v-if="!user.id"
-      :i18n="i18n"
-      :title="i18n.privacy"
+      :title="gettext('Privacy')"
       :step="STEPS.CREATE_ACCOUNT"
     >
       <template #contents>
         <span
           v-html="
-            user.private === 'True' ? i18n.nameRedact : i18n.namePlainText
+            user.private === 'True'
+              ? gettext('My name must be <strong>redacted</strong>')
+              : gettext(
+                  'My name may appear on the website in <strong>plain text</strong>'
+                )
           "
         />
-        <!-- TODO
-        <a
-          href="#"
-          @click.prevent="$emit('onlinehelpClick', { content: i18n.TODO })"
-          >{{ i18n.help }}</a>
-        -->
+        <!-- TODO online help link -->
       </template>
     </ReviewRequestLine>
 
     <ReviewRequestLine
       v-if="!user.id"
-      :i18n="i18n"
-      :title="i18n.name"
+      :title="gettext('Name')"
       :invalid="needCorrectionUser"
       :step="STEPS.CREATE_ACCOUNT"
     >
       <template #contents>
         <span :class="{ 'text-danger': !user.first_name }">
-          {{ user.first_name || i18n.yourFirstName }}
+          {{ user.first_name || gettext('Your first name') }}
         </span>
         <span
           :class="{ 'text-danger': !user.last_name }"
           style="margin-left: 1ch"
         >
-          {{ user.last_name || i18n.yourLastName }}
+          {{ user.last_name || gettext('Your last name') }}
         </span>
       </template>
     </ReviewRequestLine>
 
     <ReviewRequestLine
       v-if="!user.id"
-      :i18n="i18n"
-      :title="i18n.email"
+      :title="gettext('Email')"
       :invalid="needCorrectionEmail"
       :step="STEPS.CREATE_ACCOUNT"
     >
       <template #contents>
         <span :class="{ 'text-danger': needCorrectionEmail }">
-          {{ user.email || i18n.email }}
+          {{ user.email || gettext('Email') }}
         </span>
-        {{ i18n.notSentToPb }}
+        {{ gettext('(not sent to public body)') }}
       </template>
     </ReviewRequestLine>
 
     <ReviewRequestLine
-      :i18n="i18n"
-      :title="i18n.address"
+      :title="gettext('Address')"
       :invalid="needCorrectionAddress"
       :step="user.id ? STEPS.WRITE_REQUEST : STEPS.CREATE_ACCOUNT"
     >
@@ -160,26 +156,30 @@
     </ReviewRequestLine>
 
     <ReviewRequestLine
-      :i18n="i18n"
-      :title="i18n.proof"
+      :title="gettext('Proof of identity')"
       :step="STEPS.WRITE_REQUEST"
       v-if="user && proofForm"
     >
       <template #contents>
-        {{ hasProofs ? i18n.hasProofs : i18n.hasNoProofs }}
+        {{
+          hasProofs
+            ? gettext('You have provided a proof of your identity')
+            : gettext(
+                "You're not providing a proof of your identity (only required in rare cases)"
+              )
+        }}
       </template>
     </ReviewRequestLine>
 
     <ReviewRequestLine
       v-if="needCorrectionTerms"
-      :i18n="i18n"
-      :title="i18n.terms"
+      :title="gettext('Terms of Use')"
       :invalid="needCorrectionTerms"
-      :contents="i18n.notAgreed"
+      :contents="gettext('Not agreed')"
       :step="STEPS.CREATE_ACCOUNT"
     />
 
-    <UserConfirmation :i18n="i18n" :form="userForm" />
+    <UserConfirmation :form="userForm" />
 
     <div class="mt-4">
       <button
@@ -190,7 +190,7 @@
         @click.prevent="$emit('submit')"
       >
         <i class="fa fa-send" aria-hidden="true" />
-        {{ i18n.submitRequest }}
+        {{ gettext('Submit request') }}
       </button>
       <button
         v-if="user.id && showDraft"
@@ -202,13 +202,15 @@
         @click="$emit('savedraft')"
       >
         <i class="fa fa-save" aria-hidden="true" />
-        {{ i18n.saveAsDraft }}
+        {{ gettext('Save as draft') }}
       </button>
     </div>
   </div>
 </template>
 
 <script>
+import { translateMixin } from 'vuepo/vue'
+
 import LetterMixin from './lib/letter-mixin'
 
 import ReviewPublicbody from './review-publicbody.vue'
@@ -221,7 +223,7 @@ import { SET_STEP, STEPS } from '../../store/mutation_types'
 
 export default {
   name: 'ReviewRequest',
-  mixins: [LetterMixin],
+  mixins: [translateMixin, LetterMixin],
   components: {
     ReviewRequestLine,
     ReviewPublicbody,
@@ -229,10 +231,6 @@ export default {
   },
   emits: ['submit', 'onlinehelpClick', 'savedraft'],
   props: {
-    i18n: {
-      type: Object,
-      required: true
-    },
     config: {
       type: Object,
       required: true

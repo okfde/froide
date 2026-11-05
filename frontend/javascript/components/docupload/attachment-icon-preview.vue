@@ -1,5 +1,6 @@
 <script setup>
 import { computed, inject, ref } from 'vue'
+import { useGettext } from 'vuepo/vue'
 
 import AttachmentActions from './attachment-actions.vue'
 import AttachmentDocumentFields from './attachment-document-fields.vue'
@@ -9,8 +10,8 @@ import BsModal from '../bs-modal.vue'
 
 import DocumentViewer from './document-viewer.vue'
 
-const i18n = inject('i18n')
 const config = inject('config')
+const { gettext } = useGettext()
 
 const { attachment, actions, nudgeRedaction, big } = defineProps({
   attachment: {
@@ -54,14 +55,14 @@ const closePreviewModal = () => {
 }
 
 const iconTooltipTexts = computed(() => {
-  if (attachment.is_image) return [i18n.value.preview]
-  if (needsRedaction.value && nudgeRedaction) return [i18n.value.redact]
+  if (attachment.is_image) return [gettext('Preview')]
+  if (needsRedaction.value && nudgeRedaction) return [gettext('Redact')]
   return [
-    i18n.value.preview,
+    gettext('Preview'),
     ...(attachment.document
-      ? [i18n.value.editTitle, i18n.value.editDescription]
+      ? [gettext('Edit title'), gettext('Edit description')]
       : [])
-  ]
+  ].map((v) => v.value)
 })
 
 // cf. PdfRedactionModal modal title
@@ -94,7 +95,7 @@ const hasLongName = computed(
         <img
           v-if="!attachment.pending"
           :src="attachment.file_url"
-          :alt="i18n.preview"
+          :alt="gettext('Preview')"
           class="object-fit-contain shadow-sm"
           :style="{ maxWidth: size, maxHeight: size }"
         />
@@ -115,7 +116,7 @@ const hasLongName = computed(
           aria-hidden="true"
         ></i>
         <span class="visually-hidden">
-          {{ i18n.preview }}
+          {{ gettext('Preview') }}
         </span>
         <span
           v-if="attachment.document"
@@ -124,8 +125,8 @@ const hasLongName = computed(
         >
           <i class="fa fa-edit" aria-hidden="true"></i>
           <span class="visually-hidden">
-            {{ i18n.editTitle }},
-            {{ i18n.editDescription }}
+            {{ gettext('Edit title') }},
+            {{ gettext('Edit description') }}
           </span>
         </span>
         <span
@@ -135,7 +136,7 @@ const hasLongName = computed(
         >
           <i class="fa fa-paint-brush" aria-hidden="true"></i>
           <span class="visually-hidden">
-            {{ i18n.redact }}
+            {{ gettext('Redact') }}
           </span>
         </span>
         <div
@@ -147,7 +148,7 @@ const hasLongName = computed(
             class="spinner-border spinner-border-sm text-light"
             role="status"
           >
-            <span class="sr-only">{{ i18n.loading }}</span>
+            <span class="sr-only">{{ gettext('Loading...') }}</span>
           </span>
         </div>
       </a>
@@ -198,14 +199,14 @@ const hasLongName = computed(
             >
               <div class="card-body">
                 <h5 class="card-title">
-                  {{ i18n.properties }}
+                  {{ gettext('Properties') }}
                 </h5>
                 <div v-if="attachment.size">
-                  {{ i18n.size }}:
+                  {{ gettext('Size') }}:
                   {{ Math.round(attachment.size / 1000) }}&nbsp;kB
                 </div>
                 <div v-if="attachment.filetype">
-                  {{ i18n.fileType }}:
+                  {{ gettext('File type') }}:
                   {{ attachment.filetype }}
                 </div>
               </div>
@@ -216,7 +217,7 @@ const hasLongName = computed(
             <div v-if="actions" class="card actions">
               <div class="card-body">
                 <h5 class="card-title">
-                  {{ i18n.actions }}
+                  {{ gettext('Actions') }}
                 </h5>
                 <div class="d-flex flex-column">
                   <AttachmentActions

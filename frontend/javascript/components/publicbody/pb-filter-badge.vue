@@ -1,7 +1,7 @@
 <script setup>
-import { inject } from 'vue'
+import { useGettext } from 'vuepo/vue'
 
-const i18n = inject('i18n')
+const { gettext } = useGettext()
 
 defineProps({
   label: {
@@ -30,7 +30,7 @@ const emit = defineEmits(['removeClick'])
       @click="emit('removeClick')"
       type="button"
       class="btn btn-close align-self-center"
-      :aria-label="i18n.remove"
+      :aria-label="gettext('Remove')"
     ></button>
   </span>
 </template>

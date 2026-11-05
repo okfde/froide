@@ -1,9 +1,10 @@
 <script setup>
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
+import { useGettext } from 'vuepo/vue'
 
 import { useAttachments } from './lib/attachments'
 
-const i18n = inject('i18n')
+const { gettext } = useGettext()
 
 const { attachments } = useAttachments()
 
@@ -24,7 +25,7 @@ const unconvertedExtension = computed(
 
 <template>
   <span v-if="attachment.is_image" class="badge text-bg-secondary me-1">
-    {{ i18n.imageFile }}
+    {{ gettext('Image file') }}
   </span>
   <span
     v-else-if="unconverted && !unconverted.is_image"

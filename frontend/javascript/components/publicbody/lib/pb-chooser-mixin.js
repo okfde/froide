@@ -38,22 +38,22 @@ const PBChooserMixin = {
       return [
         {
           key: 'name',
-          label: this.i18n.name,
+          label: this.gettext('Name'),
           sortKey: (x) => x.name
         },
         {
           key: 'jurisdiction',
-          label: this.i18n.jurisdictionPlural[0],
+          label: this.gettext('Jurisdiction'),
           sortKey: (x) => x.jurisdiction.name
         },
         {
           key: 'classification',
-          label: this.i18n.classificationPlural[0],
+          label: this.gettext('Classification'),
           sortKey: (x) => x.classification && x.classification.name
         },
         {
           key: 'categories',
-          label: this.i18n.topicPlural[1],
+          label: this.gettext('Topics'),
           sortKey: (x) => x.categories[0] && x.categories[0].name
         }
       ]
@@ -138,7 +138,13 @@ const PBChooserMixin = {
       })
     },
     clearSelection() {
-      if (window.confirm(this.i18n.reallyClearSelection)) {
+      if (
+        window.confirm(
+          this.gettext(
+            'Are you sure you want to discard your current selection?'
+          )
+        )
+      ) {
         this.clearPublicBodies({ scope: this.scope })
         this.setStepSelectPublicBody()
       }

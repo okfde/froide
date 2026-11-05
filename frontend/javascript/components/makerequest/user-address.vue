@@ -9,7 +9,7 @@
         'field-required': requiresPostalAddress
       }"
     >
-      {{ i18n.yourAddress }}
+      {{ gettext('Your postal address') }}
     </label>
     <div class="col-sm-8 col-md-5">
       <div>
@@ -71,6 +71,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+import { translateMixin } from 'vuepo/vue'
 
 import {
   UPDATE_ADDRESS,
@@ -85,11 +86,8 @@ const addressRegexBlockValidity = false
 
 export default {
   name: 'UserAddress',
+  mixins: [translateMixin],
   props: {
-    i18n: {
-      type: Object,
-      required: true
-    },
     config: {
       type: Object,
       required: true
@@ -141,7 +139,14 @@ export default {
         if (addressRegexBlockValidity) {
           valid = false
         }
-        this.addressValidationErrors.push(this.i18n.pleaseFollowAddressFormat)
+        this.addressValidationErrors.push(
+          this.gettext(
+            'Please enter an address in the following format:\n%(format)s'
+          ).replace(
+            '%(format)s',
+            this.gettext('Street address,\nPost Code, City')
+          )
+        )
       }
       if (valid) {
         this.clearFormErrors = true

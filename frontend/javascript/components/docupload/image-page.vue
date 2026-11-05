@@ -1,11 +1,12 @@
 <script setup>
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
+import { useGettext } from 'vuepo/vue'
 
 import { useAttachments } from './lib/attachments'
 
 const { splitPages, rotatePage } = useAttachments()
 
-const i18n = inject('i18n')
+const { gettext } = useGettext()
 
 const { idx, page, pageNum, pageCount, showRotate, showSplit } = defineProps({
   idx: {
@@ -91,7 +92,7 @@ const progressPercentLabel = computed(() => {
         @click="rotatePage(page)"
       >
         <span class="fa fa-rotate-right" aria-hidden="true" />
-        <span class="visually-hidden">{{ i18n.rotatePage }}</span>
+        <span class="visually-hidden">{{ gettext('Rotate page') }}</span>
       </button>
       <button
         v-if="showSplit && !isLast"
@@ -100,7 +101,7 @@ const progressPercentLabel = computed(() => {
         @click="splitPages(idx, pageNum)"
       >
         <span class="fa fa-scissors" aria-hidden="true" />
-        <span class="visually-hidden">{{ i18n.splitPagesHere }}</span>
+        <span class="visually-hidden">{{ gettext('Split pages here') }}</span>
       </button>
     </div>
     <div

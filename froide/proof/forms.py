@@ -14,7 +14,7 @@ from froide.helper.widgets import (
 )
 
 from .models import Proof, ProofAttachment, TemporaryProof
-from .widgets import ProofImageWidget, get_widget_context
+from .widgets import ProofImageWidget
 
 
 def get_proof_choice_field(user, initial=None):
@@ -89,9 +89,6 @@ class ProofMessageForm(JSONMixin, ProofSettingsForm):
             if proof_choice:
                 self.fields["proof"] = proof_choice
         self.order_fields(self.field_order)
-
-    def get_js_context(self):
-        return get_widget_context()
 
     def save_proof(self, name):
         proof = Proof(user=self.user, name=name)

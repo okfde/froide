@@ -1,12 +1,19 @@
+import { vuepo } from 'vuepo:client'
+import { createGettext } from 'vuepo/vue'
 import { createAppWithProps } from './lib/vue-helper'
 import store from './store'
 import { SET_CONFIG } from './store/mutation_types'
 
 import FileUploader from './components/upload/file-uploader.vue'
 
+const gettext = createGettext(vuepo)
+
 function createFileUploader(element) {
   store.commit(SET_CONFIG)
-  createAppWithProps(element, FileUploader).use(store).mount(element)
+  createAppWithProps(element, FileUploader)
+    .use(gettext)
+    .use(store)
+    .mount(element)
 }
 
 const els = document.querySelectorAll('.file-uploader')

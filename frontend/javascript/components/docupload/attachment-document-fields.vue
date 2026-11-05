@@ -1,9 +1,10 @@
 <script setup>
-import { inject, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
+import { useGettext } from 'vuepo/vue'
 
 import { useAttachments } from './lib/attachments'
 
-const i18n = inject('i18n')
+const { gettext } = useGettext()
 
 const { updateDocument } = useAttachments()
 
@@ -34,7 +35,7 @@ const submitClick = () => {
     <label
       class="form-label fw-bold"
       :for="'documentTitle' + attachment.document.id"
-      >{{ i18n.documentTitle }}</label
+      >{{ gettext('Document title') }}</label
     >
     <input
       type="text"
@@ -43,19 +44,19 @@ const submitClick = () => {
       :aria-describedby="'documentTitleHelp' + attachment.document.id"
       v-model="fields.title"
       :disabled="isDocumentSubmitting"
-      :placeholder="i18n.documentTitlePlaceholder"
+      :placeholder="gettext('e.g. Letter from date')"
     />
     <small
       :id="'documentTitleHelp' + attachment.document.id"
       class="form-text text-body-secondary"
-      >{{ i18n.documentTitleHelp }}</small
+      >{{ gettext('Give this document a proper title') }}</small
     >
   </div>
   <div class="mb-3">
     <label
       class="form-label fw-bold"
       :for="'documentDescription' + attachment.document.id"
-      >{{ i18n.description }}</label
+      >{{ gettext('Description') }}</label
     >
     <textarea
       class="form-control"
@@ -68,7 +69,7 @@ const submitClick = () => {
     <small
       :id="'documentDescriptionHelp' + attachment.document.id"
       class="form-text text-body-secondary"
-      >{{ i18n.descriptionHelp }}</small
+      >{{ gettext('Describe the contents of the document') }}</small
     >
   </div>
   <button
@@ -77,6 +78,6 @@ const submitClick = () => {
     class="btn btn-secondary"
     :disabled="isSubmitting"
   >
-    {{ i18n.save }}
+    {{ gettext('Save') }}
   </button>
 </template>

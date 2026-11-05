@@ -11,7 +11,7 @@
           class="btn btn-sm btn-light float-end"
           @click.prevent="showSearch = true"
         >
-          {{ i18n.searchPublicBodyLabel }}
+          {{ gettext('Search for public authorities') }}
         </button>
         <div v-if="showSearch" class="form-search">
           <div class="input-group">
@@ -19,7 +19,7 @@
               v-model="search"
               type="search"
               class="search-public_bodies form-control"
-              :placeholder="i18n.publicBodySearchPlaceholder"
+              :placeholder="gettext('Ministry of...')"
               @keyup="triggerAutocomplete"
               @keydown.enter.prevent="triggerAutocomplete"
             />
@@ -29,7 +29,7 @@
               @click="triggerAutocomplete"
             >
               <i class="fa fa-search" />
-              {{ i18n.search }}
+              {{ gettext('Search') }}
             </button>
           </div>
           <div v-if="showFilters" class="row mt-3">
@@ -41,7 +41,6 @@
               <PbFilter
                 :global-config="config"
                 :config="filterConfig[filterKey]"
-                :i18n="i18n"
                 :scope="scope"
                 :value="filters[filterKey]"
                 @update="updateFilter"
@@ -55,23 +54,18 @@
         <div class="row mt-3">
           <p v-if="searching">
             <span class="spinner-border spinner-border-sm" role="status">
-              <span class="visually-hidden">Loading...</span>
+              <span class="visually-hidden">{{ gettext('Loading...') }}</span>
             </span>
           </p>
           <p v-else-if="lastQuery && (showFoundCountIfIdle || searchMeta)">
-            {{
-              searching
-                ? '…'
-                : i18n._('publicBodiesFound', { count: searchResultsLength })
-            }}
+            {{ searching ? '…' : publicBodiesFound(searchResultsLength) }}
           </p>
         </div>
         <div v-if="showBadges" class="d-flex flex-wrap gap-2">
           <PbFilterBadge
             v-if="search"
-            :label="i18n.searchText"
+            :label="pgettext('Search input', 'Text')"
             :value="search"
-            :i18n="i18n"
             @remove-click="search = ''"
           />
           <PbFilterSelected
@@ -80,7 +74,6 @@
             :config="filterConfig[filterKey]"
             @update="updateFilter"
             :value="filters[filterKey]"
-            :i18n="i18n"
           />
         </div>
       </div>
@@ -111,6 +104,8 @@ import PBBetaList from './pb-beta-list'
 import ResultsPagination from '../makerequest/results-pagination.vue'
 
 import { mapMutations, mapActions } from 'vuex'
+import { t } from 'vuepo'
+import { translateMixin } from 'vuepo/vue'
 import {
   SET_STEP_REQUEST,
   ADD_PUBLICBODY_ID,
@@ -119,7 +114,6 @@ import {
 } from '../../store/mutation_types'
 
 import { FroideAPI } from '../../lib/api'
-import I18nMixin from '../../lib/i18n-mixin'
 import PBListMixin from './lib/pb-list-mixin'
 
 import PbFilter from './pb-filter'
@@ -141,7 +135,7 @@ export default {
     PbFilterBadge,
     ResultsPagination
   },
-  mixins: [PBChooserMixin, PBListMixin, I18nMixin],
+  mixins: [translateMixin, PBChooserMixin, PBListMixin],
   emits: ['stepNext'],
   props: {
     name: {
@@ -235,7 +229,7 @@ export default {
       return {
         classification: {
           // = Behörden-Typen
-          label: this.i18n.classificationPlural[1],
+          label: this.gettext('Classifications'),
           key: 'classification',
           initialFilters: { depth: 1 },
           multi: true,
@@ -250,7 +244,7 @@ export default {
           }
         },
         jurisdiction: {
-          label: this.i18n.level, // this.i18n.jurisdictionPlural[1],
+          label: this.pgettext('Publicbody filter', 'Level'), // this.gettext('Jurisdictions'),
           key: 'jurisdiction',
           multi: true,
           getItems: () => searcher.listJurisdictions(),
@@ -264,7 +258,7 @@ export default {
         },
         categories: {
           // = Themen
-          label: this.i18n.topicPlural[1],
+          label: this.gettext('Topics'),
           key: 'categories',
           initialFilters: { depth: 1 },
           getItems: (q, filters) => searcher.listCategories(q, filters),
@@ -279,7 +273,7 @@ export default {
           }
         },
         regions: {
-          label: this.i18n.location,
+          label: this.pgettext('Publicbody filter', 'Location'),
           key: 'regions',
           multi: true,
           initialFilters: { kind: this.config.fixtures.georegion_kind[0][0] },
@@ -295,7 +289,7 @@ export default {
           }
         },
         regions_kind: {
-          label: this.i18n.administrativeUnitKind,
+          label: this.gettext('Type of administrative unit'),
           key: 'regions_kind',
           getItems: () =>
             Promise.resolve({
@@ -310,6 +304,13 @@ export default {
     }
   },
   methods: {
+    publicBodiesFound(count) {
+      return this.ngettext(
+        'one public body found',
+        t`${count} public bodies found`,
+        count
+      )
+    },
     getEmptyFilters() {
       return {
         classification: null,

@@ -63,11 +63,10 @@
 
 <script>
 import PBListMixin from './lib/pb-list-mixin'
-import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
   name: 'PbResultList',
-  mixins: [PBListMixin, I18nMixin],
+  mixins: [PBListMixin],
   props: {
     name: {
       type: String,

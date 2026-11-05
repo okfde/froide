@@ -1,6 +1,12 @@
 <template>
   <div>
-    <p>{{ i18n.whenToAddProof }}</p>
+    <p>
+      {{
+        gettext(
+          'You usually do not need to prove your identity! This is only required in rare cases, for example when requesting information about yourself or to prove you are a journalist.'
+        )
+      }}
+    </p>
     <template v-if="formFields.proof?.choices.length">
       <div class="mb-3 mt-3">
         <label
@@ -29,7 +35,7 @@
         </select>
       </div>
       <div class="text-center fw-bold">
-        {{ i18n.orUploadNewProof }}
+        {{ gettext('or upload a new proof') }}
       </div>
     </template>
 
@@ -70,7 +76,6 @@
       <ProofUpload
         name="proof_image"
         :disabled="!!proof"
-        :config="config"
         :required="proofImageRequired"
         @input="(image) => (proofImage = image)"
       />
@@ -100,7 +105,7 @@
 </template>
 
 <script>
-import I18nMixin from '../../lib/i18n-mixin'
+import { translateMixin } from 'vuepo/vue'
 
 import ProofUpload from './proof-upload.vue'
 
@@ -109,12 +114,8 @@ export default {
   components: {
     ProofUpload
   },
-  mixins: [I18nMixin],
+  mixins: [translateMixin],
   props: {
-    config: {
-      type: Object,
-      required: true
-    },
     form: {
       type: Object,
       required: true

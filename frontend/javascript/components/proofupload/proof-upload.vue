@@ -2,7 +2,11 @@
   <div class="mb-3">
     <p class="small">
       <i class="fa fa-exclamation-triangle"></i>
-      {{ i18n.redactionWarning }}
+      {{
+        gettext(
+          'When you upload an identity document, please redact all information except your name, the city and the validity date. After selecting an image, you can apply redactions to it.'
+        )
+      }}
     </p>
     <div class="input-group mb-3">
       <input
@@ -18,27 +22,31 @@
       <button
         class="btn btn-sm btn-outline-secondary"
         :disabled="!hasFile"
-        :title="i18n.reset"
+        :title="gettext('Reset')"
         @click.prevent="resetFile"
       >
         <i class="fa fa-times-circle" />
-        {{ i18n.reset }}
+        {{ gettext('Reset') }}
       </button>
     </div>
     <div v-if="img" class="mt-3">
       <div class="row">
         <div class="col-12 col-md d-flex align-items-center">
-          {{ i18n.redactionInstructions }}
+          {{
+            gettext(
+              'Click or touch and drag over the image to redact parts of it.'
+            )
+          }}
         </div>
         <div class="col-auto d-flex align-items-center">
           <button
             class="btn btn-sm btn-outline-secondary"
             :disabled="!hasRedaction"
-            :title="i18n.undo"
+            :title="gettext('Undo')"
             @click.prevent="undoRedaction"
           >
             <i class="fa fa-share fa-flip-horizontal" />
-            {{ i18n.undo }}
+            {{ gettext('Undo') }}
           </button>
         </div>
       </div>
@@ -55,7 +63,7 @@
 </template>
 
 <script>
-import I18nMixin from '../../lib/i18n-mixin'
+import { translateMixin } from 'vuepo/vue'
 
 import ProofRedact from './proof-redact.vue'
 
@@ -80,14 +88,10 @@ export default {
   components: {
     ProofRedact
   },
-  mixins: [I18nMixin],
+  mixins: [translateMixin],
   props: {
     name: {
       type: String,
-      required: true
-    },
-    config: {
-      type: Object,
       required: true
     },
     required: {

@@ -7,7 +7,6 @@
       <ul class="list">
         <PbTruncatedList
           :public-bodies="publicBodies"
-          :i18n="i18n"
           :threshold="20"
           :show-count="20"
         >
@@ -25,14 +24,14 @@
             </li>
           </template>
           <template #truncation="{ count }">
-            <li>… ({{ i18n._('publicBodiesCount', { count }) }})</li>
+            <li>… ({{ publicBodiesCount(count) }})</li>
           </template>
         </PbTruncatedList>
       </ul>
     </div>
   </div>
   <div v-if="multiRequest && !canBatchRequest" class="mb-5 mt-5">
-    <p>{{ i18n._('toMultiPublicBodies', { count: publicBodies.length }) }}</p>
+    <p>{{ toMultiPublicBodies(publicBodies.length) }}</p>
     <div class="publicbody-summary-list">
       <ul>
         <li v-for="pb in publicBodies" :key="pb.id">
@@ -40,7 +39,11 @@
         </li>
       </ul>
     </div>
-    <small>{{ i18n.batchRequestDraftOnly }}</small>
+    <small>{{
+      gettext(
+        'You have been allowed to make one project request to these public bodies, but you do not have permission to select your own.'
+      )
+    }}</small>
   </div>
 
   <div v-if="!multiRequest" class="publicbody-summary-container">
@@ -67,7 +70,8 @@
 </template>
 
 <script>
-import I18nMixin from '../../lib/i18n-mixin'
+import { t } from 'vuepo'
+import { translateMixin } from 'vuepo/vue'
 
 import { mapGetters } from 'vuex'
 
@@ -75,7 +79,7 @@ import PbTruncatedList from '../publicbody/pb-truncated-list.vue'
 
 export default {
   name: 'ReviewPublicbody',
-  mixins: [I18nMixin],
+  mixins: [translateMixin],
   components: {
     PbTruncatedList
   },
@@ -134,6 +138,18 @@ export default {
       'getPublicBodiesByScope',
       'defaultLaw'
     ])
+  },
+  methods: {
+    publicBodiesCount(count) {
+      return this.ngettext('one public body', t`${count} public bodies`, count)
+    },
+    toMultiPublicBodies(count) {
+      return this.ngettext(
+        t`To: one public body`,
+        t`To: ${count} public bodies`,
+        count
+      )
+    }
   }
 }
 </script>

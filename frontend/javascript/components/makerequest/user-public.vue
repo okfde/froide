@@ -35,7 +35,7 @@
             v-if="config.url.helpRequestPrivacy"
             :href="config.url.helpRequestPrivacy"
             target="_blank"
-            >{{ i18n.privacyMoreInfo }}</a
+            >{{ gettext('More information about privacy on this website') }}</a
           >
         </p>
       </div>
@@ -44,8 +44,11 @@
 </template>
 
 <script>
+import { translateMixin } from 'vuepo/vue'
+
 export default {
   name: 'UserPublic',
+  mixins: [translateMixin],
   props: {
     config: {
       type: Object
@@ -58,7 +61,6 @@ export default {
       required: true
     }
   },
-  inject: ['i18n'],
   data() {
     return {
       privateValue: this.initialPrivate

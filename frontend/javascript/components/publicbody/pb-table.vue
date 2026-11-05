@@ -48,7 +48,7 @@ import PbTableRow from './pb-table-row'
 
 export default {
   name: 'PbTable',
-  props: ['name', 'headers', 'options', 'scope', 'i18n', 'rows'],
+  props: ['name', 'headers', 'options', 'scope', 'rows'],
   data() {
     return {
       sortHeader: null,

@@ -1,11 +1,12 @@
 <script setup>
 import { computed, inject, ref } from 'vue'
+import { useGettext } from 'vuepo/vue'
 import BsModal from '../bs-modal.vue'
 import PdfRedaction from '../redaction/pdf-redaction.vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 
-const i18n = inject('i18n')
 const config = inject('config')
+const { gettext } = useGettext()
 
 const emit = defineEmits(['uploaded'])
 
@@ -45,7 +46,7 @@ const hasLongName = computed(() => attachment.name?.length > 40)
   >
     <template #header>
       <h1 class="modal-title h5" :class="{ 'fs-6': hasLongName }">
-        {{ i18n.redact }}, {{ attachment.name }}
+        {{ gettext('Redact') }}, {{ attachment.name }}
       </h1>
     </template>
     <template #body>

@@ -3,13 +3,13 @@
     <li v-if="hasPreviousSearchResults" class="page-item">
       <a href="#" class="page-link prev" @click.prevent="getPrevious">
         <span aria-hidden="true">&laquo;</span>
-        <span class="visually-hidden">{{ i18n.previous }}</span>
+        <span class="visually-hidden">{{ gettext('previous') }}</span>
       </a>
     </li>
     <li v-else class="page-item disabled">
       <a class="page-link" href="#" tabindex="-1">
         <span aria-hidden="true">&laquo;</span>
-        <span class="visually-hidden">{{ i18n.previous }}</span>
+        <span class="visually-hidden">{{ gettext('previous') }}</span>
       </a>
     </li>
     <li class="page-item disabled">
@@ -20,12 +20,12 @@
     <li v-if="hasNextSearchResults" class="page-item">
       <a href="#" class="page-link next" @click.prevent="getNext">
         <span aria-hidden="true">&raquo;</span>
-        <span class="visually-hidden">{{ i18n.next }}</span>
+        <span class="visually-hidden">{{ gettext('next') }}</span>
       </a>
     </li>
     <li v-else class="page-item disabled">
       <a class="page-link" href="#" tabindex="-1">
-        <span class="visually-hidden">{{ i18n.next }}</span>
+        <span class="visually-hidden">{{ gettext('next') }}</span>
         <span aria-hidden="true">&raquo;</span>
       </a>
     </li>
@@ -34,10 +34,12 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { translateMixin } from 'vuepo/vue'
 
 export default {
   name: 'PbPagination',
-  props: ['scope', 'i18n'],
+  mixins: [translateMixin],
+  props: ['scope'],
   computed: {
     searchResults() {
       return this.getScopedSearchResults(this.scope)

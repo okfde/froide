@@ -3,7 +3,7 @@
     <div class="row">
       <div v-for="item in summary" :key="item.label" class="col-sm-6 col-md-4">
         <strong>
-          {{ item.count }} {{ i18n._(item.i18nLabel, { count: item.count }) }}
+          {{ item.count }} {{ summaryLabel(item.i18nLabel, item.count) }}
           <span v-if="item.multi">multi</span>
         </strong>
         <ul class="summary-subitem-list">
@@ -18,10 +18,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { translateMixin } from 'vuepo/vue'
 
 export default {
   name: 'PbSummary',
-  props: ['scope', 'dimensions', 'i18n'],
+  mixins: [translateMixin],
+  props: ['scope', 'dimensions'],
   computed: {
     summary() {
       const summary = {}
@@ -74,6 +76,27 @@ export default {
       return this.getPublicBodiesByScope(this.scope)
     },
     ...mapGetters(['getPublicBodiesByScope'])
+  },
+  methods: {
+    summaryLabel(i18nLabel, count) {
+      if (i18nLabel === 'jurisdictionPlural') {
+        return this.ngettext('Jurisdiction', 'Jurisdictions', count)
+      }
+      if (i18nLabel === 'classificationPlural') {
+        return this.ngettext('Classification', 'Classifications', count)
+      }
+      if (i18nLabel === 'topicPlural') {
+        return this.ngettext('Topic', 'Topics', count)
+      }
+      if (i18nLabel === 'containingGeoregionsPlural') {
+        return this.ngettext(
+          'Part of administrative region',
+          'Part of administrative regions',
+          count
+        )
+      }
+      return i18nLabel
+    }
   }
 }
 </script>

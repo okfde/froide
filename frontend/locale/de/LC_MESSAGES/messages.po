@@ -1,0 +1,1570 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Translators:
+# arne <arne.semsrott@okfn.de>, 2015
+# fin <fin+transifex@xbhd.org>, 2015
+# m_hoerz <hoerz@michael-hoerz.de>, 2011
+# m_hoerz <hoerz@michael-hoerz.de>, 2011
+# Stefan Wehrmeyer <mail@stefanwehrmeyer.com>, 2011
+# stefanw <stefanwehrmeyer@gmail.com>, 2011
+# stefanw <stefanwehrmeyer@gmail.com>, 2011
+# stefanw <stefanwehrmeyer@gmail.com>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: froide\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-05 17:08+0100\n"
+"PO-Revision-Date: 2026-11-05 16:45+0100\n"
+"Last-Translator: Max <github@krmax44.de>\n"
+"Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
+"froide/de/>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.9\n"
+
+#: frontend/javascript/components/bs-modal.vue:92
+#: frontend/javascript/components/bs-toast.vue:43
+#: frontend/javascript/components/makerequest/similar-request-search.vue:273
+#: frontend/javascript/components/postupload/post-upload.vue:864
+#: frontend/javascript/components/redaction/confirm-no-redaction.vue:13
+msgid "Close"
+msgstr "Schließen"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:61
+msgid "Are you sure you want to delete this attachment?"
+msgstr "Sind Sie sicher, dass Sie diesen Anhang löschen wollen?"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:76
+msgid "Approve without redaction?"
+msgstr "Ungeschwärzt freigeben?"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:90
+msgid "Mark as result"
+msgstr "Als Ergebnis markieren"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:100
+#: frontend/javascript/components/docupload/attachment-actions.vue:117
+#: frontend/javascript/components/docupload/attachment-actions.vue:228
+#: frontend/javascript/components/docupload/attachment-actions.vue:246
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:59
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:139
+#: frontend/javascript/components/docupload/pdf-redaction-modal.vue:49
+#: frontend/javascript/components/postupload/post-upload.vue:1
+#: frontend/javascript/components/postupload/post-upload.vue:710
+#: frontend/javascript/components/postupload/post-upload.vue:725
+#: frontend/javascript/components/redaction/pdf-redaction.vue:83
+#: frontend/javascript/components/redaction/pdf-redaction.vue:89
+msgid "Redact"
+msgstr "Schwärzen"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:112
+#: frontend/javascript/components/docupload/attachment-actions.vue:241
+msgid "Edit redaction"
+msgstr "Schwärzung bearbeiten"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:127
+#: frontend/javascript/components/docupload/attachment-actions.vue:139
+msgid "Mark as important"
+msgstr "Als nicht unwichtig markieren"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:147
+msgid "Download"
+msgstr "Herunterladen"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:156
+#: frontend/javascript/components/docupload/attachment-actions.vue:253
+msgid "Download non-redacted"
+msgstr "Ungeschwärzt herunterladen"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:165
+#: frontend/javascript/components/docupload/attachment-actions.vue:259
+msgid "Download original"
+msgstr "Original-Datei herunterladen"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:181
+#: frontend/javascript/components/docupload/attachment-actions.vue:269
+msgctxt "Attachment manager"
+msgid "Make public"
+msgstr "Öffentlich machen"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:186
+#: frontend/javascript/components/docupload/attachment-actions.vue:272
+msgid "Approve"
+msgstr "Freigeben"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:196
+#: frontend/javascript/components/docupload/attachments-table.vue:369
+#: frontend/javascript/components/docupload/attachments-table.vue:446
+msgid "Delete"
+msgstr "Löschen"
+
+#: frontend/javascript/components/docupload/attachment-actions.vue:208
+#: frontend/javascript/components/docupload/attachment-actions.vue:217
+msgid "Other actions"
+msgstr "Weitere Aktionen"
+
+#: frontend/javascript/components/docupload/attachment-badge-filetype.vue:28
+msgid "Image file"
+msgstr "Bilddatei"
+
+#: frontend/javascript/components/docupload/attachment-badges.vue:28
+msgid "Processing…"
+msgstr "Verarbeitung…"
+
+# #: froide/foirequest/views/message.py
+# #: frontend/javascript/components/postupload/post-upload.vue
+# msgid "Done"
+# msgstr "Fertig"
+#: frontend/javascript/components/docupload/attachment-badges.vue:31
+#: frontend/javascript/components/postupload/post-upload.vue:1100
+msgid "New"
+msgstr "Neu"
+
+#: frontend/javascript/components/docupload/attachment-badges.vue:36
+msgid "redacted"
+msgstr "geschwärzt"
+
+#: frontend/javascript/components/docupload/attachment-badges.vue:41
+msgid "Resolution"
+msgstr "Ergebnis"
+
+#: frontend/javascript/components/docupload/attachment-badges.vue:46
+msgid "non-redacted"
+msgstr "ungeschwärzt"
+
+#: frontend/javascript/components/docupload/attachment-document-fields.vue:38
+msgid "Document title"
+msgstr "Dokumententitel"
+
+#: frontend/javascript/components/docupload/attachment-document-fields.vue:47
+#: frontend/javascript/components/docupload/images-converter.vue:53
+msgid "e.g. Letter from date"
+msgstr "z.B. Brief mit Datum"
+
+#: frontend/javascript/components/docupload/attachment-document-fields.vue:52
+msgid "Give this document a proper title"
+msgstr "Geben Sie diesem Dokument einen richtigen Titel"
+
+#: frontend/javascript/components/docupload/attachment-document-fields.vue:59
+#: frontend/javascript/components/messageredaction/description-redaction.vue:6
+#: frontend/javascript/components/moderation/moderation-problems.vue:9
+msgid "Description"
+msgstr "Beschreibung"
+
+#: frontend/javascript/components/docupload/attachment-document-fields.vue:72
+msgid "Describe the contents of the document"
+msgstr "Beschreiben Sie den Inhalt"
+
+#: frontend/javascript/components/docupload/attachment-document-fields.vue:81
+msgid "Save"
+msgstr "Speichern"
+
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:58
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:61
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:98
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:119
+#: frontend/javascript/components/postupload/post-upload.vue:737
+msgid "Preview"
+msgstr "Vorschau"
+
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:63
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:129
+msgid "Edit description"
+msgstr "Beschreibung bearbeiten"
+
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:63
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:128
+msgid "Edit title"
+msgstr "Titel bearbeiten"
+
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:151
+#: frontend/javascript/components/docupload/images-converter.vue:72
+#: frontend/javascript/components/makerequest/request-page.vue:436
+#: frontend/javascript/components/postupload/post-upload.vue:1074
+#: frontend/javascript/components/publicbody/pb-filter.vue:43
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:57
+#: frontend/javascript/components/publicbody/publicbody-chooser.vue:33
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:53
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:91
+msgid "Loading..."
+msgstr "Wird geladen..."
+
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:202
+msgid "Properties"
+msgstr "Eigenschaften"
+
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:205
+msgid "Size"
+msgstr "Größe"
+
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:209
+msgid "File type"
+msgstr "Dateityp"
+
+#: frontend/javascript/components/docupload/attachment-icon-preview.vue:220
+msgid "Actions"
+msgstr "Aktionen"
+
+#: frontend/javascript/components/docupload/attachment-manager.vue:58
+#: frontend/javascript/components/postupload/post-upload.vue:1759
+msgid "I have technical difficulties / I need help"
+msgstr "Ich habe technische Probleme / benötige Hilfe"
+
+#: frontend/javascript/components/docupload/attachment-manager.vue:63
+#: frontend/javascript/components/online-help.vue:100
+msgid "Attachments are loading..."
+msgstr "Anhänge werden geladen..."
+
+#: frontend/javascript/components/docupload/attachments-table.vue:163
+#: frontend/javascript/components/docupload/attachments-table.vue:307
+msgid "Select none"
+msgstr "Keine auswählen"
+
+#: frontend/javascript/components/docupload/attachments-table.vue:164
+#: frontend/javascript/components/docupload/attachments-table.vue:304
+msgid "Select all"
+msgstr "Alle auswählen"
+
+#: frontend/javascript/components/docupload/attachments-table.vue:191
+msgid "Are you sure you want to approve the selected attachments?"
+msgstr ""
+"Sind Sie sicher, dass Sie die ausgewählten Anhänge freigeben/öffentlich "
+"machen wollen?"
+
+#: frontend/javascript/components/docupload/attachments-table.vue:198
+msgid "Are you sure you want to delete the selected attachments?"
+msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge löschen wollen?"
+
+#: frontend/javascript/components/docupload/attachments-table.vue:205
+msgid "Are you sure you want to mark the selected attachments as result?"
+msgstr ""
+"Sind Sie sicher, dass Sie die ausgewählten Anhänge als Ergebnis markieren "
+"wollen?"
+
+#: frontend/javascript/components/docupload/attachments-table.vue:241
+#: frontend/javascript/components/docupload/attachments-table.vue:279
+msgid "Delete selected"
+msgstr "Ausgewählte löschen"
+
+#: frontend/javascript/components/docupload/attachments-table.vue:250
+#: frontend/javascript/components/docupload/attachments-table.vue:288
+msgid "Approve selected"
+msgstr "Ausgewählte freigeben"
+
+#: frontend/javascript/components/docupload/attachments-table.vue:259
+#: frontend/javascript/components/docupload/attachments-table.vue:297
+msgid "Mark selected as result"
+msgstr "Ausgewählte als Ergebnis markieren"
+
+#: frontend/javascript/components/docupload/attachments-table.vue:270
+msgid "Selection…"
+msgstr "Auswahl…"
+
+#: frontend/javascript/components/docupload/attachments-table.vue:392
+msgid "Display as table"
+msgstr "Als Tabelle darstellen"
+
+#: frontend/javascript/components/docupload/attachments-table.vue:464
+msgid "Display as icons"
+msgstr "Als Icons darstellen"
+
+#: frontend/javascript/components/docupload/image-page.vue:95
+msgid "Rotate page"
+msgstr "Seite drehen"
+
+#: frontend/javascript/components/docupload/image-page.vue:104
+msgid "Split pages here"
+msgstr "Seiten hier auftrennen"
+
+#: frontend/javascript/components/docupload/images-converter.vue:20
+#: frontend/javascript/components/makerequest/intro-skip-preference.vue:59
+#: frontend/javascript/components/makerequest/request-page.vue:67
+#: frontend/javascript/components/makerequest/request-page.vue:938
+#: frontend/javascript/components/makerequest/similar-request-search.vue:266
+#: frontend/javascript/components/postupload/post-upload.vue:1
+#: frontend/javascript/components/postupload/post-upload.vue:122
+#: frontend/javascript/components/postupload/post-upload.vue:345
+msgid "Error"
+msgstr "Fehler"
+
+#: frontend/javascript/components/docupload/images-converter.vue:30
+msgid "New document with one page"
+msgid_plural "New document with {0} pages"
+msgstr[0] "Neues Dokument mit einer Seite"
+msgstr[1] "Neues Dokument mit {0} Seiten"
+
+#: frontend/javascript/components/docupload/images-converter.vue:40
+msgid ""
+"Here you can combine your uploaded images to a PDF document. You can "
+"rearrange the pages and split it into multiple documents. You can redact the "
+"PDF in the next step."
+msgstr ""
+"Sie können Ihre hochgeladenen Bilder hier in ein PDF-Dokument umwandeln. Sie "
+"können die Seiten hier richtig anordnen und ggf. in mehrere Dokumente "
+"auftrennen. Das PDF können Sie im Anschluss schwärzen."
+
+#: frontend/javascript/components/docupload/images-converter.vue:46
+msgid "Name of attachment to create"
+msgstr "Name des Anhangs, der aus den Bildern erstellt werden soll"
+
+#: frontend/javascript/components/docupload/images-converter.vue:65
+msgid "Convert images to document"
+msgstr "Bilder in Dokument umwandeln"
+
+#: frontend/javascript/components/makerequest/intro-skip-preference.vue:15
+msgid "Skip this part next time and start at “Choose public body” (optional)"
+msgstr ""
+"Diesen Teil beim nächsten Mal überspringen und direkt mit „Behörde wählen“ "
+"beginnen (optional)"
+
+#: frontend/javascript/components/makerequest/lib/letter-mixin.js:8
+msgid "Dear Sir or Madam,"
+msgstr "Guten Tag,"
+
+#: frontend/javascript/components/makerequest/lib/letter-mixin.js:10
+msgid "Please send me the following information:"
+msgstr "bitte senden Sie mir Folgendes zu:"
+
+#: frontend/javascript/components/makerequest/lib/letter-mixin.js:24
+#: frontend/javascript/components/makerequest/lib/letter-mixin.js:29
+#: frontend/javascript/components/makerequest/lib/letter-mixin.js:35
+#: frontend/javascript/components/makerequest/request-form.vue:627
+msgid "Kind regards"
+msgstr "Mit freundlichen Grüßen"
+
+#: frontend/javascript/components/makerequest/lib/letter-mixin.js:41
+msgid "Please fill out your name below, or in the next step"
+msgstr "Bitte geben Sie Ihren Namen unten ein, bzw. im nächsten Schritt"
+
+#: frontend/javascript/components/makerequest/request-form.vue:15
+msgid "Receiving public body"
+msgstr "Empfänger:in (Behörde)"
+
+#: frontend/javascript/components/makerequest/request-form.vue:19
+#: frontend/javascript/components/makerequest/review-request.vue:13
+msgid "None chosen"
+msgstr "Keine ausgewählt"
+
+#: frontend/javascript/components/makerequest/request-form.vue:31
+#: frontend/javascript/components/makerequest/request-page.vue:896
+#: frontend/javascript/components/makerequest/review-publicbody.vue:144
+#: frontend/javascript/components/publicbody/pb-multi-review.vue:88
+#: frontend/javascript/components/publicbody/pb-truncated-list.vue:49
+msgid "one public body"
+msgid_plural "{0} public bodies"
+msgstr[0] "eine Behörde"
+msgstr[1] "{0} Behörden"
+
+#: frontend/javascript/components/makerequest/request-form.vue:43
+#: frontend/javascript/components/makerequest/review-request-line.vue:1
+msgid "Change"
+msgstr "Ändern"
+
+#: frontend/javascript/components/makerequest/request-form.vue:57
+#: frontend/javascript/components/makerequest/review-request.vue:1
+#: frontend/javascript/components/makerequest/review-request.vue:25
+#: frontend/javascript/components/messageredaction/message-redaction.vue:6
+msgid "Subject"
+msgstr "Betreff"
+
+#: frontend/javascript/components/makerequest/request-form.vue:74
+#: frontend/javascript/components/postupload/post-upload.vue:1
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: frontend/javascript/components/makerequest/request-form.vue:133
+msgid ""
+"Watch out! You are requesting information across jurisdictions! If you write "
+"the full text, we cannot customize it according to applicable laws. Instead "
+"you have to write the text to be jurisdiction agnostic."
+msgstr ""
+"Achtung! Sie fragen Informationen von mehreren Zuständigkeitsbereichen an! "
+"Wenn Sie die Vorlage anpassen, können wir Ihre Anfrage nicht mehr an die "
+"lokale Gesetzeslage anpassen. Daher müssen Sie Ihren Text so schreiben, dass "
+"er in allen Zuständigkeitsbereichen passt."
+
+#: frontend/javascript/components/makerequest/request-form.vue:159
+#: frontend/javascript/components/makerequest/request-form.vue:182
+msgid "Fix placeholders automatically"
+msgstr "Platzhalter automatisch reparieren"
+
+#: frontend/javascript/components/makerequest/request-form.vue:196
+#: frontend/javascript/components/makerequest/review-request.vue:32
+msgid "Request body"
+msgstr "Anfragentext"
+
+#: frontend/javascript/components/makerequest/request-form.vue:241
+msgid "Show entire message"
+msgstr "Gesamte Nachricht anzeigen"
+
+#: frontend/javascript/components/makerequest/request-form.vue:272
+msgid "Reset text to template version"
+msgstr "Text auf Vorlage zurücksetzen"
+
+#: frontend/javascript/components/makerequest/request-form.vue:280
+#: frontend/javascript/components/makerequest/request-form.vue:319
+msgid "Your previous customized text"
+msgstr "Ihr vorheriger, angepasster Text"
+
+#: frontend/javascript/components/makerequest/request-form.vue:331
+#: frontend/javascript/components/makerequest/request-form.vue:339
+msgid "Attach a proof of identity"
+msgstr "Identitätsnachweis beifügen"
+
+#: frontend/javascript/components/makerequest/request-form.vue:358
+msgid "Update my postal address"
+msgstr "Meine Postadresse aktualisieren"
+
+#: frontend/javascript/components/makerequest/request-form.vue:382
+#: frontend/javascript/components/makerequest/request-page.vue:114
+#: frontend/javascript/components/makerequest/request-page.vue:391
+#: frontend/javascript/components/makerequest/request-page.vue:721
+#: frontend/javascript/components/makerequest/user-create-account.vue:61
+#: frontend/javascript/components/postupload/post-upload.vue:1980
+#: frontend/javascript/components/postupload/post-upload.vue:2021
+#: frontend/javascript/components/postupload/post-upload.vue:2031
+#: frontend/javascript/components/postupload/post-upload.vue:2049
+#: frontend/javascript/components/publicbody/pb-multi-review.vue:44
+msgid "Next"
+msgstr "Weiter"
+
+#: frontend/javascript/components/makerequest/request-form.vue:621
+msgid "Dear Sir or Madam"
+msgstr "Guten Tag"
+
+#: frontend/javascript/components/makerequest/request-form.vue:622
+msgid ""
+"Do not add a greeting, it is added automatically at the start of the letter."
+msgstr ""
+"Schreiben Sie keine Anrede-Formel, wir fügen automatisch eine am Anfang des "
+"Briefes ein."
+
+#: frontend/javascript/components/makerequest/request-form.vue:628
+msgid ""
+"Do not add a closing, it is added automatically at the end of the letter."
+msgstr ""
+"Schreiben Sie keine Grußformel, wir fügen automatisch eine am Ende des "
+"Briefes ein."
+
+#: frontend/javascript/components/makerequest/request-form.vue:637
+msgid ""
+"Do not insert your name, we will add it automatically at the end of the "
+"letter."
+msgstr ""
+"Schreiben Sie Ihren Namen nicht selbst in Ihre Anfrage. Wir fügen Ihren "
+"Namen automatisch am Ende des Briefs ein."
+
+#: frontend/javascript/components/makerequest/request-form.vue:689
+msgid "Ensure this value has at least {0} character."
+msgid_plural "Ensure this value has at least {0} characters."
+msgstr[0] ""
+"Bitte sicherstellen, dass der Wert aus mindestens {0} Zeichen besteht."
+msgstr[1] ""
+"Bitte sicherstellen, dass der Wert aus mindestens {0} Zeichen besteht."
+
+#: frontend/javascript/components/makerequest/request-form.vue:732
+msgid "Please write a meaningful subject"
+msgstr "Bitte schreiben sie einen relevanten Betreff"
+
+#: frontend/javascript/components/makerequest/request-intro.vue:28
+#: frontend/javascript/components/publicbody/pb-action-list.vue:30
+#: frontend/javascript/components/publicbody/pb-beta-list.vue:33
+msgid "Make request"
+msgstr "Anfrage stellen"
+
+#: frontend/javascript/components/makerequest/request-intro.vue:31
+msgid ""
+"Access information by filing a request to a public body. We'll guide you "
+"through the process."
+msgstr ""
+"Erhalten Sie Zugang zu Informationen, indem Sie eine eigene Anfrage an eine "
+"Behörde stellen. Wir unterstützen Sie dabei Schritt für Schritt."
+
+#: frontend/javascript/components/makerequest/request-intro.vue:37
+msgid "Let's go!"
+msgstr "Los geht's!"
+
+#: frontend/javascript/components/makerequest/request-intro.vue:44
+msgid ""
+"Or send a pre-written request with just one click, by participating in one "
+"of our campaigns:"
+msgstr ""
+"Oder stellen Sie mit nur einem Klick eine vorformulierte Anfrage, indem Sie "
+"bei einer unserer Aktionen teilnehmen:"
+
+#: frontend/javascript/components/makerequest/request-page.vue:11
+#: frontend/javascript/components/postupload/post-upload.vue:835
+msgid "Step"
+msgstr "Schritt"
+
+#: frontend/javascript/components/makerequest/request-page.vue:42
+#: frontend/javascript/components/postupload/post-upload.vue:850
+msgid "Back"
+msgstr "Zurück"
+
+#: frontend/javascript/components/makerequest/request-page.vue:75
+msgid "Request to:"
+msgstr "Anfrage an:"
+
+#: frontend/javascript/components/makerequest/request-page.vue:135
+#: frontend/javascript/components/makerequest/request-page.vue:655
+msgid "Similar requests"
+msgstr "Ähnliche Anfragen"
+
+#: frontend/javascript/components/makerequest/request-page.vue:149
+#: frontend/javascript/components/makerequest/request-page.vue:719
+msgid "Skip"
+msgstr "Überspringen"
+
+#: frontend/javascript/components/makerequest/request-page.vue:169
+msgid "Currently chosen:"
+msgstr "Aktuell ausgewählt:"
+
+#: frontend/javascript/components/makerequest/request-page.vue:243
+#: frontend/javascript/components/makerequest/request-page.vue:658
+#: frontend/javascript/components/makerequest/request-page.vue:662
+msgctxt "Make request breadcrumbs/stepper"
+msgid "Account"
+msgstr "Konto"
+
+#: frontend/javascript/components/makerequest/request-page.vue:249
+msgid ""
+"You need to create an account at {0} so you will be able to manage your "
+"request."
+msgstr ""
+"Damit Sie Ihre Anfrage nach dem Abschicken weiter verwalten können, ist es "
+"nötig, einen Account auf {0} anzulegen."
+
+#: frontend/javascript/components/makerequest/request-page.vue:258
+#: frontend/javascript/components/makerequest/request-page.vue:290
+msgid "Create account"
+msgstr "Account anlegen"
+
+#: frontend/javascript/components/makerequest/request-page.vue:264
+msgid "Do you already have an account?"
+msgstr "Sie haben schon einen Account?"
+
+#: frontend/javascript/components/makerequest/request-page.vue:266
+msgid "This form remembers your inputs, as long as stay in the same tab."
+msgstr ""
+"Dieses Formular speichert ihre Eingaben, so lange Sie das Tab nicht "
+"schließen."
+
+#: frontend/javascript/components/makerequest/request-page.vue:276
+msgctxt "Make request"
+msgid "Log in"
+msgstr "Zum Login"
+
+#: frontend/javascript/components/makerequest/request-page.vue:316
+msgid "Write the request"
+msgstr "Anfrage schreiben"
+
+#: frontend/javascript/components/makerequest/request-page.vue:372
+msgid "Public visibility of the request"
+msgstr "Sichtbarkeit der Anfrage"
+
+#: frontend/javascript/components/makerequest/request-page.vue:402
+msgid "Preview & submit"
+msgstr "Vorschau & abschicken"
+
+#: frontend/javascript/components/makerequest/request-page.vue:653
+#: frontend/javascript/components/makerequest/request-page.vue:654
+msgid "Introduction"
+msgstr "Einführung"
+
+#: frontend/javascript/components/makerequest/request-page.vue:656
+#: frontend/javascript/components/makerequest/request-page.vue:657
+msgid "Choose public body"
+msgstr "Behörde auswählen"
+
+#: frontend/javascript/components/makerequest/request-page.vue:666
+#: frontend/javascript/components/makerequest/request-page.vue:667
+msgid "Write message"
+msgstr "Nachricht schreiben"
+
+#: frontend/javascript/components/makerequest/request-page.vue:668
+#: frontend/javascript/components/makerequest/request-page.vue:669
+#: frontend/javascript/components/makerequest/review-request.vue:193
+msgid "Submit request"
+msgstr "Anfrage absenden"
+
+#: frontend/javascript/components/makerequest/request-page.vue:880
+#: frontend/javascript/components/publicbodyupload/publicbody-upload.vue:82
+msgid "You have not completed this process. Are you sure you want to cancel?"
+msgstr ""
+"Sie haben den Prozess noch nicht abgeschlossen. Sind Sie sicher, dass Sie "
+"den Vorgang abbrechen wollen?"
+
+#: frontend/javascript/components/makerequest/results-pagination.vue:32
+#: frontend/javascript/components/publicbody/pb-action-list.vue:40
+#: frontend/javascript/components/publicbody/pb-action-list.vue:46
+#: frontend/javascript/components/publicbody/pb-pagination.vue:6
+#: frontend/javascript/components/publicbody/pb-pagination.vue:12
+msgid "previous"
+msgstr "vorherige"
+
+#: frontend/javascript/components/makerequest/results-pagination.vue:76
+#: frontend/javascript/components/publicbody/pb-action-list.vue:57
+#: frontend/javascript/components/publicbody/pb-action-list.vue:62
+#: frontend/javascript/components/publicbody/pb-pagination.vue:23
+#: frontend/javascript/components/publicbody/pb-pagination.vue:28
+msgid "next"
+msgstr "nächste"
+
+#: frontend/javascript/components/makerequest/results-pagination.vue:86
+msgid "Pagination"
+msgstr "Paginierung"
+
+#: frontend/javascript/components/makerequest/review-publicbody.vue:43
+msgid ""
+"You have been allowed to make one project request to these public bodies, "
+"but you do not have permission to select your own."
+msgstr ""
+"Ihnen wurde es erlaubt eine Projekt-Anfrage an diese Behörden zu stellen, "
+"aber Sie haben nicht die Berechtigung diese zu ändern."
+
+#: frontend/javascript/components/makerequest/review-publicbody.vue:147
+msgid "To: one public body"
+msgid_plural "To: {0} public bodies"
+msgstr[0] "An: eine Behörde"
+msgstr[1] "An: {0} Behörden"
+
+#: frontend/javascript/components/makerequest/review-request-line.vue:1
+msgid "Correct"
+msgstr "Korrigieren"
+
+#: frontend/javascript/components/makerequest/review-request.vue:1
+#: frontend/javascript/components/makerequest/review-request.vue:131
+msgid "Email"
+msgstr "E-Mail"
+
+#: frontend/javascript/components/makerequest/review-request.vue:1
+msgid "Publish request later"
+msgstr "Anfrage zunächst nicht veröffentlichen"
+
+#: frontend/javascript/components/makerequest/review-request.vue:1
+msgid "Publish request now"
+msgstr "Anfrage sofort veröffentlichen"
+
+#: frontend/javascript/components/makerequest/review-request.vue:1
+msgid "You have provided a proof of your identity"
+msgstr "Sie haben einen Identitätsnachweis angefügt"
+
+#: frontend/javascript/components/makerequest/review-request.vue:1
+msgid ""
+"You're not providing a proof of your identity (only required in rare cases)"
+msgstr "Kein Identitätsnachweis angegeben (nur selten nötig)"
+
+#: frontend/javascript/components/makerequest/review-request.vue:1
+#: frontend/javascript/components/makerequest/user-registration.vue:17
+msgid "Your first name"
+msgstr "Ihr Vorname"
+
+#: frontend/javascript/components/makerequest/review-request.vue:1
+#: frontend/javascript/components/makerequest/user-registration.vue:54
+msgid "Your last name"
+msgstr "Ihr Nachname"
+
+#: frontend/javascript/components/makerequest/review-request.vue:2
+msgid "My name may appear on the website in <strong>plain text</strong>"
+msgstr ""
+"Mein Name soll <strong>im Klartext</strong> auf dieser Webseite angezeigt "
+"werden"
+
+#: frontend/javascript/components/makerequest/review-request.vue:2
+msgid "My name must be <strong>redacted</strong>"
+msgstr "Mein Name soll <strong>geschwärzt</strong> werden"
+
+#: frontend/javascript/components/makerequest/review-request.vue:8
+msgid "Public body"
+msgstr "Behörde"
+
+#: frontend/javascript/components/makerequest/review-request.vue:63
+msgid "request"
+msgstr "Anfrage"
+
+#: frontend/javascript/components/makerequest/review-request.vue:65
+msgid "Not confirmed"
+msgstr "Nicht bestätigt"
+
+#: frontend/javascript/components/makerequest/review-request.vue:71
+msgid "Visibility"
+msgstr "Sichtbarkeit"
+
+#: frontend/javascript/components/makerequest/review-request.vue:86
+#: frontend/javascript/components/online-help.vue:95
+msgid "Help"
+msgstr "Hilfe"
+
+#: frontend/javascript/components/makerequest/review-request.vue:93
+#: frontend/javascript/components/makerequest/user-create-account.vue:27
+msgid "Privacy"
+msgstr "Privatsphäre"
+
+#: frontend/javascript/components/makerequest/review-request.vue:112
+#: frontend/javascript/components/moderation/moderation-attachments.vue:6
+#: frontend/javascript/components/moderation/moderation-publicbodies.vue:6
+#: frontend/javascript/components/moderation/moderation-unclassified.vue:6
+#: frontend/javascript/components/publicbody/lib/pb-chooser-mixin.js:41
+msgid "Name"
+msgstr "Name"
+
+#: frontend/javascript/components/makerequest/review-request.vue:139
+msgid "(not sent to public body)"
+msgstr "(wird Behörde nicht mitgeteilt)"
+
+#: frontend/javascript/components/makerequest/review-request.vue:144
+msgid "Address"
+msgstr "Adresse"
+
+#: frontend/javascript/components/makerequest/review-request.vue:159
+msgid "Proof of identity"
+msgstr "Identitätsnachweis"
+
+#: frontend/javascript/components/makerequest/review-request.vue:176
+#: frontend/javascript/components/makerequest/user-create-account.vue:48
+msgid "Terms of Use"
+msgstr "Nutzungsbedingungen"
+
+#: frontend/javascript/components/makerequest/review-request.vue:178
+msgid "Not agreed"
+msgstr "Nicht zugestimmt"
+
+#: frontend/javascript/components/makerequest/review-request.vue:205
+msgid "Save as draft"
+msgstr "Als Entwurf speichern"
+
+#: frontend/javascript/components/makerequest/similar-request-search-result.vue:18
+msgid "to {0} and {1} other public bodies"
+msgstr "an {0} und {1} andere Behörden"
+
+#: frontend/javascript/components/makerequest/similar-request-search-result.vue:22
+msgid "to {0}"
+msgstr "an {0}"
+
+#: frontend/javascript/components/makerequest/similar-request-search-result.vue:31
+msgid "Not yet set"
+msgstr "Noch nicht festgelegt"
+
+#: frontend/javascript/components/makerequest/similar-request-search-result.vue:39
+msgid "Select this public body"
+msgstr "Auch an diese Behörde schreiben"
+
+#: frontend/javascript/components/makerequest/similar-request-search.vue:18
+msgid "Search requests"
+msgstr "Anfragen durchsuchen"
+
+#: frontend/javascript/components/makerequest/similar-request-search.vue:27
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:32
+#: frontend/javascript/components/publicbody/publicbody-chooser.vue:27
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:39
+msgid "Search"
+msgstr "Suchen"
+
+#: frontend/javascript/components/makerequest/similar-request-search.vue:41
+#: frontend/javascript/components/makerequest/similar-request-search.vue:215
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:247
+msgctxt "Publicbody filter"
+msgid "Level"
+msgstr "Ebene"
+
+#: frontend/javascript/components/makerequest/similar-request-search.vue:104
+msgid "Date range"
+msgstr "Zeitraum"
+
+#: frontend/javascript/components/makerequest/similar-request-search.vue:116
+#: frontend/javascript/components/makerequest/similar-request-search.vue:240
+msgid "From"
+msgstr "Von"
+
+#: frontend/javascript/components/makerequest/similar-request-search.vue:136
+#: frontend/javascript/components/makerequest/similar-request-search.vue:247
+msgid "Until"
+msgstr "Bis"
+
+#: frontend/javascript/components/makerequest/similar-request-search.vue:161
+#: frontend/javascript/components/makerequest/similar-request-search.vue:255
+msgid "Campaign"
+msgstr "Aktion"
+
+#: frontend/javascript/components/makerequest/similar-request-search.vue:176
+msgid "No campaign"
+msgstr "Keine Kampagne"
+
+#: frontend/javascript/components/makerequest/similar-request-search.vue:327
+#: frontend/javascript/components/publicbody/pb-filter-list.vue:226
+#: frontend/javascript/components/publicbody/pb-filter-selected.vue:65
+msgid "state"
+msgstr "Bundesland"
+
+#: frontend/javascript/components/makerequest/similar-request-search.vue:333
+msgid "One result"
+msgid_plural "{0} results"
+msgstr[0] "Ein Ergebnis"
+msgstr[1] "{0} Ergebnisse"
+
+#: frontend/javascript/components/makerequest/user-address.vue:12
+msgid "Your postal address"
+msgstr "Ihre Postadresse"
+
+#: frontend/javascript/components/makerequest/user-address.vue:143
+msgid ""
+"Please enter an address in the following format:\n"
+"%(format)s"
+msgstr ""
+"Bitte geben Sie eine Adresse in diesem Format an: \n"
+"%(format)s"
+
+#: frontend/javascript/components/makerequest/user-address.vue:147
+msgid ""
+"Street address,\n"
+"Post Code, City"
+msgstr ""
+"Straße, Hausnummer\n"
+"PLZ, Ort"
+
+#: frontend/javascript/components/makerequest/user-public.vue:38
+msgid "More information about privacy on this website"
+msgstr "Weitere Infos zur Privatsphäre auf dieser Website"
+
+#: frontend/javascript/components/makerequest/user-registration.vue:92
+msgid "Your email address"
+msgstr "Ihre E-Mail-Adresse"
+
+#: frontend/javascript/components/messageredaction/description-redaction.vue:19
+#: frontend/javascript/components/messageredaction/message-redaction.vue:31
+msgid "Message is loading..."
+msgstr "Nachricht wird geladen..."
+
+#: frontend/javascript/components/messageredaction/message-redaction-word.vue:45
+msgid "This word needs to stay redacted."
+msgstr "Dieses Wort muss geschwärzt bleiben."
+
+#: frontend/javascript/components/messageredaction/message-redaction.vue:17
+#: frontend/javascript/components/moderation/moderation-attachments.vue:7
+#: frontend/javascript/components/moderation/moderation-problems.vue:8
+msgid "Message"
+msgstr "Nachricht"
+
+#: frontend/javascript/components/moderation/moderation-attachments.vue:9
+#: frontend/javascript/components/moderation/moderation-problems.vue:11
+#: frontend/javascript/components/moderation/moderation-publicbodies.vue:9
+#: frontend/javascript/components/moderation/moderation-unclassified.vue:9
+msgctxt "action to take in moderation table"
+msgid "Action"
+msgstr "Aktion"
+
+#: frontend/javascript/components/moderation/moderation-attachments.vue:22
+#: frontend/javascript/components/moderation/moderation-problem.vue:33
+msgid "to message"
+msgstr "zur Nachricht"
+
+#: frontend/javascript/components/moderation/moderation-attachments.vue:28
+msgid "redact"
+msgstr "schwärzen"
+
+#: frontend/javascript/components/moderation/moderation-attachments.vue:35
+msgid "Mark moderated"
+msgstr "Als moderiert markieren"
+
+#: frontend/javascript/components/moderation/moderation-dashboard.vue:5
+msgid "Active moderators"
+msgstr "Aktive Moderator:innen"
+
+#: frontend/javascript/components/moderation/moderation-dashboard.vue:23
+msgid "problem reports"
+msgstr "Problemberichte"
+
+#: frontend/javascript/components/moderation/moderation-dashboard.vue:36
+msgid "public bodies"
+msgstr "Behörden"
+
+#: frontend/javascript/components/moderation/moderation-dashboard.vue:47
+msgid "unclassified requests"
+msgstr "Unklassifizierte Anfragen"
+
+#: frontend/javascript/components/moderation/moderation-dashboard.vue:58
+msgid "Attachments"
+msgstr "Anhänge"
+
+#: frontend/javascript/components/moderation/moderation-problem.vue:17
+msgid "not requester"
+msgstr "nicht Anfragesteller:in"
+
+#: frontend/javascript/components/moderation/moderation-problem.vue:42
+msgid "to public body"
+msgstr "zur Behörde"
+
+#: frontend/javascript/components/moderation/moderation-problem.vue:48
+msgid "Please write a nice message to the user."
+msgstr "Bitte schreiben Sie eine nette Nachricht an die meldende Person."
+
+#: frontend/javascript/components/moderation/moderation-problem.vue:52
+msgid "Mark resolved"
+msgstr "Als abgeschlossen markieren"
+
+#: frontend/javascript/components/moderation/moderation-problem.vue:60
+msgid "Please describe to admins what should be done."
+msgstr "Bitte beschreiben Sie den Admins, was hier getan werden muss."
+
+#: frontend/javascript/components/moderation/moderation-problem.vue:64
+#: frontend/javascript/components/moderation/moderation-problem.vue:91
+msgid "Escalate"
+msgstr "An Admins"
+
+#: frontend/javascript/components/moderation/moderation-problem.vue:76
+msgid "Claim"
+msgstr "Bearbeiten"
+
+#: frontend/javascript/components/moderation/moderation-problem.vue:88
+msgid "Resolve"
+msgstr "Lösen"
+
+#: frontend/javascript/components/moderation/moderation-problem.vue:94
+#: frontend/javascript/components/postupload/post-upload.vue:845
+#: frontend/javascript/components/redaction/confirm-no-redaction.vue:27
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: frontend/javascript/components/moderation/moderation-problem.vue:205
+msgid "Claimed for {min} min."
+msgstr "Wird seit {min} Minuten bearbeitet."
+
+#: frontend/javascript/components/moderation/moderation-problems.vue:6
+msgid "Kind"
+msgstr "Art"
+
+#: frontend/javascript/components/moderation/moderation-problems.vue:7
+#: frontend/javascript/components/moderation/moderation-publicbodies.vue:7
+msgid "Date"
+msgstr "Datum"
+
+#: frontend/javascript/components/moderation/moderation-problems.vue:75
+msgid "You cannot work on more than 5 issues at the same time."
+msgstr "Sie können nicht an mehr als 5 Problemen gleichzeitig arbeiten."
+
+#: frontend/javascript/components/moderation/moderation-publicbodies.vue:32
+msgid "review changes"
+msgstr "Änderungen prüfen"
+
+#: frontend/javascript/components/moderation/moderation-publicbodies.vue:41
+msgid "review new"
+msgstr "Vorschlag prüfen"
+
+#: frontend/javascript/components/moderation/moderation-unclassified.vue:7
+msgid "last message"
+msgstr "letzte Nachricht"
+
+#: frontend/javascript/components/moderation/moderation-unclassified.vue:29
+msgid "set status"
+msgstr "Status festlegen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1
+#: frontend/javascript/components/postupload/post-upload.vue:747
+#: frontend/javascript/components/postupload/post-upload.vue:832
+msgid "Done"
+msgstr "Abgeschlossen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1
+#: frontend/javascript/components/postupload/post-upload.vue:565
+#: frontend/javascript/components/postupload/post-upload.vue:577
+#: frontend/javascript/components/postupload/post-upload.vue:584
+#: frontend/javascript/components/postupload/post-upload.vue:600
+#: frontend/javascript/components/postupload/post-upload.vue:616
+#: frontend/javascript/components/postupload/post-upload.vue:636
+#: frontend/javascript/components/postupload/post-upload.vue:657
+#: frontend/javascript/components/postupload/post-upload.vue:669
+#: frontend/javascript/components/postupload/post-upload.vue:680
+#: frontend/javascript/components/postupload/post-upload.vue:695
+msgid "Enter information"
+msgstr "Infos eingeben"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1
+msgid "Upload"
+msgstr "Upload"
+
+#: frontend/javascript/components/postupload/post-upload.vue:49
+msgid "Question {0} of {1}"
+msgstr "Frage {0} von {1}"
+
+#: frontend/javascript/components/postupload/post-upload.vue:51
+msgid "Redacting document {0} of {1}"
+msgstr "Dokument schwärzen {0} von {1}"
+
+#: frontend/javascript/components/postupload/post-upload.vue:54
+msgid ""
+"Should you experience problems, you can use <a class=\"alert-link\" "
+"href=\"{0}\">the older version</a> here. We welcome feedback!"
+msgstr ""
+"Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" "
+"href=\"{0}\">hier noch das alte Upload-Formular</a>. Wir würden uns über "
+"Feedback freuen!"
+
+#: frontend/javascript/components/postupload/post-upload.vue:57
+msgid ""
+"You have noted that the public body had demanded compensation to the amount "
+"of {0}.<br/>Is this amount still correct?"
+msgstr ""
+"Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von {0} "
+"verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:163
+msgid "I have received the letter"
+msgstr "Ich habe Post erhalten"
+
+#: frontend/javascript/components/postupload/post-upload.vue:164
+msgid "I have sent the letter"
+msgstr "Ich habe einen Brief gesendet"
+
+#: frontend/javascript/components/postupload/post-upload.vue:393
+msgid "letter.pdf"
+msgstr "brief.pdf"
+
+#: frontend/javascript/components/postupload/post-upload.vue:517
+msgid "Add letter"
+msgstr "Brief hinzufügen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:527
+#: frontend/javascript/components/postupload/post-upload.vue:541
+#: frontend/javascript/components/postupload/post-upload.vue:548
+#: frontend/javascript/components/postupload/post-upload.vue:558
+msgid "Upload or scan letter"
+msgstr "Brief hochladen oder scannen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:890
+msgid "Review"
+msgstr "Überprüfen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:898
+msgid "Back to submit"
+msgstr "Zurück zum Abschluss"
+
+#: frontend/javascript/components/postupload/post-upload.vue:976
+msgid "If you have the letter as PDF already"
+msgstr "Wenn Sie den Brief schon als PDF oder Foto vorliegen haben"
+
+#: frontend/javascript/components/postupload/post-upload.vue:987
+msgid "Upload files"
+msgstr "Dateien hochladen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1030
+#: frontend/javascript/components/postupload/post-upload.vue:1044
+msgid "Add more files"
+msgstr "Dateien hinzufügen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1082
+msgid "Hint"
+msgstr "Tipp"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1085
+msgid ""
+"You don't need to redact your letter <strong>beforehand</strong>. You can do "
+"this later in the process using our browser tool."
+msgstr ""
+"Sie brauchen den Brief vorher <strong>nicht</strong> zu schwärzen. Das "
+"erledigen Sie später mit unserem Online-Tool."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1092
+msgid "We will guide you through the process step-by-step."
+msgstr "Wir führen Sie Schritt für Schritt durch den Prozess."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1103
+msgid "We have redone this part of the app."
+msgstr "Wir haben diesen Bereich stark überarbeitet."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1114
+msgid "Mark image attachments as important to convert them into PDFs."
+msgstr ""
+"Markieren Sie Bilddateien als nicht unwichtig um sie in ein PDF zu "
+"konvertieren."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1148
+msgid "Drag the documents in the right order"
+msgstr "Ziehen Sie die Seiten in die richtige Reihenfolge"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1163
+msgid "We will convert your images into a PDF"
+msgstr "Wir erstellen aus Ihren Bildern ein PDF-Dokument"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1176
+msgid "Change filename"
+msgstr "Dateiname ändern"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1186
+msgid "Documents available so far"
+msgstr "Bisher vorhandene Dokumente"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1204
+msgid "Have you received or sent the uploaded document?"
+msgstr "Haben Sie den hochgeladenen Brief erhalten oder versendet?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1236
+msgid "Is this the public body you have sent the letter to?"
+msgstr "Ist dies die Behörde, an die Sie den Brief gesendet haben?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1240
+msgid "Is this the public body that sent the letter?"
+msgstr "Ist dies die Behörde, von der der Brief stammt?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1288
+msgid "Which public body have you sent this letter to?"
+msgstr "An welche Behörde haben Sie den Brief gesendet?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1291
+msgid "Which public body has sent this letter?"
+msgstr "Von welcher Behörde stammt der Brief?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1318
+msgid "When was the letter sent?"
+msgstr "Wann wurde der Brief versendet?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1348
+msgid "The letter is registered mail"
+msgstr "Es handelt sich um einen gelben Brief"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1355
+msgid ""
+"Registered mail is a postal service which allows the sender proof of mailing "
+"via a receipt. The letter can have a special envelope."
+msgstr ""
+"Ein gelber Brief ist eine förmliche Zustellung mit Zustellungsurkunde. "
+"Normalerweise befindet sich solch ein Brief in einem gelben Umschlag, aber "
+"es gibt auch Ausnahmen."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1382
+msgid "Registered mail: what is the date stamped on the envelope?"
+msgstr ""
+"Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag eingetragen?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1409
+msgid ""
+"Your request was resolved. Is this still the case after you have received "
+"the letter?"
+msgstr ""
+"Ihre Anfrage war bereits abgeschlossen. Ist dies nach Erhalt des Briefes "
+"immer noch der Fall?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1415
+msgid "Was your request resolved by this letter?"
+msgstr "Wurde ihre Anfrage durch Erhalt dieses Briefes abgeschlossen?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1419
+msgid ""
+"Your request had already been resolved. Is this still the case after you "
+"have sent the letter?"
+msgstr ""
+"Ihre Anfrage war bereits abgeschlossen. Ist dies nach Versenden des Briefes "
+"noch immer der Fall?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1425
+msgid "Was your request resolv by sending this letter?"
+msgstr "Wurde Ihre Anfrage durch Versenden dieses Briefes abgeschlossen?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1447
+msgid "My request remains resolved."
+msgstr "Meine Anfrage ist nach wie vor abgeschlossen."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1450
+msgid "My request is now unresolved."
+msgstr "Meine Anfrage läuft nun wieder."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1455
+msgid "Yes, the request is resolved."
+msgstr "Ja, Anfrage ist jetzt abgeschlossen."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1458
+msgid "No, the request is not resolved yet."
+msgstr "Nein, Anfrage läuft noch."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1476
+msgid "How would you characterize the result?"
+msgstr "Wie würde Sie das Ergebnis beschreiben?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1509
+msgid "Did the public body demand compensation?"
+msgstr "Hat die Behörde Kosten verlangt?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1592
+msgid "How much compensation does the public body demand?"
+msgstr "Welchen Betrag hat die Behörde verlangt?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1624
+msgid "Which documents do you want to redact?"
+msgstr "Welche dieser Dokumente möchten Sie schwärzen?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1628
+msgid ""
+"A document should be redacted when it contains information about yourself or "
+"the public body's employees."
+msgstr ""
+"Ein Dokument sollte geschwärzt werden, wenn es Informationen über Sie selbst "
+"oder Behördenmitarbeiter:innen enthält."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1668
+#: frontend/javascript/components/postupload/post-upload.vue:1692
+msgid "already published"
+msgstr "bereits veröffentlicht"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1689
+msgid "Publish"
+msgstr "Veröffentlichen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1697
+#: frontend/javascript/components/postupload/post-upload.vue:1703
+msgid "Uncheck to leave unpublished for now"
+msgstr "Deaktivieren um zunächst unveröffentlicht zu lassen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1718
+msgid "The request is public, thus all document will be approved."
+msgstr ""
+"Die Anfrage ist öffentlich, die Dokumente werden automatisch veröffentlicht."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1731
+msgid "Pick documents to exclude from approval"
+msgstr "Bestimmte Dokumente nicht veröffentlichen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1824
+msgid "These documents will be added to the request:"
+msgstr "Diese Dokumente werden der Anfrage hinzugefügt:"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1867
+msgid "Documents added successfully"
+msgstr "Dokumente erfolgreich hinzugefügt"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1870
+msgid "Thank you for updating your request!"
+msgstr "Danke, dass Sie Ihre Anfrage auf den neuesten Stand gebracht haben!"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1887
+msgid "Scan or upload another document"
+msgstr "Weiteres Dokument scannen oder hochladen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1911
+msgid "I have finished redacting"
+msgstr "Ich bin fertig mit Schwärzen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1915
+msgid "Important: Have you checked all pages?"
+msgstr "Wichtig: Haben Sie alle Seiten überprüft?"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1935
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1940
+msgid ""
+"Your request is not public at the moment. The documents will not be public, "
+"either."
+msgstr ""
+"Ihre Anfrage ist derzeit nicht öffentlich. Diese Dokumente werden deshalb "
+"nicht öffentlich verfügbar."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1952
+msgid "See request"
+msgstr "Anfrage ansehen"
+
+#: frontend/javascript/components/postupload/post-upload.vue:1985
+msgid "The documents will not be published immediately."
+msgstr "Die Dokumente werden nicht sofort veröffentlicht."
+
+#: frontend/javascript/components/postupload/post-upload.vue:1996
+msgid "Done sorting"
+msgstr "Fertig mit Sortieren"
+
+#: frontend/javascript/components/postupload/post-upload.vue:2013
+msgid "Create PDF"
+msgstr "PDF erstellen"
+
+#: frontend/javascript/components/proofupload/proof-form.vue:5
+msgid ""
+"You usually do not need to prove your identity! This is only required in "
+"rare cases, for example when requesting information about yourself or to "
+"prove you are a journalist."
+msgstr ""
+"Sie müssen in der Regel nicht Ihre Identität nachweisen! Dies ist nur in "
+"seltenen Fällen nötig, etwa wenn Sie Informationen zu sich selbst anfragen "
+"oder eine Presseanfrage stellen."
+
+#: frontend/javascript/components/proofupload/proof-form.vue:38
+msgid "or upload a new proof"
+msgstr "oder laden Sie einen neuen Nachweis hoch"
+
+#: frontend/javascript/components/proofupload/proof-upload.vue:6
+msgid ""
+"When you upload an identity document, please redact all information except "
+"your name, the city and the validity date. After selecting an image, you can "
+"apply redactions to it."
+msgstr ""
+"Wenn Sie ein Identitätsnachweis hochladen, entfernen Sie bitte alle "
+"Informationen außer Ihren Namen, die Stadt und das Gültigkeitsdatum. Nachdem "
+"Sie ein Bild ausgewählt haben, können Sie es hier schwärzen."
+
+#: frontend/javascript/components/proofupload/proof-upload.vue:25
+#: frontend/javascript/components/proofupload/proof-upload.vue:29
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: frontend/javascript/components/proofupload/proof-upload.vue:36
+msgid "Click or touch and drag over the image to redact parts of it."
+msgstr ""
+"Klicken und ziehen Sie ein Rechteck über das Bild, um den Teil zu schwärzen."
+
+#: frontend/javascript/components/proofupload/proof-upload.vue:45
+#: frontend/javascript/components/proofupload/proof-upload.vue:49
+#: frontend/javascript/components/redaction/pdf-redaction.vue:119
+#: frontend/javascript/components/redaction/pdf-redaction.vue:123
+msgid "Undo"
+msgstr "Rückgängig"
+
+#: frontend/javascript/components/publicbody/lib/pb-chooser-mixin.js:46
+#: frontend/javascript/components/publicbody/pb-summary.vue:83
+msgid "Jurisdiction"
+msgid_plural "Jurisdictions"
+msgstr[0] "Zuständigkeitsbereich"
+msgstr[1] "Zuständigkeitsbereiche"
+
+#: frontend/javascript/components/publicbody/lib/pb-chooser-mixin.js:51
+#: frontend/javascript/components/publicbody/pb-summary.vue:86
+msgid "Classification"
+msgid_plural "Classifications"
+msgstr[0] "Behörden-Typ"
+msgstr[1] "Behörden-Typen"
+
+#: frontend/javascript/components/publicbody/lib/pb-chooser-mixin.js:56
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:261
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:252
+msgid "Topics"
+msgstr "Themen"
+
+#: frontend/javascript/components/publicbody/lib/pb-chooser-mixin.js:143
+msgid "Are you sure you want to discard your current selection?"
+msgstr "Sind Sie sicher, dass Sie die aktuelle Auswahl verwerfen wollen?"
+
+#: frontend/javascript/components/publicbody/pb-action-list.vue:27
+#: frontend/javascript/components/publicbody/pb-beta-list.vue:30
+msgid "Make request to {0}"
+msgstr "Anfrage an {0} stellen"
+
+#: frontend/javascript/components/publicbody/pb-beta-list.vue:4
+msgid "Search results"
+msgstr "Suchergebnisse"
+
+#: frontend/javascript/components/publicbody/pb-filter-badge.vue:33
+msgid "Remove"
+msgstr "Entfernen"
+
+#: frontend/javascript/components/publicbody/pb-filter-list.vue:99
+msgid "Toggle collapse"
+msgstr "Ein-/Ausklappen"
+
+#: frontend/javascript/components/publicbody/pb-filter-list.vue:136
+msgid "load more..."
+msgstr "Lade mehr..."
+
+#: frontend/javascript/components/publicbody/pb-filter.vue:16
+msgid "Search..."
+msgstr "Suchen..."
+
+#: frontend/javascript/components/publicbody/pb-multi-review.vue:21
+msgid "clear selection"
+msgstr "Auswahl verwerfen"
+
+#: frontend/javascript/components/publicbody/pb-summary.vue:89
+msgid "Topic"
+msgid_plural "Topics"
+msgstr[0] "Thema"
+msgstr[1] "Themen"
+
+#: frontend/javascript/components/publicbody/pb-summary.vue:92
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:267
+msgid "Part of administrative region"
+msgid_plural "Part of administrative regions"
+msgstr[0] "Teil von Verwaltungseinheit"
+msgstr[1] "Teil von Verwaltungseinheiten"
+
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:14
+#: frontend/javascript/components/publicbody/publicbody-chooser.vue:8
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:21
+msgid "Search for public authorities"
+msgstr "Suchen Sie nach Behörden"
+
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:22
+#: frontend/javascript/components/publicbody/publicbody-chooser.vue:17
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:29
+msgid "Ministry of..."
+msgstr "Bundesministerium für..."
+
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:67
+msgctxt "Search input"
+msgid "Text"
+msgstr "Freitext"
+
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:232
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:227
+msgid "Classifications"
+msgstr "Behörden-Typen"
+
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:276
+msgctxt "Publicbody filter"
+msgid "Location"
+msgstr "Standort"
+
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:292
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:281
+msgid "Type of administrative unit"
+msgstr "Art der Verwaltungseinheit"
+
+#: frontend/javascript/components/publicbody/publicbody-beta-chooser.vue:308
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:336
+msgid "one public body found"
+msgid_plural "{0} public bodies found"
+msgstr[0] "Eine Behörde gefunden"
+msgstr[1] "{0} Behörden gefunden"
+
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:72
+msgid "clear search"
+msgstr "Suche zurücksetzen"
+
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:242
+msgid "Jurisdictions"
+msgstr "Zuständigkeitsbereiche"
+
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:343
+msgid "select one"
+msgid_plural "select all"
+msgstr[0] "Eine auswählen"
+msgstr[1] "Alle auswählen"
+
+#: frontend/javascript/components/publicbody/publicbody-multichooser.vue:372
+msgid "Selecting all public bodies, please wait..."
+msgstr "Alle Behörden werden ausgewählt, bitte warten..."
+
+#: frontend/javascript/components/publicbodyupload/publicbody-upload.vue:16
+#: frontend/javascript/components/publicbodyupload/publicbody-upload.vue:41
+msgid "Create response now"
+msgstr "Dateien als Antwort erstellen"
+
+#: frontend/javascript/components/redaction/confirm-no-redaction.vue:7
+msgid "Are you sure that no redaction is needed?"
+msgstr "Sind Sie sicher, dass keine Schwärzungen nötig sind?"
+
+#: frontend/javascript/components/redaction/confirm-no-redaction.vue:19
+msgid ""
+"You redacted parts of the document, but clicked that no redaction is needed. "
+"Are you sure that no redaction is needed?"
+msgstr ""
+"Sie haben Teile des Dokumentes geschwärzt, aber ausgewählt, dass keine "
+"Schwärzungen nötig sind. Sind Sie sich sicher?"
+
+#: frontend/javascript/components/redaction/confirm-no-redaction.vue:35
+#: frontend/javascript/components/redaction/pdf-redaction.vue:232
+msgid "No redaction needed"
+msgstr "Keine Schwärzung benötigt"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:11
+msgid ""
+"The original document is protected with a password. The password is getting "
+"removed on publication."
+msgstr ""
+"Das Original-Dokument ist mit einem Passwort geschützt. Das Passwort wird "
+"für die Veröffentlichung entfernt."
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:33
+msgid "Loading PDF..."
+msgstr "Lade PDF..."
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:36
+msgid "Redacting PDF, please wait..."
+msgstr "PDF wird geschwärzt, bitte warten..."
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:39
+msgid "Uploading redaction instructions, please wait..."
+msgstr "Schwärzungen werden hochgeladen, bitte warten..."
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:102
+#: frontend/javascript/components/redaction/pdf-redaction.vue:108
+msgctxt "redact tool"
+msgid "Move"
+msgstr "Bewegen"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:131
+#: frontend/javascript/components/redaction/pdf-redaction.vue:135
+msgid "Redo"
+msgstr "Wiederholen"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:141
+#: frontend/javascript/components/redaction/pdf-redaction.vue:146
+msgid "Remove all redaction"
+msgstr "Alle Schwärzungen entfernen"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:163
+#: frontend/javascript/components/redaction/pdf-redaction.vue:166
+msgid "Text only"
+msgstr "Nur Text"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:180
+#: frontend/javascript/components/redaction/pdf-redaction.vue:321
+msgid "Previous Page"
+msgstr "Vorherige Seite"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:190
+#: frontend/javascript/components/redaction/pdf-redaction.vue:332
+msgid "Next Page"
+msgstr "Nächste Seite"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:210
+msgid "Save redaction"
+msgstr "Schwärzungen anwenden"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:213
+msgid "Remove password and publish"
+msgstr "Veröffentlichen ohne Passwort"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:630
+#: frontend/javascript/components/redaction/pdf-redaction.vue:639
+msgid "This PDF requires a password to open. Please provide the password here:"
+msgstr ""
+"Das Öffnen des PDFs benötigt ein Passwort. Bitte geben Sie das Passwort hier "
+"ein:"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:633
+msgid "The password you provided was incorrect. Do you want to abort?"
+msgstr "Das angegeben Passwort ist inkorrekt. Möchten Sie den Vorgang beenden?"
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:634
+msgid ""
+"The PDF could not be opened because of a missing password. Please ask the "
+"authority to provide you with a password."
+msgstr ""
+"Das PDF konnte nicht geöffnet werden, weil ein Passwort benötigt wird. Bitte "
+"fragen Sie die Behörde nach dem Passwort."
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:855
+#: frontend/javascript/components/redaction/pdf-redaction.vue:926
+msgid ""
+"Your redaction took too long. It may become available soon, if not, contact "
+"moderators."
+msgstr ""
+"Die Schwärzung dauerte zu lang. Unter Umständen wird das geschwärzte "
+"Dokument verfügbar sein, falls nicht informieren Sie bitte Moderator:innen."
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:901
+#: frontend/javascript/components/redaction/pdf-redaction.vue:905
+#: frontend/javascript/components/redaction/pdf-redaction.vue:938
+msgid "There was a problem with your redaction. Please contact moderators."
+msgstr ""
+"Es gab ein Problem bei der Schwärzung des Dokuments. Bitte kontaktieren Sie "
+"Moderator:innen."
+
+#: frontend/javascript/components/redaction/pdf-redaction.vue:1432
+msgid ""
+"We automatically redacted some text for you already. Please check if we got "
+"everything."
+msgstr ""
+"Wir haben schon automatisiert ein paar Textstellen geschwärzt. Bitte prüfen "
+"Sie, ob wir etwas übersehen haben."

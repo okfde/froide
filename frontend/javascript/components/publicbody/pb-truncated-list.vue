@@ -6,20 +6,20 @@
     :index="index"
   />
   <slot v-if="truncated" name="truncation" :count="publicBodies.length">
-    {{ i18n._('publicBodiesCount', { count: publicBodies.length }) }}
+    {{ publicBodiesCount(publicBodies.length) }}
   </slot>
 </template>
 
 <script>
+import { t } from 'vuepo'
+import { translateMixin } from 'vuepo/vue'
+
 export default {
   name: 'PbTruncatedList',
+  mixins: [translateMixin],
   props: {
     publicBodies: {
       type: Array,
-      required: true
-    },
-    i18n: {
-      type: Object,
       required: true
     },
     // Truncate once there are more than `threshold` public bodies...
@@ -42,6 +42,11 @@ export default {
         return this.publicBodies
       }
       return this.publicBodies.slice(0, this.showCount)
+    }
+  },
+  methods: {
+    publicBodiesCount(count) {
+      return this.ngettext('one public body', t`${count} public bodies`, count)
     }
   }
 }

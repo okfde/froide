@@ -10,13 +10,14 @@ const {
 } = useAttachments()
 
 import { computed, inject, nextTick, ref, watch } from 'vue'
+import { useGettext } from 'vuepo/vue'
 
 import AttachmentIconPreview from './attachment-icon-preview.vue'
 import AttachmentActions from './attachment-actions.vue'
 import AttachmentBadges from './attachment-badges.vue'
 import PdfRedactionModal from './pdf-redaction-modal.vue'
 
-const i18n = inject('i18n')
+const { gettext } = useGettext()
 
 const {
   subset,
@@ -159,8 +160,8 @@ const selectAllClick = () => {
 
 const selectAllLabel = computed(() => {
   return selectAllState.value === true
-    ? i18n.value.selectNone
-    : i18n.value.selectAll
+    ? gettext('Select none')
+    : gettext('Select all')
 })
 
 const toggleSelection = (from, id) => {
@@ -187,21 +188,38 @@ const isSelectionMakeResultable = computed(
 )
 
 const approveSelected = async () => {
-  if (!window.confirm(i18n.value.confirmApproveBulk)) return
+  if (
+    !window.confirm(
+      gettext('Are you sure you want to approve the selected attachments?')
+    )
+  )
+    return
   for (const att of selected.value) {
     await approveAttachment(att)
   }
 }
 
 const deleteSelected = async () => {
-  if (!window.confirm(i18n.value.confirmDeleteBulk)) return
+  if (
+    !window.confirm(
+      gettext('Are you sure you want to delete the selected attachments?')
+    )
+  )
+    return
   for (const att of selected.value) {
     await deleteAttachment(att)
   }
 }
 
 const makeResultSelected = async () => {
-  if (!window.confirm(i18n.value.confirmMakeResultBulk)) return
+  if (
+    !window.confirm(
+      gettext(
+        'Are you sure you want to mark the selected attachments as result?'
+      )
+    )
+  )
+    return
   for (const att of selected.value) {
     await createDocument(att)
   }
@@ -237,7 +255,7 @@ const makeResultSelected = async () => {
             class="btn btn-link fw-bold text-start"
             @click="deleteSelected"
           >
-            {{ i18n.deleteSelected }}
+            {{ gettext('Delete selected') }}
           </button>
           <button
             v-if="selectionActionApprove"
@@ -246,7 +264,7 @@ const makeResultSelected = async () => {
             :disabled="!isSelectionApprovable"
             @click="approveSelected"
           >
-            {{ i18n.approveSelected }}
+            {{ gettext('Approve selected') }}
           </button>
           <button
             v-if="selectionActionMakeResult"
@@ -255,7 +273,7 @@ const makeResultSelected = async () => {
             :disabled="!isSelectionMakeResultable"
             @click="makeResultSelected"
           >
-            {{ i18n.markResultSelected }}
+            {{ gettext('Mark selected as result') }}
           </button>
         </div>
       </div>
@@ -266,7 +284,7 @@ const makeResultSelected = async () => {
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          {{ i18n.selection }}
+          {{ gettext('Selection…') }}
         </button>
         <ul class="dropdown-menu">
           <button
@@ -275,7 +293,7 @@ const makeResultSelected = async () => {
             class="dropdown-item"
             @click="deleteSelected"
           >
-            {{ i18n.deleteSelected }}
+            {{ gettext('Delete selected') }}
           </button>
           <button
             v-if="selectionActionApprove"
@@ -284,7 +302,7 @@ const makeResultSelected = async () => {
             :disabled="!isSelectionApprovable"
             @click="approveSelected"
           >
-            {{ i18n.approveSelected }}
+            {{ gettext('Approve selected') }}
           </button>
           <button
             v-if="selectionActionMakeResult"
@@ -293,17 +311,17 @@ const makeResultSelected = async () => {
             :disabled="!isSelectionMakeResultable"
             @click="makeResultSelected"
           >
-            {{ i18n.markResultSelected }}
+            {{ gettext('Mark selected as result') }}
           </button>
         </ul>
       </div>
     </div>
     <div v-if="selectionButtons" class="d-flex flex-grow-1 justify-content-end">
       <button type="button" class="btn btn-link" @click="selectAll">
-        {{ i18n.selectAll }}
+        {{ gettext('Select all') }}
       </button>
       <button type="button" class="btn btn-link" @click="selectNone">
-        {{ i18n.selectNone }}
+        {{ gettext('Select none') }}
       </button>
     </div>
   </div>
@@ -365,7 +383,7 @@ const makeResultSelected = async () => {
           @click="deleteAttachment(att)"
         >
           <i class="fa fa-trash" aria-hidden="true"></i>
-          {{ i18n.delete }}
+          {{ gettext('Delete') }}
         </button>
         <div
           v-if="actions"
@@ -388,7 +406,7 @@ const makeResultSelected = async () => {
         class="btn btn-link btn-sm"
         @click="asCards = false"
       >
-        {{ i18n.displayAsTable }}
+        {{ gettext('Display as table') }}
       </button>
     </div>
   </div>
@@ -442,7 +460,7 @@ const makeResultSelected = async () => {
         @click="deleteAttachment(att)"
       >
         <i class="fa fa-trash"></i>
-        <span class="sr-only">{{ i18n.delete }}</span>
+        <span class="sr-only">{{ gettext('Delete') }}</span>
       </button>
       <div
         v-if="actions"
@@ -460,7 +478,7 @@ const makeResultSelected = async () => {
     <slot name="after-table"></slot>
     <div class="py-3 text-end border-top px-md-1">
       <button type="button" class="btn btn-link btn-sm" @click="asCards = true">
-        {{ i18n.displayAsCards }}
+        {{ gettext('Display as icons') }}
       </button>
     </div>
   </div>

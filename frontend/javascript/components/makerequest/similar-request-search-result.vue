@@ -15,14 +15,11 @@
         <small>
           <span v-if="object.project">
             {{
-              i18n._('searchToProject', {
-                name: object.public_body.name,
-                count: object.project_request_count
-              })
+              gettext`to ${object.public_body.name} and ${object.project_request_count} other public bodies`
             }}
           </span>
           <span v-else-if="object.public_body_name">{{
-            i18n._('searchToPbName', { name: object.public_body_name })
+            gettext`to ${object.public_body_name}`
           }}</span>
           <span v-else-if="object.public_body">
             {{ object.public_body.name }}
@@ -31,7 +28,7 @@
             >
           </span>
           <span v-else>
-            {{ i18n.notYetSet }}
+            {{ gettext('Not yet set') }}
           </span>
           <button
             v-if="object.public_body.id"
@@ -39,7 +36,7 @@
             class="btn btn-sm btn-link align-baseline text-start"
             @click="selectPublicBody(object.public_body.id)"
           >
-            {{ i18n.searchSelectThisPb }}
+            {{ gettext('Select this public body') }}
           </button>
         </small>
         <div>
@@ -64,6 +61,7 @@
 
 <script setup>
 import { computed, inject } from 'vue'
+import { useGettext } from 'vuepo/vue'
 import { useStore } from 'vuex'
 import { SET_STEP, STEPS } from '../../store/mutation_types'
 
@@ -71,7 +69,7 @@ const store = useStore()
 
 const pbScope = inject('pbScope')
 
-const i18n = inject('i18n')
+const { gettext } = useGettext()
 
 const props = defineProps({
   object: {

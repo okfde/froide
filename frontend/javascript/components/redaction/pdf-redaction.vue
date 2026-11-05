@@ -8,7 +8,11 @@
     <div v-if="hasPassword && ready" class="row">
       <div class="col">
         <div class="alert alert-info mb-0" role="alert">
-          {{ i18n.hasPassword }}
+          {{
+            gettext(
+              'The original document is protected with a password. The password is getting removed on publication.'
+            )
+          }}
         </div>
       </div>
     </div>
@@ -30,13 +34,13 @@
       <div class="col">
         <div class="text-center">
           <h3 v-if="loading">
-            {{ i18n.loadingPdf }}
+            {{ gettext('Loading PDF...') }}
           </h3>
           <h3 v-if="redacting">
-            {{ i18n.redacting }}
+            {{ gettext('Redacting PDF, please wait...') }}
           </h3>
           <h3 v-if="sending">
-            {{ i18n.sending }}
+            {{ gettext('Uploading redaction instructions, please wait...') }}
           </h3>
         </div>
         <div
@@ -80,13 +84,13 @@
             we make them autohide after a timeout. -->
           <label
             class="btn btn-outline-secondary d-flex"
-            :title="i18n.redact"
+            :title="gettext('Redact')"
             for="btn-check-paint"
           >
             <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
             <div class="align-self-center">
               <i class="fa fa-lg fa-paint-brush" />
-              <small class="d-none d-xl-block">{{ i18n.redact }}</small>
+              <small class="d-none d-xl-block">{{ gettext('Redact') }}</small>
             </div>
           </label>
           <input
@@ -99,13 +103,15 @@
           />
           <label
             class="btn btn-outline-secondary d-flex"
-            :title="i18n.moveTool"
+            :title="pgettext('redact tool', 'Move')"
             for="btn-check-move"
           >
             <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
             <div class="align-self-center">
               <i class="fa fa-lg fa-arrows" />
-              <small class="d-none d-xl-block">{{ i18n.moveTool }}</small>
+              <small class="d-none d-xl-block">{{
+                pgettext('redact tool', 'Move')
+              }}</small>
             </div>
           </label>
         </div>
@@ -116,11 +122,11 @@
             type="button"
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
-            :title="i18n.undo"
+            :title="gettext('Undo')"
             @click="undo"
           >
             <i class="fa fa-lg fa-share fa-flip-horizontal" />
-            <small class="d-none d-xxl-block">{{ i18n.undo }}</small>
+            <small class="d-none d-xxl-block">{{ gettext('Undo') }}</small>
           </button>
           <button
             type="button"
@@ -128,22 +134,22 @@
             :disabled="!canRedo"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            :title="i18n.redo"
+            :title="gettext('Redo')"
             @click="redo"
           >
             <i class="fa fa-lg fa-share" />
-            <small class="d-none d-xxl-block">{{ i18n.redo }}</small>
+            <small class="d-none d-xxl-block">{{ gettext('Redo') }}</small>
           </button>
           <button
             type="button"
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
-            :title="i18n.removeAllRedaction"
+            :title="gettext('Remove all redaction')"
             @click="undoAll"
           >
             <i class="fa fa-lg fa-trash" />
             <small class="d-none d-xxl-block">{{
-              i18n.removeAllRedaction
+              gettext('Remove all redaction')
             }}</small>
           </button>
         </div>
@@ -160,10 +166,10 @@
           <label
             class="btn btn-outline-secondary"
             for="toggle-mode"
-            :title="i18n.toggleText"
+            :title="gettext('Text only')"
           >
             <i class="fa fa-align-justify" />
-            <small class="d-none d-xl-block">{{ i18n.toggleText }}</small>
+            <small class="d-none d-xl-block">{{ gettext('Text only') }}</small>
           </label>
         </div>
 
@@ -177,7 +183,7 @@
             @click="goPrevious"
           >
             &laquo;
-            <span class="visually-hidden">{{ i18n.previousPage }}</span>
+            <span class="visually-hidden">{{ gettext('Previous Page') }}</span>
           </button>
           <span class="input-group-text pageOfTotal">
             {{ pageOfTotal }}
@@ -187,7 +193,7 @@
             :disabled="!hasNext"
             @click="goNext"
           >
-            <span class="visually-hidden">{{ i18n.nextPage }}</span>
+            <span class="visually-hidden">{{ gettext('Next Page') }}</span>
             &raquo;
           </button>
         </div>
@@ -207,10 +213,10 @@
           >
             <i class="fa fa-check me-2" />
             <template v-if="hasRedactions">
-              {{ i18n.redactAndPublish }}
+              {{ gettext('Save redaction') }}
             </template>
             <template v-else-if="hasPassword">
-              {{ i18n.removePasswordAndPublish }}
+              {{ gettext('Remove password and publish') }}
             </template>
           </button>
           <form
@@ -229,7 +235,7 @@
               type="submit"
               @click="confirmNoRedactions"
             >
-              <i class="fa fa-check me-2" />{{ i18n.publishWithoutRedaction }}
+              <i class="fa fa-check me-2" />{{ gettext('No redaction needed') }}
             </button>
           </form>
         </div>
@@ -318,7 +324,7 @@
           >
             &laquo;
             <span class="d-none d-md-inline-block">{{
-              i18n.previousPage
+              gettext('Previous Page')
             }}</span>
           </button>
           <span class="input-group-text pageOfTotal">
@@ -329,17 +335,15 @@
             :disabled="!hasNext"
             @click="goNext"
           >
-            <span class="d-none d-md-inline-block">{{ i18n.nextPage }}</span>
+            <span class="d-none d-md-inline-block">{{
+              gettext('Next Page')
+            }}</span>
             &raquo;
           </button>
         </div>
       </div>
     </div>
-    <ConfirmNoRedaction
-      :i18n="config.i18n"
-      ref="confirmmodal"
-      @submit="submitRedactions"
-    />
+    <ConfirmNoRedaction ref="confirmmodal" @submit="submitRedactions" />
   </div>
 </template>
 
@@ -353,6 +357,9 @@ import Panzoom from '@panzoom/panzoom'
 import range from 'lodash.range'
 
 import { Modal } from 'bootstrap'
+
+import { t } from 'vuepo'
+import { translateMixin } from 'vuepo/vue'
 
 import { toRaw } from 'vue'
 import { bustCache, getData } from '../../lib/api.js'
@@ -395,6 +402,7 @@ let resizeTimeout = false
 export default {
   name: 'PdfRedaction',
   components: { ConfirmNoRedaction },
+  mixins: [translateMixin],
   props: {
     config: {
       type: Object,
@@ -476,9 +484,6 @@ export default {
     }
   },
   computed: {
-    i18n() {
-      return this.config.i18n
-    },
     hasNext() {
       return this.currentPage < this.numPages && !this.pageLoading
     },
@@ -508,9 +513,7 @@ export default {
     },
     pageOfTotal() {
       if (this.numPages !== null) {
-        return this.i18n.pageCurrentOfTotal
-          .replace(/\$current/, this.currentPage)
-          .replace(/\$total/, this.numPages)
+        return t`${this.currentPage} of ${this.numPages}`
       }
       return ''
     },
@@ -629,16 +632,32 @@ export default {
         let password
         if (reason === 1) {
           // need a password
-          password = window.prompt(this.i18n.passwordRequired)
+          password = window.prompt(
+            gettext(
+              'This PDF requires a password to open. Please provide the password here:'
+            )
+          )
         }
         if (reason !== 1 || !password) {
-          if (window.confirm(this.i18n.passwordCancel)) {
-            this.errors = this.i18n.passwordMissing
+          if (
+            window.confirm(
+              gettext(
+                'The password you provided was incorrect. Do you want to abort?'
+              )
+            )
+          ) {
+            this.errors = gettext(
+              'The PDF could not be opened because of a missing password. Please ask the authority to provide you with a password.'
+            )
             this.workingState = null
             this.ready = false
             return
           }
-          password = window.prompt(this.i18n.passwordRequired)
+          password = window.prompt(
+            gettext(
+              'This PDF requires a password to open. Please provide the password here:'
+            )
+          )
         }
         this.password = password
         passwordFunc(password)
@@ -854,7 +873,9 @@ export default {
                 })
               } else {
                 this.workingState = null
-                this.errors = this.i18n.redactionTimeout
+                this.errors = gettext(
+                  'Your redaction took too long. It may become available soon, if not, contact moderators.'
+                )
                 this.$refs.top.scrollIntoView(true)
               }
             })
@@ -900,11 +921,19 @@ export default {
                   .catch(reject)
               } catch (e) {
                 console.error('Failed to decode JSON', e, xhr.responseText)
-                reject(this.i18n.redactionError)
+                reject(
+                  gettext(
+                    'There was a problem with your redaction. Please contact moderators.'
+                  )
+                )
               }
             } else {
               console.error('Non 200 response code', xhr.status)
-              reject(this.i18n.redactionError)
+              reject(
+                gettext(
+                  'There was a problem with your redaction. Please contact moderators.'
+                )
+              )
             }
           }
         }
@@ -925,7 +954,11 @@ export default {
                 waitTime += 5
                 if (waitTime > 60 * 3) {
                   console.error('Timeout while waiting for redaction')
-                  return reject(this.i18n.redactionTimeout)
+                  return reject(
+                    gettext(
+                      'Your redaction took too long. It may become available soon, if not, contact moderators.'
+                    )
+                  )
                 }
                 if (this.errors === null) {
                   window.setTimeout(checkAttachment, 5 * 1000)
@@ -937,7 +970,11 @@ export default {
             })
             .catch(() => {
               console.err('Could not get attachment via API')
-              return reject(this.i18n.redactionError)
+              return reject(
+                gettext(
+                  'There was a problem with your redaction. Please contact moderators.'
+                )
+              )
             })
         }
         window.setTimeout(checkAttachment, 1000)
@@ -1431,7 +1468,9 @@ export default {
         }
       })
       if (matches.length > 0) {
-        this.message = this.i18n.autoRedacted
+        this.message = gettext(
+          'We automatically redacted some text for you already. Please check if we got everything.'
+        )
       }
     },
     getDivRect(div) {

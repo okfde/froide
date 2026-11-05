@@ -18,7 +18,7 @@
       <div class="row">
         <div class="form-search col-md-8 mt-3">
           <label for="publicbody-multi-search-input">{{
-            i18n.searchPublicBodyLabel
+            gettext('Search for public authorities')
           }}</label>
           <div class="input-group">
             <input
@@ -26,7 +26,7 @@
               type="search"
               class="search-public_bodies form-control form-control-lg"
               v-model="search"
-              :placeholder="i18n.publicBodySearchPlaceholder"
+              :placeholder="gettext('Ministry of...')"
               @keyup="triggerAutocomplete"
               @keydown.enter.prevent="triggerAutocomplete"
             />
@@ -36,7 +36,7 @@
               @click="triggerAutocomplete"
             >
               <i class="fa fa-search"></i>
-              {{ i18n.search }}
+              {{ gettext('Search') }}
             </button>
           </div>
         </div>
@@ -50,13 +50,9 @@
             class="spinner-border spinner-border-sm fs-3 text-secondary"
             role="status"
           >
-            <span class="visually-hidden">{{ i18n.loading }}</span>
+            <span class="visually-hidden">{{ gettext('Loading...') }}</span>
           </span>
-          {{
-            searching
-              ? '…'
-              : i18n._('publicBodiesFound', { count: searchResultsLength })
-          }}
+          {{ searching ? '…' : publicBodiesFound(searchResultsLength) }}
         </h3>
         <div class="btn-group" role="group">
           <button
@@ -64,14 +60,14 @@
             class="btn btn-sm btn-outline-secondary"
             :disabled="selectAllButtonDisabled"
           >
-            {{ i18n._('selectAll', { count: searchResultsLength }) }}
+            {{ selectAllLabel(searchResultsLength) }}
           </button>
           <button
             :disabled="!hasSearchResults"
             @click.prevent="clearSearch"
             class="btn-sm btn btn-outline-secondary"
           >
-            {{ i18n.clearSearchResults }}
+            {{ gettext('clear search') }}
           </button>
         </div>
       </div>
@@ -80,7 +76,6 @@
           <PbTable
             :name="name"
             :scope="scope"
-            :i18n="i18n"
             :headers="currentHeaders"
             :options="selectOptions"
             :rows="searchResults"
@@ -91,10 +86,10 @@
             class="spinner-border text-secondary"
             role="status"
           >
-            <span class="visually-hidden">{{ i18n.loading }}</span>
+            <span class="visually-hidden">{{ gettext('Loading...') }}</span>
           </div>
           <slot name="publicbody-missing" v-if="!searching"></slot>
-          <PbPagination :scope="scope" :i18n="i18n"></PbPagination>
+          <PbPagination :scope="scope"></PbPagination>
         </div>
         <div class="col-md-4 col-lg-3 order-md-1">
           <div class="d-flex flex-wrap flex-md-column gap-2">
@@ -118,7 +113,6 @@
                 :global-config="config"
                 :expanded="filterExpanded[filterKey]"
                 :config="filterConfig[filterKey]"
-                :i18n="i18n"
                 :scope="scope"
                 :value="filters[filterKey]"
                 @update="updateFilter"
@@ -134,6 +128,8 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { t } from 'vuepo'
+import { translateMixin } from 'vuepo/vue'
 import {
   SET_STEP_REQUEST,
   SET_STEP_REVIEW_PUBLICBODY,
@@ -143,7 +139,6 @@ import {
 } from '../../store/mutation_types'
 
 import { FroideAPI } from '../../lib/api'
-import I18nMixin from '../../lib/i18n-mixin'
 
 import PBChooserMixin from './lib/pb-chooser-mixin'
 import PBListMixin from './lib/pb-list-mixin'
@@ -157,7 +152,7 @@ const MAX_PUBLICBODIES = 800
 
 export default {
   name: 'PublicbodyMultiChooser',
-  mixins: [PBChooserMixin, PBListMixin, I18nMixin],
+  mixins: [translateMixin, PBChooserMixin, PBListMixin],
   props: {
     name: {
       type: String,
@@ -227,7 +222,7 @@ export default {
       const searcher = new FroideAPI(this.config)
       return {
         classification: {
-          label: this.i18n.classificationPlural[1],
+          label: this.gettext('Classifications'),
           key: 'classification',
           expanded: this.filterExpanded.classification,
           initialFilters: { depth: 1 },
@@ -242,7 +237,7 @@ export default {
           }
         },
         jurisdiction: {
-          label: this.i18n.jurisdictionPlural[1],
+          label: this.gettext('Jurisdictions'),
           key: 'jurisdiction',
           expanded: this.filterExpanded.jurisdiction,
           getItems: () => searcher.listJurisdictions(),
@@ -252,7 +247,7 @@ export default {
           }
         },
         categories: {
-          label: this.i18n.topicPlural[1],
+          label: this.gettext('Topics'),
           key: 'categories',
           initialFilters: { depth: 1 },
           getItems: (q, filters) => searcher.listCategories(q, filters),
@@ -267,7 +262,7 @@ export default {
           }
         },
         regions: {
-          label: this.i18n.containingGeoregionsPlural[0],
+          label: this.gettext('Part of administrative region'),
           key: 'regions',
           expanded: this.filterExpanded.georegion,
           getItems: (q, filters) => searcher.listGeoregions(q, filters),
@@ -281,7 +276,7 @@ export default {
           }
         },
         regions_kind: {
-          label: this.i18n.administrativeUnitKind,
+          label: this.gettext('Type of administrative unit'),
           key: 'regions_kind',
           getItems: () =>
             Promise.resolve({
@@ -335,6 +330,16 @@ export default {
     ])
   },
   methods: {
+    publicBodiesFound(count) {
+      return this.ngettext(
+        'one public body found',
+        t`${count} public bodies found`,
+        count
+      )
+    },
+    selectAllLabel(count) {
+      return this.ngettext('select one', 'select all', count)
+    },
     togglePane(e) {
       this.tabPane = e.target.dataset.pane
     },
@@ -362,7 +367,9 @@ export default {
     },
     selectAll() {
       this.blockUI = true
-      this.blockMessage = this.i18n.selectingAll
+      this.blockMessage = this.gettext(
+        'Selecting all public bodies, please wait...'
+      )
       if (this.currentResultPage !== 1) {
         this.runAutocomplete().then(() => this.selectAll())
       } else {

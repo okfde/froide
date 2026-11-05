@@ -3,6 +3,7 @@ import autoprefixer from 'autoprefixer'
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import devManifest from 'vite-plugin-dev-manifest'
+import gettextPlugin from 'vuepo/vite'
 
 const outputDir = resolve(__dirname, 'build')
 
@@ -77,5 +78,13 @@ export default defineConfig({
       plugins: [autoprefixer]
     }
   },
-  plugins: [vue(), devManifest()]
+  plugins: [
+    vue(),
+    devManifest(),
+    gettextPlugin({
+      localeDir: './frontend/locale',
+      locales: ['en', 'de'],
+      defaultLocale: 'en'
+    })
+  ]
 })

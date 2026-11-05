@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { translateMixin } from 'vuepo/vue'
+
 import FilterMixin from './lib/filter-mixin'
 import PbFilterBadge from './pb-filter-badge'
 
@@ -31,8 +33,8 @@ const groupedCollapseLabelValuesThreshold = 8
 export default {
   name: 'PbFilterSelected',
   components: { PbFilterBadge },
-  props: ['globalConfig', 'config', 'i18n', 'scope', 'value', 'expanded'],
-  mixins: [FilterMixin],
+  props: ['globalConfig', 'config', 'scope', 'value', 'expanded'],
+  mixins: [translateMixin, FilterMixin],
   computed: {
     valuesGrouped() {
       if (!this.config.groupBy) return
@@ -43,7 +45,7 @@ export default {
         groups[groupId] = groups[groupId] || {
           id: groupId,
           values: [],
-          label: this.i18n['groupBy_' + groupId] || groupId
+          label: this.groupByLabel(groupId)
         }
         groups[groupId].values.push(x)
       })
@@ -55,6 +57,14 @@ export default {
             : group.values.map((v) => v.label).join(', ')
       }
       return groups
+    }
+  },
+  methods: {
+    groupByLabel(groupId) {
+      if (groupId === 'state') {
+        return this.gettext('state')
+      }
+      return groupId
     }
   }
 }

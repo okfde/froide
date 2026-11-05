@@ -4,7 +4,12 @@ const LetterMixin = {
       if (this.defaultLaw) {
         return this.defaultLaw.letter_start + '\n'
       } else {
-        return this.i18n.greeting + '\n\n' + this.i18n.defaultLetterStart + '\n'
+        return (
+          this.gettext('Dear Sir or Madam,') +
+          '\n\n' +
+          this.gettext('Please send me the following information:') +
+          '\n'
+        )
       }
     },
     letterSignatureName() {
@@ -16,24 +21,26 @@ const LetterMixin = {
     },
     letterEndShort() {
       const name = this.letterSignatureName
-      return `\n${this.i18n.kindRegards}\n${name}`
+      return `\n${this.gettext('Kind regards')}\n${name}`
     },
     letterEnd() {
       const name = this.letterSignatureName
       if (!this.defaultLaw) {
-        return `${this.i18n.kindRegards}\n${name}`
+        return `${this.gettext('Kind regards')}\n${name}`
       }
       return `${this.defaultLaw.letter_end}\n${name}`
     },
     letterEndNoName() {
       if (!this.defaultLaw) {
-        return `${this.i18n.kindRegards}`
+        return `${this.gettext('Kind regards')}`
       }
       return `${this.defaultLaw.letter_end}`
     },
     letterSignature() {
       if (!this.user || (!this.user.first_name && !this.user.last_name)) {
-        return this.i18n.giveName
+        return this.gettext(
+          'Please fill out your name below, or in the next step'
+        )
       }
       return false
     }

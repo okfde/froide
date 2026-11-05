@@ -18,7 +18,7 @@
         }"
         @click="setStep(step)"
       >
-        {{ invalid ? i18n.correct : i18n.change }}
+        {{ invalid ? gettext('Correct') : gettext('Change') }}
       </button>
     </div>
   </div>
@@ -26,15 +26,13 @@
 
 <script>
 import { mapMutations } from 'vuex'
+import { translateMixin } from 'vuepo/vue'
 import { SET_STEP } from '../../store/mutation_types'
 
 export default {
   name: 'ReviewRequestLine',
+  mixins: [translateMixin],
   props: {
-    i18n: {
-      type: Object,
-      required: true
-    },
     title: {
       type: String,
       default: ''

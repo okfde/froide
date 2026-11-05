@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { inject, nextTick, onMounted, ref, useId } from 'vue'
+import { nextTick, onMounted, ref, useId } from 'vue'
+import { useGettext } from 'vuepo/vue'
 import { Modal } from 'bootstrap'
 
 const props = defineProps({
@@ -18,7 +19,7 @@ const props = defineProps({
   keepAlive: Boolean
 })
 
-const i18n: any = inject('i18n')
+const { gettext } = useGettext()
 
 const modalEl = ref()
 const titleId = useId()
@@ -88,7 +89,7 @@ defineExpose({
               @click="hide"
               type="button"
               class="btn-close"
-              :aria-label="i18n.close"
+              :aria-label="gettext('Close')"
             ></button>
           </div>
           <div :class="'modal-body ' + bodyClasses">

@@ -3,10 +3,10 @@
     <table class="table table-striped table-hover">
       <thead>
         <tr>
-          <th>{{ i18n.name }}</th>
-          <th>{{ i18n.lastMessage }}</th>
+          <th>{{ gettext('Name') }}</th>
+          <th>{{ gettext('last message') }}</th>
           <th class="action-column">
-            {{ i18n.action }}
+            {{ pgettext('action to take in moderation table', 'Action') }}
           </th>
         </tr>
       </thead>
@@ -26,7 +26,7 @@
               class="btn btn-primary btn-sm"
               target="_blank"
             >
-              {{ i18n.setStatus }}
+              {{ gettext('set status') }}
             </a>
           </td>
         </tr>
@@ -36,10 +36,13 @@
 </template>
 
 <script>
+import { translateMixin } from 'vuepo/vue'
+
 const getUrl = (templ, objId) => templ.replace(/0/, objId)
 
 export default {
   name: 'ModerationUnclassified',
+  mixins: [translateMixin],
   props: {
     unclassified: {
       type: Array,
@@ -48,9 +51,6 @@ export default {
   },
   inject: ['config'],
   computed: {
-    i18n() {
-      return this.config.i18n
-    },
     unclassifiedList() {
       return this.unclassified.map((req) => {
         req.url = getUrl(this.config.url.foirequest, req.id)

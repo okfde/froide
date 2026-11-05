@@ -5,16 +5,16 @@ import ImagesConverter from '../docupload/images-converter.vue'
 import AttachmentsTable from './attachments-table.vue'
 import OnlineHelp from '../online-help.vue'
 import BsToast from '../bs-toast.vue'
-import { useI18n } from '../../lib/i18n'
+import { useGettext } from 'vuepo/vue'
 import { useAttachments } from './lib/attachments'
 import { csrfToken } from '../../api'
 
-import { onMounted, nextTick, provide, ref, watch } from 'vue'
+import { computed, onMounted, nextTick, provide, ref, watch } from 'vue'
 
 const props = defineProps(['config', 'message'])
 
-const { i18n } = useI18n(props.config)
-provide('i18n', i18n)
+const { gettext } = useGettext()
+const i18n = computed(() => props.config.i18n)
 provide('config', props.config)
 
 const { attachments, addFromUppy, refresh } = useAttachments({
@@ -55,12 +55,12 @@ const onlineHelp = ref()
       class="btn btn-link text-decoration-underline ps-0"
       @click="onlineHelp.show(config.url.helpAttachmentsManagement)"
     >
-      {{ i18n.helpNeeded }}
+      {{ gettext('I have technical difficulties / I need help') }}
     </button>
   </p>
 
   <div v-show="attachments.isFetching" class="spinner-border">
-    <span class="sr-only">{{ i18n.attachmentsLoading }}</span>
+    <span class="sr-only">{{ gettext('Attachments are loading...') }}</span>
   </div>
 
   <div v-if="attachments.approved.length" class="my-5">

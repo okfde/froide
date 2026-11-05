@@ -13,7 +13,7 @@
           role="status"
           aria-hidden="true"
         />
-        {{ i18n.createResponse }}
+        {{ gettext('Create response now') }}
       </button>
     </div>
     <FileUploader
@@ -38,7 +38,7 @@
           role="status"
           aria-hidden="true"
         />
-        {{ i18n.createResponse }}
+        {{ gettext('Create response now') }}
       </button>
     </div>
   </div>
@@ -47,14 +47,14 @@
 <script>
 import FileUploader from '../upload/file-uploader.vue'
 
-import I18nMixin from '../../lib/i18n-mixin'
+import { translateMixin } from 'vuepo/vue'
 
 export default {
   name: 'PublicbodyUpload',
   components: {
     FileUploader
   },
-  mixins: [I18nMixin],
+  mixins: [translateMixin],
   props: {
     config: {
       type: Object,
@@ -79,7 +79,9 @@ export default {
       // If you prevent default behavior in Mozilla Firefox prompt will always be shown
       e.preventDefault()
       // Chrome requires returnValue to be set
-      e.returnValue = this.i18n.sureCancel
+      e.returnValue = this.gettext(
+        'You have not completed this process. Are you sure you want to cancel?'
+      ).value
       return e.returnValue
     })
   }

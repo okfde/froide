@@ -1,5 +1,6 @@
 <script setup>
 import { computed, inject } from 'vue'
+import { useGettext } from 'vuepo/vue'
 import { useAttachments } from './lib/attachments'
 const {
   attachments,
@@ -26,7 +27,7 @@ const emit = defineEmits(['actionDelete', 'actionDone', 'redactClick'])
 
 const config = inject('config')
 
-const i18n = inject('i18n')
+const { gettext, pgettext } = useGettext()
 
 const unredacted = computed(() =>
   attachment.resource_uri
@@ -56,7 +57,10 @@ const redactClick = (evt, att) => {
 }
 
 const deleteClick = () => {
-  if (!window.confirm(i18n.value.confirmDelete)) return
+  if (
+    !window.confirm(gettext('Are you sure you want to delete this attachment?'))
+  )
+    return
   emit('actionDelete')
   deleteAttachment(attachment)
   // can't .then-emit actionDone here because the component will be optimistically gone by then
@@ -69,7 +73,7 @@ const makeRelevantClick = () => {
 }
 
 const approveClick = () => {
-  if (!window.confirm(i18n.value.confirmApproveUnredacted)) return
+  if (!window.confirm(gettext('Approve without redaction?'))) return
   approveAttachment(attachment).then(() => emit('actionDone'))
 }
 </script>
@@ -83,7 +87,7 @@ const approveClick = () => {
     :class="{ disabled: attachment.isCreatingDocument }"
   >
     <i class="fa fa-certificate" aria-hidden="true"></i>
-    {{ i18n.markResult }}
+    {{ gettext('Mark as result') }}
   </button>
   <a
     v-if="!dropdown && unredacted && unredacted.can_redact"
@@ -93,7 +97,7 @@ const approveClick = () => {
   >
     <!-- "restart redaction (from unredacted)" -->
     <i class="fa fa-square" aria-hidden="true"></i>
-    {{ i18n.redact }}
+    {{ gettext('Redact') }}
   </a>
   <a
     v-if="!dropdown && attachment.canRedact"
@@ -105,12 +109,12 @@ const approveClick = () => {
       <!-- "continue redaction (keep past redactions)"
         TODO: not really "edit" because can't undo/remove past redactions -->
       <i class="fa fa-pencil-square" aria-hidden="true"></i>
-      {{ i18n.editRedaction }}
+      {{ gettext('Edit redaction') }}
     </template>
     <template v-else>
       <!-- "start redaction (not redacted yet)" -->
       <i class="fa fa-square" aria-hidden="true"></i>
-      {{ i18n.redact }}
+      {{ gettext('Redact') }}
     </template>
   </a>
   <button
@@ -120,7 +124,7 @@ const approveClick = () => {
     class="btn btn-sm btn-link text-start"
   >
     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-    {{ i18n.markNotIrrelevant }}
+    {{ gettext('Mark as important') }}
   </button>
   <button
     v-if="
@@ -132,7 +136,7 @@ const approveClick = () => {
   >
     <i class="fa fa-exclamation-circle"></i>
     <!-- these are not actually strictly irrelevant, but we use the language in the instruction above -->
-    {{ i18n.markNotIrrelevant }}
+    {{ gettext('Mark as important') }}
   </button>
   <a
     class="btn btn-sm btn-link text-start"
@@ -140,7 +144,7 @@ const approveClick = () => {
     :download="attachment.name"
   >
     <i class="fa fa-download" aria-hidden="true"></i>
-    {{ i18n.download }}
+    {{ gettext('Download') }}
   </a>
   <a
     v-if="!dropdown && unredacted"
@@ -149,7 +153,7 @@ const approveClick = () => {
     download
   >
     <i class="fa fa-download" aria-hidden="true"></i>
-    {{ i18n.downloadUnredacted }}
+    {{ gettext('Download non-redacted') }}
   </a>
   <a
     v-if="!dropdown && unconverted"
@@ -158,7 +162,7 @@ const approveClick = () => {
     download
   >
     <i class="fa fa-download" aria-hidden="true"></i>
-    {{ i18n.downloadOriginal }}
+    {{ gettext('Download original') }}
     <!-- TODO: show file extension / simplified filetype;
      XLS instead of application/vnd.mx-excel
      there is is_excel in attachment.py... -->
@@ -174,12 +178,12 @@ const approveClick = () => {
     <template v-if="config.foirequest.public"
       ><!-- comment preserves the one whitespace from collapsing to match other items
       -->
-      {{ i18n.makePublic }}
+      {{ pgettext('Attachment manager', 'Make public') }}
     </template>
     <template v-else
       ><!--
       -->
-      {{ i18n.approve }}
+      {{ gettext('Approve') }}
     </template>
   </button>
   <button
@@ -189,7 +193,7 @@ const approveClick = () => {
     @click="deleteClick"
   >
     <i class="fa fa-trash" aria-hidden="true"></i>
-    {{ i18n.delete }}
+    {{ gettext('Delete') }}
   </button>
   <div
     v-if="dropdown && dropdownHasItems"
@@ -201,7 +205,7 @@ const approveClick = () => {
       data-bs-toggle="dropdown"
       aria-expanded="false"
     >
-      <span>{{ i18n.otherActions }}</span>
+      <span>{{ gettext('Other actions') }}</span>
     </button>
     <button
       class="d-md-none btn btn-sm btn-light"
@@ -210,7 +214,7 @@ const approveClick = () => {
       aria-expanded="false"
     >
       <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-      <span class="sr-only">{{ i18n.otherActions }}</span>
+      <span class="sr-only">{{ gettext('Other actions') }}</span>
     </button>
     <ul class="dropdown-menu">
       <li v-if="unredacted && unredacted.can_redact">
@@ -221,7 +225,7 @@ const approveClick = () => {
         >
           <!-- "restart redaction (from unredacted)" -->
           <i class="fa fa-square" aria-hidden="true"></i>
-          {{ i18n.redact }}
+          {{ gettext('Redact') }}
         </a>
       </li>
       <li v-if="attachment.canRedact">
@@ -234,25 +238,25 @@ const approveClick = () => {
             <!-- "continue redaction (keep past redactions)"
               TODO: not really "edit" because can't undo/remove past redactions -->
             <i class="fa fa-pencil-square" aria-hidden="true"></i>
-            {{ i18n.editRedaction }}
+            {{ gettext('Edit redaction') }}
           </template>
           <template v-else>
             <!-- "start redaction (not redacted yet)" -->
             <i class="fa fa-square" aria-hidden="true"></i>
-            {{ i18n.redact }}
+            {{ gettext('Redact') }}
           </template>
         </a>
       </li>
       <li v-if="unredacted">
         <a class="dropdown-item" :href="unredacted.file_url" download>
           <i class="fa fa-download" aria-hidden="true"></i>
-          {{ i18n.downloadUnredacted }}
+          {{ gettext('Download non-redacted') }}
         </a>
       </li>
       <li v-if="unconverted">
         <a class="dropdown-item" :href="unconverted.file_url" download>
           <i class="fa fa-download" aria-hidden="true"></i>
-          {{ i18n.downloadOriginal }}
+          {{ gettext('Download original') }}
           <!-- TODO: show file extension / simplified filetype;
           XLS instead of application/vnd.mx-excel
           there is is_excel in attachment.py... -->
@@ -262,10 +266,10 @@ const approveClick = () => {
         <button type="button" class="dropdown-item" @click="approveClick">
           <i class="fa fa-check" aria-hidden="true"></i>
           <template v-if="config.foirequest.public">
-            {{ i18n.makePublic }}
+            {{ pgettext('Attachment manager', 'Make public') }}
           </template>
           <template v-else>
-            {{ i18n.approve }}
+            {{ gettext('Approve') }}
           </template>
         </button>
       </li>

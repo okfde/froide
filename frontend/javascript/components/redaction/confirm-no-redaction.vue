@@ -4,23 +4,27 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
-            {{ i18n.confirmNoRedactionTitle }}
+            {{ gettext('Are you sure that no redaction is needed?') }}
           </h5>
           <button
             type="button"
             class="btn-close"
             data-bs-dismiss="modal"
-            :aria-label="i18n.close"
+            :aria-label="gettext('Close')"
           />
         </div>
         <div class="modal-body">
           <p>
-            {{ i18n.confirmNoRedactionsText }}
+            {{
+              gettext(
+                'You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?'
+              )
+            }}
           </p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn" data-bs-dismiss="modal">
-            {{ i18n.cancel }}
+            {{ gettext('Cancel') }}
           </button>
           <button
             id="send-request-button"
@@ -28,7 +32,7 @@
             class="btn btn-primary"
             @click="submit"
           >
-            {{ i18n.publishWithoutRedaction }}
+            {{ gettext('No redaction needed') }}
           </button>
         </div>
       </div>
@@ -37,14 +41,11 @@
 </template>
 
 <script>
+import { translateMixin } from 'vuepo/vue'
+
 export default {
   name: 'ConfirmNoRedaction',
-  props: {
-    i18n: {
-      type: Object,
-      required: true
-    }
-  },
+  mixins: [translateMixin],
   methods: {
     submit() {
       this.$emit('submit')

@@ -13,7 +13,7 @@
         <input
           type="search"
           class="form-control form-control-sm"
-          :placeholder="i18n.searchPlaceholder"
+          :placeholder="gettext('Search...')"
           v-model="search"
           @input="triggerSearch"
           @keydown.enter.prevent="triggerSearch"
@@ -40,12 +40,11 @@
       </div>
       <div class="overflow-y-auto p-3" style="max-height: 50vh">
         <div v-if="loading" class="spinner-border text-secondary" role="status">
-          <span class="visually-hidden">{{ i18n.loading }}</span>
+          <span class="visually-hidden">{{ gettext('Loading...') }}</span>
         </div>
         <PbFilterList
           v-else
           :config="config"
-          :i18n="i18n"
           :scope="scope"
           :has-more="hasMore"
           :items="orderedItems"
@@ -62,6 +61,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { translateMixin } from 'vuepo/vue'
 import debounce from 'lodash.debounce'
 
 import { FroideAPI } from '../../lib/api'
@@ -71,8 +71,8 @@ import PbFilterList from './pb-filter-list'
 
 export default {
   name: 'PbFilter',
-  props: ['globalConfig', 'config', 'i18n', 'scope', 'value', 'expanded'],
-  mixins: [FilterMixin],
+  props: ['globalConfig', 'config', 'scope', 'value', 'expanded'],
+  mixins: [translateMixin, FilterMixin],
   components: { PbFilterList },
   data() {
     let choice = null

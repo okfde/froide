@@ -10,8 +10,11 @@
 </template>
 
 <script>
+import { translateMixin } from 'vuepo/vue'
+
 export default {
   name: 'MessageRedactionWord',
+  mixins: [translateMixin],
   props: {
     word: {
       type: String,
@@ -31,7 +34,6 @@ export default {
     }
   },
   emits: ['redact'],
-  inject: ['config'],
   data() {
     return {
       changed: false
@@ -40,7 +42,7 @@ export default {
   computed: {
     title() {
       if (this.blocked) {
-        return this.config.i18n.blockedRedaction
+        return this.gettext('This word needs to stay redacted.')
       }
       return null
     }

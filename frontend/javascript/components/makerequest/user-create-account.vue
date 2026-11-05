@@ -15,7 +15,6 @@
 
     <UserAddress
       ref="userAddress"
-      :i18n="i18n"
       :form="userForm"
       :config="config"
       :default-law="defaultLaw"
@@ -24,7 +23,9 @@
     />
 
     <template v-if="config.settings.user_can_hide_web">
-      <h3 id="id_private_label" class="fs-6">{{ i18n.privacy }}</h3>
+      <h3 id="id_private_label" class="fs-6">
+        {{ gettext('Privacy') }}
+      </h3>
       <UserPublic
         :user-form="userForm"
         :config="config"
@@ -44,7 +45,7 @@
       />
     </template>
 
-    <h3 class="fs-6">{{ i18n.terms }}</h3>
+    <h3 class="fs-6">{{ gettext('Terms of Use') }}</h3>
     <UserTerms
       ref="userTerms"
       :form="userForm"
@@ -57,7 +58,7 @@
         class="btn btn-primary"
         @click="validateAllNextStep"
       >
-        {{ i18n.stepNext }}
+        {{ gettext('Next') }}
       </button>
     </div>
   </div>
@@ -71,6 +72,7 @@ import UserAddress from './user-address.vue'
 import UserClaimsVip from './user-claims-vip.vue'
 
 import { mapGetters, mapMutations } from 'vuex'
+import { translateMixin } from 'vuepo/vue'
 
 import {
   UPDATE_FIRST_NAME,
@@ -81,10 +83,9 @@ import {
   UPDATE_TERMS
 } from '../../store/mutation_types'
 
-import I18nMixin from '../../lib/i18n-mixin'
-
 export default {
   name: 'UserCreateAccount',
+  mixins: [translateMixin],
   components: {
     UserRegistration,
     UserTerms,
@@ -92,7 +93,6 @@ export default {
     UserAddress,
     UserClaimsVip
   },
-  mixins: [I18nMixin],
   emits: ['stepNext'],
   props: {
     config: {

@@ -6,7 +6,6 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.utils.translation import pgettext
 from django.views.decorators.http import require_POST
 
 from froide.account.models import User
@@ -142,41 +141,6 @@ def moderation_view(request):
                     "attachment_id": 1,
                 },
             ),
-        },
-        "i18n": {
-            "name": _("Name"),
-            "kind": _("Kind"),
-            "date": _("Date"),
-            "problemReports": _("problem reports"),
-            "publicBodyChangeProposals": _("public bodies"),
-            "message": _("Message"),
-            "description": _("Description"),
-            "action": pgettext("action to take in moderation table", "Action"),
-            "isNotRequester": _("not requester"),
-            "claim": _("Claim"),
-            "unclaim": _("Cancel"),
-            "resolve": _("Resolve"),
-            "markResolved": _("Mark resolved"),
-            "markModerated": _("Mark moderated"),
-            "claimedMinutesAgo": _("Claimed for {min} min."),
-            "maxClaimCount": _(
-                "You cannot work on more than 5 issues at the same time."
-            ),
-            "resolutionDescription": _("Please write a nice message to the user."),
-            "escalate": _("Escalate"),
-            "escalationDescription": _(
-                "Please describe to admins what should be done."
-            ),
-            "activeModerators": _("Active moderators"),
-            "toPublicBody": _("to public body"),
-            "toMessage": _("to message"),
-            "reviewNewPublicBody": _("review new"),
-            "reviewChangedPublicBody": _("review changes"),
-            "unclassifiedRequests": _("unclassified requests"),
-            "setStatus": _("set status"),
-            "lastMessage": _("last message"),
-            "attachments": _("Attachments"),
-            "redact": _("redact"),
         },
     }
 

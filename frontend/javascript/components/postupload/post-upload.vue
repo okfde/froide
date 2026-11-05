@@ -21,7 +21,8 @@ import {
 } from '../../api/index.ts'
 import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
 import { vBsTooltip } from '../../lib/vue-bootstrap.ts'
-import { useI18n } from '../../lib/i18n'
+import { t } from 'vuepo'
+import { useGettext } from 'vuepo/vue'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
 import { useAttachments } from '../docupload/lib/attachments'
 import OnlineHelp from '../online-help.vue'
@@ -41,9 +42,19 @@ const props = defineProps({
   currency: String
 })
 
-const { i18n } = useI18n(props.config)
-provide('i18n', i18n)
+const { gettext } = useGettext()
+const i18n = computed(() => props.config.i18n)
 provide('config', props.config)
+
+const questionOf = (current, total) => gettext`Question ${current} of ${total}`
+const redactionCounter = (current, total) =>
+  gettext`Redacting document ${current} of ${total}`
+const newLinkOldFlow = computed(
+  () =>
+    gettext`Should you experience problems, you can use <a class="alert-link" href="${props.config.url.legacyPostupload}">the older version</a> here. We welcome feedback!`
+)
+const messageCostCheckLast = (amount) =>
+  gettext`You have noted that the public body had demanded compensation to the amount of ${amount}.<br/>Is this amount still correct?`
 
 const {
   attachments,
@@ -108,7 +119,7 @@ if (props.config.url.mobileAppContent) {
   fetch(props.config.url.mobileAppContent.replace('{}', props.message.id))
     .then((response) => {
       if (!response.ok) {
-        return i18n.value.error
+        return gettext('Error')
       }
       return response.text()
     })
@@ -149,8 +160,8 @@ const requestResolutionChoices = computed(() => {
 })
 
 const messageIsResponseChoices = [
-  { value: true, label: i18n.value.messageReceivedLetter },
-  { value: false, label: i18n.value.messageSentLetter }
+  { value: true, label: gettext('I have received the letter') },
+  { value: false, label: gettext('I have sent the letter') }
 ]
 
 const isoPrepareDate = (dateYmdStr) => {
@@ -331,7 +342,7 @@ const attachmentsConvertImages = () => {
     .then(() => gotoStep())
     .catch((err) => {
       console.error(err)
-      window.alert(`${i18n.value.error}: ${err.message}`)
+      window.alert(`${gettext('Error')}: ${err.message}`)
     })
 }
 
@@ -379,9 +390,7 @@ const fileUploaderUpload = () => {
 const uppyAdds = []
 
 const fileUploaderSucceeded = (uppyResult) => {
-  uppyAdds.push(
-    addFromUppy(uppyResult, i18n.value.documentsUploadDefaultFilename)
-  )
+  uppyAdds.push(addFromUppy(uppyResult, gettext('letter.pdf')))
 }
 
 const fileUploaderCompleted = async (uppyResult) => {
@@ -505,7 +514,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.addLetter
+      mobileHeaderTitle: gettext('Add letter')
     }
   },
   [STEP_DOCUMENTS_CONVERT]: {
@@ -515,7 +524,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan
+      mobileHeaderTitle: gettext('Upload or scan letter')
     }
   },
   [STEP_DOCUMENTS_SORT]: {
@@ -529,14 +538,14 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan
+      mobileHeaderTitle: gettext('Upload or scan letter')
     }
   },
   [STEP_DOCUMENTS_CONVERT_PDF]: {
     next: STEP_DOCUMENTS_OVERVIEW,
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan
+      mobileHeaderTitle: gettext('Upload or scan letter')
     }
   },
   [STEP_DOCUMENTS_OVERVIEW]: {
@@ -546,14 +555,14 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan
+      mobileHeaderTitle: gettext('Upload or scan letter')
     }
   },
   [STEP_MESSAGE_SENT_OR_RECEIVED]: {
     next: STEP_MESSAGE_PUBLICBODY_CHECK,
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      mobileHeaderTitle: gettext('Enter information')
     }
   },
   [STEP_MESSAGE_PUBLICBODY_CHECK]: {
@@ -565,14 +574,14 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      mobileHeaderTitle: gettext('Enter information')
     }
   },
   [STEP_MESSAGE_PUBLICBODY_UPDATE]: {
     next: STEP_MESSAGE_DATE,
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      mobileHeaderTitle: gettext('Enter information')
     }
   },
   [STEP_MESSAGE_DATE]: {
@@ -588,7 +597,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation,
+      mobileHeaderTitle: gettext('Enter information'),
       isGotoValid: () => {
         if (isDesktop.value && values.is_registered_mail)
           return validity.date && validity.registered_mail_date
@@ -604,7 +613,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation,
+      mobileHeaderTitle: gettext('Enter information'),
       isGotoValid: () => validity.registered_mail_date
     }
   },
@@ -624,7 +633,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation,
+      mobileHeaderTitle: gettext('Enter information'),
       isGotoValid: () => {
         if (isDesktop.value && requestIsResolved.value) {
           return validity.status && validity.resolution
@@ -645,7 +654,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation,
+      mobileHeaderTitle: gettext('Enter information'),
       isGotoValid: () => validity.resolution
     }
   },
@@ -657,7 +666,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      mobileHeaderTitle: gettext('Enter information')
     }
   },
   [STEP_MESSAGE_COST_CHECK_LAST]: {
@@ -668,7 +677,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation,
+      mobileHeaderTitle: gettext('Enter information'),
       isGotoValid: () => {
         if (isDesktop.value && requestUpdateCosts.value) return validity.costs
         return true
@@ -683,7 +692,7 @@ const stepsConfig = {
     context: {
       isGotoValid: () => validity.costs,
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      mobileHeaderTitle: gettext('Enter information')
     }
   },
   [STEP_REDACTION_PICKER]: {
@@ -698,7 +707,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 2,
-      mobileHeaderTitle: i18n.value.redact
+      mobileHeaderTitle: gettext('Redact')
     }
   },
   [STEP_REDACTION_REDACT]: {
@@ -713,7 +722,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 2,
-      mobileHeaderTitle: i18n.value.redact
+      mobileHeaderTitle: gettext('Redact')
     }
   },
   [STEP_DOCUMENTS_OVERVIEW_REDACTED]: {
@@ -725,7 +734,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 2,
-      mobileHeaderTitle: i18n.value.preview
+      mobileHeaderTitle: gettext('Preview')
     }
   },
   [STEP_OUTRO]: {
@@ -735,7 +744,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 2,
-      mobileHeaderTitle: i18n.value.done
+      mobileHeaderTitle: gettext('Done')
     }
   }
 }
@@ -813,13 +822,18 @@ addEventListener('hashchange', () => {
   <SimpleStepper
     class="sticky-top position-md-static"
     :step="stepContext.progressStep"
-    :steps="[i18n.upload, i18n.enterInformation, i18n.redact]"
+    :steps="[
+      gettext('Upload'),
+      gettext('Enter information'),
+      gettext('Redact')
+    ]"
   >
     <template v-if="step === STEP_OUTRO">
-      <small>{{ i18n.done }}</small>
+      <small>{{ gettext('Done') }}</small>
     </template>
     <template v-else>
-      {{ i18n.step }} <strong>{{ stepContext.progressStep + 1 }}/3</strong>:
+      {{ gettext('Step') }}
+      <strong>{{ stepContext.progressStep + 1 }}/3</strong>:
       {{ stepContext.mobileHeaderTitle }}
     </template>
   </SimpleStepper>
@@ -828,12 +842,12 @@ addEventListener('hashchange', () => {
     <!-- TODO button does not support going back throug pdfRedactionCurrentIndex-->
     <div v-if="step === STEP_INTRO" class="my-3">
       <a href="../.." class="action-link arrow-back ps-0">
-        {{ i18n.cancel }}
+        {{ gettext('Cancel') }}
       </a>
     </div>
     <div v-else-if="step !== STEP_OUTRO" class="my-3">
       <a href="#!" @click="backStep" class="action-link arrow-back ps-0">
-        {{ i18n.back }}
+        {{ gettext('Back') }}
       </a>
     </div>
   </div>
@@ -841,13 +855,13 @@ addEventListener('hashchange', () => {
   <div v-if="error" class="container">
     <div class="alert alert-danger alert-dismissible show" role="alert">
       <h4 class="alert-heading">
-        {{ i18n.error || 'Error' }}
+        {{ gettext('Error') || 'Error' }}
       </h4>
       <button
         type="button"
         class="btn-close"
         data-bs-dismiss="alert"
-        :aria-label="i18n.close"
+        :aria-label="gettext('Close')"
         @click="error = false"
       />
       <ul v-if="error?.non_field_errors">
@@ -873,14 +887,15 @@ addEventListener('hashchange', () => {
                 class="btn btn-primary"
                 @click="gotoStep(fieldErrorStep[key])"
               >
-                {{ i18n.review }}<!--{{ fieldErrorStep[key] }}-->
+                {{ gettext('Review')
+                }}<!--{{ fieldErrorStep[key] }}-->
               </button>
               <button
                 type="button"
                 class="btn btn-secondary"
                 @click="gotoStep(STEP_DOCUMENTS_OVERVIEW_REDACTED)"
               >
-                {{ i18n.backToSubmit }}
+                {{ gettext('Back to submit') }}
               </button>
             </div>
           </dd>
@@ -958,7 +973,7 @@ addEventListener('hashchange', () => {
               }"
             >
               <div v-if="showMobileAppContent" class="mt-3 mb-1 mb-md-3">
-                {{ i18n.uploadFilesAddendum }}:
+                {{ gettext('If you have the letter as PDF already') }}:
               </div>
               <button
                 type="button"
@@ -969,7 +984,7 @@ addEventListener('hashchange', () => {
                 class="btn btn-outline-primary btn-lg d-block w-100 mb-3"
               >
                 <i class="fa fa-upload fa-2x"></i><br />
-                {{ i18n.uploadFiles }}
+                {{ gettext('Upload files') }}
               </button>
               <div class="d-flex gap-3 row">
                 <!-- on mobile, show the table first so websocket triggers a nice pop-in -->
@@ -1012,7 +1027,7 @@ addEventListener('hashchange', () => {
                           class="btn btn-sm btn-link"
                           @click="fileUploaderShow = true"
                         >
-                          {{ i18n.addMoreFiles }}
+                          {{ gettext('Add more files') }}
                         </button>
                       </div>
                     </template>
@@ -1026,7 +1041,7 @@ addEventListener('hashchange', () => {
                           class="btn btn-sm btn-link"
                           @click="fileUploaderShow = true"
                         >
-                          {{ i18n.addMoreFiles }}
+                          {{ gettext('Add more files') }}
                         </button>
                       </div>
                     </template>
@@ -1055,29 +1070,39 @@ addEventListener('hashchange', () => {
               ></div>
               <div v-else>
                 <div class="spinner-border" role="status">
-                  <span class="visually-hidden">{{ i18n.loading }}</span>
+                  <span class="visually-hidden">{{
+                    gettext('Loading...')
+                  }}</span>
                 </div>
               </div>
             </div>
           </div>
           <div class="alert alert-warning order-md-1">
-            <h4><i class="fa fa-lightbulb-o fa-lg"></i> {{ i18n.hint }}</h4>
-            <p v-html="i18n.redactLaterHint1"></p>
-            <p v-html="i18n.redactLaterHint2"></p>
+            <h4>
+              <i class="fa fa-lightbulb-o fa-lg"></i> {{ gettext('Hint') }}
+            </h4>
+            <p
+              v-html="
+                gettext(
+                  'You don\'t need to redact your letter <strong>beforehand</strong>. You can do this later in the process using our browser tool.'
+                )
+              "
+            ></p>
+            <p
+              v-html="
+                gettext('We will guide you through the process step-by-step.')
+              "
+            ></p>
           </div>
           <div class="alert alert-warning order-md-3">
             <h4>
               <i class="fa fa-exclamation-circle fa-lg"></i>
-              {{ i18n.new }}
+              {{ gettext('New') }}
             </h4>
             <p>
-              {{ i18n.newWarning }}
+              {{ gettext('We have redone this part of the app.') }}
             </p>
-            <p
-              v-html="
-                i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
-              "
-            ></p>
+            <p v-html="newLinkOldFlow"></p>
           </div>
         </div>
       </div>
@@ -1085,7 +1110,11 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_DOCUMENTS_CONVERT" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9 fw-bold">
-          {{ i18n.documentsConvertIrrelevant }}
+          {{
+            gettext(
+              'Mark image attachments as important to convert them into PDFs.'
+            )
+          }}
         </div>
         <div class="my-3">
           <!-- note: convertable subset misses those that have been converted-created in this very step -->
@@ -1116,7 +1145,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_DOCUMENTS_SORT" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9 fw-bold">
-          {{ i18n.documentsDragOrder }}
+          {{ gettext('Drag the documents in the right order') }}
         </div>
         <ImageDocumentPagesSortable :idx="0" show-rotate />
       </div>
@@ -1131,7 +1160,7 @@ addEventListener('hashchange', () => {
           </div>
         </div>
         <div class="text-center fw-bold my-3">
-          {{ i18n.documentsFromImages }}
+          {{ gettext('We will convert your images into a PDF') }}
         </div>
         <div
           v-if="attachments.images[0]"
@@ -1144,7 +1173,7 @@ addEventListener('hashchange', () => {
               class="form-control"
             />
             <label for="documents_filename">
-              {{ i18n.changeFilename }}
+              {{ gettext('Change filename') }}
             </label>
           </div>
         </div>
@@ -1154,7 +1183,7 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="fw-bold">
-            {{ i18n.documentsAvailable }}
+            {{ gettext('Documents available so far') }}
           </div>
           <AttachmentsTable
             :subset="attachments.redactable"
@@ -1169,10 +1198,10 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="step-questioncounter">
-            {{ i18n._('questionOf', { current: 1, total: 5 }) }}
+            {{ questionOf(1, 5) }}
           </div>
           <label class="fw-bold form-label">
-            {{ i18n.letterSentOrReceived }}
+            {{ gettext('Have you received or sent the uploaded document?') }}
           </label>
           <div
             class="form-check form-check-emphasized"
@@ -1199,14 +1228,16 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="step-questioncounter">
-            {{ i18n._('questionOf', { current: 2, total: 5 }) }}
+            {{ questionOf(2, 5) }}
           </div>
           <label class="fw-bold form-label" for="id_subject">
             <template v-if="!values.is_response">
-              {{ i18n.messagePublicbodyCheckTo }}
+              {{
+                gettext('Is this the public body you have sent the letter to?')
+              }}
             </template>
             <template v-else>
-              {{ i18n.messagePublicbodyCheckFrom }}
+              {{ gettext('Is this the public body that sent the letter?') }}
             </template>
           </label>
           <div style="margin: 1em 0; font-style: italic">
@@ -1215,8 +1246,11 @@ addEventListener('hashchange', () => {
           <div
             class="form-check form-check-emphasized"
             v-for="(choice, choiceIndex) in [
-              { value: true, label: i18n.yes },
-              { value: false, label: i18n.noDifferentPublicBody }
+              { value: true, label: gettext('Yes.') },
+              {
+                value: false,
+                label: gettext('No, pick different public body.')
+              }
             ]"
             :key="choiceIndex"
           >
@@ -1251,10 +1285,10 @@ addEventListener('hashchange', () => {
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold form-label" for="id_subject">
             <template v-if="!values.is_response">
-              {{ i18n.messagePublicbodyUpdateTo }}
+              {{ gettext('Which public body have you sent this letter to?') }}
             </template>
             <template v-else>
-              {{ i18n.messagePublicbodyUpdateFrom }}
+              {{ gettext('Which public body has sent this letter?') }}
             </template>
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
@@ -1278,10 +1312,10 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="step-questioncounter">
-            {{ i18n._('questionOf', { current: 3, total: 5 }) }}
+            {{ questionOf(3, 5) }}
           </div>
           <label class="fw-bold form-label field-required" for="id_date">
-            {{ i18n.messageDate }}
+            {{ gettext('When was the letter sent?') }}
           </label>
           <!-- has to be @required "one too early" so checkValidity doesn't return true when empty on enter step -->
           <!-- TODO "always" required might break early post/submit
@@ -1311,14 +1345,18 @@ addEventListener('hashchange', () => {
               id="id_is_registered_mail"
             />
             <label class="form-check-label" for="id_is_registered_mail">
-              {{ i18n.messageIsRegisteredMail }}
+              {{ gettext('The letter is registered mail') }}
               <span
                 type="button"
                 v-bs-tooltip
                 tabindex="0"
                 data-bs-toggle="tooltip"
                 data-bs-placement="bottom"
-                :title="i18n.messageRegisteredMailInfo"
+                :title="
+                  gettext(
+                    'Registered mail is a postal service which allows the sender proof of mailing via a receipt. The letter can have a special envelope.'
+                  )
+                "
               >
                 <i class="fa fa-info-circle"></i>
               </span>
@@ -1340,7 +1378,11 @@ addEventListener('hashchange', () => {
             class="fw-bold form-label field-required"
             for="id_registered_mail"
           >
-            {{ i18n.messageDateRegisteredMail }}
+            {{
+              gettext(
+                'Registered mail: what is the date stamped on the envelope?'
+              )
+            }}
           </label>
           <!-- TODO set min/max? -->
           <input
@@ -1359,20 +1401,28 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="step-questioncounter">
-            {{ i18n._('questionOf', { current: 4, total: 5 }) }}
+            {{ questionOf(4, 5) }}
           </div>
           <label class="fw-bold form-label" for="id_subject">
             <template v-if="values.is_response && requestWasResolved">
-              {{ i18n.messageStatusIsResolvedAfterReceivedStill }}
+              {{
+                gettext(
+                  'Your request was resolved. Is this still the case after you have received the letter?'
+                )
+              }}
             </template>
             <template v-if="values.is_response && !requestWasResolved">
-              {{ i18n.messageStatusIsResolvedAfterReceived }}
+              {{ gettext('Was your request resolved by this letter?') }}
             </template>
             <template v-if="!values.is_response && requestWasResolved">
-              {{ i18n.messageStatusIsResolvedAfterSentStill }}
+              {{
+                gettext(
+                  'Your request had already been resolved. Is this still the case after you have sent the letter?'
+                )
+              }}
             </template>
             <template v-if="!values.is_response && !requestWasResolved">
-              {{ i18n.messageStatusIsResolvedAfterSent }}
+              {{ gettext('Was your request resolv by sending this letter?') }}
             </template>
           </label>
           <div
@@ -1394,18 +1444,18 @@ addEventListener('hashchange', () => {
             <label class="form-check-label" :for="'id_status_' + choiceIndex">
               <template v-if="requestWasResolved">
                 <template v-if="choice.value === 'resolved'">
-                  {{ i18n.messageStatusIsResolvedStill }}
+                  {{ gettext('My request remains resolved.') }}
                 </template>
                 <template v-else>
-                  {{ i18n.messageStatusIsResolvedNotAgain }}
+                  {{ gettext('My request is now unresolved.') }}
                 </template>
               </template>
               <template v-else>
                 <template v-if="choice.value === 'resolved'">
-                  {{ i18n.messageStatusIsResolved }}
+                  {{ gettext('Yes, the request is resolved.') }}
                 </template>
                 <template v-else>
-                  {{ i18n.messageStatusIsResolvedNot }}
+                  {{ gettext('No, the request is not resolved yet.') }}
                 </template>
               </template>
             </label>
@@ -1423,7 +1473,7 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold col-form-label" for="id_resolution">
-            {{ i18n.messageResolution }}
+            {{ gettext('How would you characterize the result?') }}
           </label>
           <div
             class="form-check form-check-emphasized"
@@ -1453,16 +1503,16 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="step-questioncounter">
-            {{ i18n._('questionOf', { current: 5, total: 5 }) }}
+            {{ questionOf(5, 5) }}
           </div>
           <label class="fw-bold col-form-label">
-            {{ i18n.messageCostCheck }}
+            {{ gettext('Did the public body demand compensation?') }}
           </label>
           <div
             class="form-check form-check-emphasized"
             v-for="(choice, choiceIndex) in [
-              { label: i18n.no, value: false },
-              { label: i18n.yes, value: true }
+              { label: gettext('No.'), value: false },
+              { label: gettext('Yes.'), value: true }
             ]"
             :key="choiceIndex"
           >
@@ -1488,7 +1538,7 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="step-questioncounter">
-            {{ i18n._('questionOf', { current: 5, total: 5 }) }}
+            {{ questionOf(5, 5) }}
           </div>
           <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00
             also, API returns floats, so this actually should be decimalized i18n-awarely...
@@ -1498,17 +1548,13 @@ addEventListener('hashchange', () => {
           <label
             class="fw-bold col-form-label"
             for="id_nowcost"
-            v-html="
-              i18n._('messageCostCheckLast', {
-                amount: `${requestOldCosts}&nbsp;${currency}`
-              })
-            "
+            v-html="messageCostCheckLast(`${requestOldCosts}&nbsp;${currency}`)"
           ></label>
           <div
             class="form-check form-check-emphasized"
             v-for="(choice, choiceIndex) in [
-              { label: i18n.yes, value: false },
-              { label: i18n.no, value: true }
+              { label: gettext('Yes.'), value: false },
+              { label: gettext('No.'), value: true }
             ]"
             :key="choiceIndex"
           >
@@ -1543,7 +1589,7 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold col-form-label" for="id_costs">
-            {{ i18n.messageCost }}
+            {{ gettext('How much compensation does the public body demand?') }}
           </label>
           <div class="col-md-8">
             <div class="input-group" style="width: 10rem">
@@ -1575,10 +1621,14 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <label class="fw-bold col-form-label">
-            {{ i18n.redactionPick }}
+            {{ gettext('Which documents do you want to redact?') }}
           </label>
           <p>
-            {{ i18n.redactionInfo }}
+            {{
+              gettext(
+                "A document should be redacted when it contains information about yourself or the public body's employees."
+              )
+            }}
           </p>
           <AttachmentsTable
             :subset="attachments.redactable"
@@ -1615,7 +1665,7 @@ addEventListener('hashchange', () => {
                   v-bs-tooltip
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
-                  :title="i18n.alreadyPublished"
+                  :title="gettext('already published')"
                 />
               </label>
             </template>
@@ -1636,21 +1686,21 @@ addEventListener('hashchange', () => {
                     }
                   "
                 />
-                {{ i18n.publish }}*
+                {{ gettext('Publish') }}*
               </label>
               <div v-else>
-                {{ i18n.alreadyPublished }}
+                {{ gettext('already published') }}
               </div>
             </template>
             <template #after-table v-if="pickNotAutoApprove">
               <div class="text-end px-2">
-                {{ i18n.documentsApproveLater }}
+                {{ gettext('Uncheck to leave unpublished for now') }}
                 <span class="fa fa-level-up" aria-hidden="true"></span>
               </div>
             </template>
             <template #after-cards v-if="pickNotAutoApprove">
               <div class="text-end px-2">
-                * {{ i18n.documentsApproveLater }}
+                * {{ gettext('Uncheck to leave unpublished for now') }}
               </div>
             </template>
           </AttachmentsTable>
@@ -1664,7 +1714,11 @@ addEventListener('hashchange', () => {
             role="alert"
           >
             <p>
-              {{ i18n.publicRequestApproveHint }}
+              {{
+                gettext(
+                  'The request is public, thus all document will be approved.'
+                )
+              }}
             </p>
             <button
               type="button"
@@ -1674,7 +1728,7 @@ addEventListener('hashchange', () => {
               :class="{ disabled: pickNotAutoApprove }"
               @click="pickNotAutoApprove = true"
             >
-              {{ i18n.publicRequestPickNotAutoApprove }}
+              {{ gettext('Pick documents to exclude from approval') }}
             </button>
           </div>
         </div>
@@ -1686,10 +1740,10 @@ addEventListener('hashchange', () => {
           <div class="col">
             <label class="fw-bold col-form-label">
               {{
-                i18n._('redactionCounter', {
-                  current: pdfRedactionCurrentIndex + 1,
-                  total: attachmentsSelectedPdfRedaction.length
-                })
+                redactionCounter(
+                  pdfRedactionCurrentIndex + 1,
+                  attachmentsSelectedPdfRedaction.length
+                )
               }},
               {{ pdfRedactionCurrentDoc?.name }}
             </label>
@@ -1702,7 +1756,7 @@ addEventListener('hashchange', () => {
                 class="btn btn-link text-decoration-underline"
                 @click="onlineHelp.show(config.url.helpPostuploadRedaction)"
               >
-                {{ i18n.helpNeeded }}
+                {{ gettext('I have technical difficulties / I need help') }}
               </button>
             </div>
           </div>
@@ -1767,7 +1821,7 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="fw-bold col-form-label">
-            {{ i18n.documentsOverview }}
+            {{ gettext('These documents will be added to the request:') }}
           </div>
           <AttachmentsTable
             :subset="
@@ -1789,7 +1843,11 @@ addEventListener('hashchange', () => {
                       (attachmentsOverviewActions = !attachmentsOverviewActions)
                   "
                 >
-                  {{ attachmentsOverviewActions ? i18n.done : i18n.edit }}
+                  {{
+                    attachmentsOverviewActions
+                      ? gettext('Done')
+                      : gettext('Edit')
+                  }}
                 </button>
               </div>
             </template>
@@ -1806,10 +1864,10 @@ addEventListener('hashchange', () => {
             <i class="fa fa-check-square fa-4x"></i>
           </div>
           <div class="fw-bold col-form-label">
-            {{ i18n.documentsAddedSuccessfully }}
+            {{ gettext('Documents added successfully') }}
           </div>
           <div>
-            {{ i18n.requestUpdatedThanks }}
+            {{ gettext('Thank you for updating your request!') }}
           </div>
         </div>
       </div>
@@ -1826,7 +1884,7 @@ addEventListener('hashchange', () => {
             @click="gotoStep(STEP_INTRO)"
           >
             <i class="fa fa-plus"></i>
-            {{ i18n.uploadOrScanMoreFiles }}
+            {{ gettext('Scan or upload another document') }}
           </button>
         </div>
       </div>
@@ -1850,11 +1908,11 @@ addEventListener('hashchange', () => {
                 role="status"
                 aria-hidden="true"
               />
-              {{ i18n.redactionDone }}
+              {{ gettext('I have finished redacting') }}
             </button>
             <div class="mt-2">
               <small>
-                {{ i18n.redactionCheck }}
+                {{ gettext('Important: Have you checked all pages?') }}
               </small>
               <div v-if="debug" class="debug">
                 DEBUG: hasRedactions={{ pdfRedactionCurrentHasRedactions }}
@@ -1874,11 +1932,15 @@ addEventListener('hashchange', () => {
                 role="status"
                 aria-hidden="true"
               />
-              {{ i18n.confirm }}
+              {{ gettext('Confirm') }}
             </button>
             <div class="mt-2" v-if="!foirequest.public">
               <small>
-                {{ i18n.requestNonPublicHint }}
+                {{
+                  gettext(
+                    'Your request is not public at the moment. The documents will not be public, either.'
+                  )
+                }}
               </small>
             </div>
           </template>
@@ -1887,7 +1949,7 @@ addEventListener('hashchange', () => {
               :href="props.foirequest.url"
               class="btn btn-primary d-block w-100"
             >
-              {{ i18n.requestShow }}
+              {{ gettext('See request') }}
             </a>
           </template>
           <template v-else-if="step === STEP_INTRO">
@@ -1915,11 +1977,13 @@ addEventListener('hashchange', () => {
               "
               @click="gotoStep()"
             >
-              {{ i18n.next }}
+              {{ gettext('Next') }}
             </button>
             <div class="mt-2">
               <small>
-                {{ i18n.notYetPublishedHint }}
+                {{
+                  gettext('The documents will not be published immediately.')
+                }}
               </small>
             </div>
           </template>
@@ -1929,7 +1993,7 @@ addEventListener('hashchange', () => {
               @click="gotoStep()"
               class="btn btn-primary d-block w-100"
             >
-              {{ i18n.doneSorting }}
+              {{ gettext('Done sorting') }}
             </button>
           </template>
           <template v-else-if="step === STEP_DOCUMENTS_CONVERT_PDF">
@@ -1946,7 +2010,7 @@ addEventListener('hashchange', () => {
                 role="status"
                 aria-hidden="true"
               />
-              {{ i18n.createPdf }}
+              {{ gettext('Create PDF') }}
             </button>
             <button
               v-else
@@ -1954,7 +2018,7 @@ addEventListener('hashchange', () => {
               @click="gotoStep()"
               class="btn btn-primary d-block w-100"
             >
-              {{ i18n.next }}
+              {{ gettext('Next') }}
             </button>
           </template>
           <template v-else-if="step === STEP_MESSAGE_DATE">
@@ -1964,7 +2028,7 @@ addEventListener('hashchange', () => {
               @click="gotoStep()"
               class="btn btn-primary d-block w-100"
             >
-              {{ i18n.next }}
+              {{ gettext('Next') }}
             </button>
             <button
               v-if="debug"
@@ -1982,7 +2046,7 @@ addEventListener('hashchange', () => {
               :disabled="!isGotoValid"
               class="btn btn-primary d-block w-100"
             >
-              {{ i18n.next }}
+              {{ gettext('Next') }}
             </button>
           </template>
         </div>

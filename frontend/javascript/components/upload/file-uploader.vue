@@ -28,11 +28,8 @@ import Dashboard from '@uppy/dashboard'
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
 
-import I18nMixin from '../../lib/i18n-mixin'
-
 export default {
   name: 'FileUploader',
-  mixins: [I18nMixin],
   props: {
     config: {
       type: Object,

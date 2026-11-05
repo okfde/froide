@@ -1,29 +1,7 @@
-import json
-
 from django import forms
-from django.utils.translation import gettext as _
 
 from froide.helper.templatetags.frontendbuild import get_frontend_files
 from froide.helper.widgets import JSModulePath
-
-
-def get_widget_context():
-    return {
-        "i18n": {
-            "orUploadNewProof": _("or upload a new proof"),
-            "undo": _("Undo"),
-            "reset": _("Reset"),
-            "redactionWarning": _(
-                "When you upload an identity document, please redact all information except your name, the city and the validity date. After selecting an image, you can apply redactions to it."
-            ),
-            "redactionInstructions": _(
-                "Click or touch and drag over the image to redact parts of it."
-            ),
-            "whenToAddProof": _(
-                "You usually do not need to prove your identity! This is only required in rare cases, for example when requesting information about yourself or to prove you are a journalist."
-            ),
-        },
-    }
 
 
 class ProofImageWidget(forms.widgets.FileInput):
@@ -40,5 +18,4 @@ class ProofImageWidget(forms.widgets.FileInput):
 
     def get_context(self, name, value=None, attrs=None):
         context = super().get_context(name, value, attrs)
-        context["config"] = json.dumps(get_widget_context())
         return context

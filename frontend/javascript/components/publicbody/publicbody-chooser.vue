@@ -5,7 +5,7 @@
         class="btn btn-sm btn-outline-secondary text-end"
         @click.prevent="showSearch = true"
       >
-        {{ i18n.searchPublicBodyLabel }}
+        {{ gettext('Search for public authorities') }}
       </button>
     </p>
     <div v-if="showSearch" class="form-search">
@@ -14,7 +14,7 @@
           v-model="search"
           type="search"
           class="search-public_bodies form-control"
-          :placeholder="i18n.publicBodySearchPlaceholder"
+          :placeholder="gettext('Ministry of...')"
           @keyup="triggerAutocomplete"
           @keydown.enter.prevent="triggerAutocomplete"
         />
@@ -24,13 +24,13 @@
           @click="triggerAutocomplete"
         >
           <i class="fa fa-search" />
-          {{ i18n.search }}
+          {{ gettext('Search') }}
         </button>
       </div>
     </div>
     <div v-if="searching" class="search-spinner">
       <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">{{ gettext('Loading...') }}</span>
       </div>
     </div>
     <component :is="listView" :name="name" :scope="scope" :config="config" />
@@ -41,9 +41,8 @@
 import PBResultList from './pb-result-list'
 import PBActionList from './pb-action-list'
 import PBMultiList from './pb-multi-list'
-
 import PBChooserMixin from './lib/pb-chooser-mixin'
-import I18nMixin from '../../lib/i18n-mixin'
+import { translateMixin } from 'vuepo/vue'
 
 export default {
   name: 'PublicbodyChooser',
@@ -52,7 +51,7 @@ export default {
     actionList: PBActionList,
     multi: PBMultiList
   },
-  mixins: [PBChooserMixin, I18nMixin],
+  mixins: [translateMixin, PBChooserMixin],
   props: {
     name: {
       type: String,

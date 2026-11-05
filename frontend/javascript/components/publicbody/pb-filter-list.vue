@@ -38,7 +38,6 @@
           <pb-filter-list
             v-if="item.subItems && item.subItems.length > 0"
             :config="config"
-            :i18n="i18n"
             :scope="scope"
             :value="value"
             :items="item.subItems"
@@ -97,7 +96,9 @@
               class="fa fa-chevron-down load-children"
               role="button"
               :aria-controls="'collapse_' + itemGroup.id"
-              ><span class="visually-hidden">{{ i18n.toggleCollapse }}</span></i
+              ><span class="visually-hidden">{{
+                gettext('Toggle collapse')
+              }}</span></i
             >
           </div>
           <div class="collapse" :id="'collapse_' + itemGroup.id">
@@ -134,7 +135,7 @@
         class="btn btn-link btn-sm"
         @click.prevent="loadMore"
       >
-        {{ i18n.loadMore }}
+        {{ gettext('load more...') }}
       </button>
     </div>
   </div>
@@ -142,13 +143,14 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { translateMixin } from 'vuepo/vue'
 
 export default {
   name: 'PbFilterList',
+  mixins: [translateMixin],
   props: [
     'config',
     'items',
-    'i18n',
     'scope',
     'value',
     'hasMore',
@@ -196,7 +198,7 @@ export default {
         groups[groupId] = groups[groupId] || {
           id: this.config.key + '_' + groupId,
           items: [],
-          label: this.i18n['groupBy_' + groupId] || groupId,
+          label: this.groupByLabel(groupId),
           isActive: false
         }
         groups[groupId].items.push(x)
@@ -221,6 +223,12 @@ export default {
     ...mapGetters(['getScopedSearchFacets'])
   },
   methods: {
+    groupByLabel(groupId) {
+      if (groupId === 'state') {
+        return this.gettext('state')
+      }
+      return groupId
+    },
     isActive(itemId) {
       if (this.config.multi) {
         return this.value && this.value.some((x) => itemId === x.id)

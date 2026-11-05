@@ -3,10 +3,10 @@
     <table class="table table-striped table-hover">
       <thead>
         <tr>
-          <th>{{ i18n.name }}</th>
-          <th>{{ i18n.message }}</th>
+          <th>{{ gettext('Name') }}</th>
+          <th>{{ gettext('Message') }}</th>
           <th class="action-column">
-            {{ i18n.action }}
+            {{ pgettext('action to take in moderation table', 'Action') }}
           </th>
         </tr>
       </thead>
@@ -19,20 +19,20 @@
           </td>
           <td>
             <a :href="att.messageUrl" target="_blank">
-              {{ i18n.toMessage }}
+              {{ gettext('to message') }}
             </a>
           </td>
           <td>
             <div class="btn-group-vertical btn-group-sm">
               <a :href="att.redactUrl" class="btn btn-primary" target="_blank">
-                {{ i18n.redact }}
+                {{ gettext('redact') }}
               </a>
               <button
                 @click="() => markModerated(att)"
                 class="btn btn-dark"
                 target="_blank"
               >
-                {{ i18n.markModerated }}
+                {{ gettext('Mark moderated') }}
               </button>
             </div>
           </td>
@@ -44,6 +44,7 @@
 
 <script>
 import { postData } from '../../lib/api.js'
+import { translateMixin } from 'vuepo/vue'
 
 const getUrl = (templ, att) => {
   return templ
@@ -64,6 +65,7 @@ const getMessageUrl = (templ, att) => {
 
 export default {
   name: 'ModerationAttachments',
+  mixins: [translateMixin],
   props: {
     attachments: {
       type: Array,
@@ -73,9 +75,6 @@ export default {
   emits: ['resolved'],
   inject: ['config', 'csrfToken'],
   computed: {
-    i18n() {
-      return this.config.i18n
-    },
     attachmentsList() {
       return this.attachments.map((att) => {
         att.url = getUrl(this.config.url.show_attachment, att)

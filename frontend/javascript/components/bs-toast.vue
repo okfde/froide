@@ -1,8 +1,8 @@
 <script setup>
-import { inject } from 'vue'
+import { useGettext } from 'vuepo/vue'
 import { vBsToast } from '../lib/vue-bootstrap'
 
-const i18n = inject('i18n')
+const { gettext } = useGettext()
 
 const props = defineProps({
   color: {
@@ -40,7 +40,7 @@ if (!teleportTo) {
           type="button"
           class="btn-close me-2 m-auto"
           data-bs-dismiss="toast"
-          :aria-label="i18n.close"
+          :aria-label="gettext('Close')"
           @click="emit('dismiss')"
         ></button>
       </div>

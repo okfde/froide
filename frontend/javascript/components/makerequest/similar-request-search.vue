@@ -15,7 +15,7 @@
                   class="form-control"
                   type="search"
                   v-model="textQuery"
-                  :placeholder="i18n.searchRequests"
+                  :placeholder="gettext('Search requests')"
                 />
                 <button
                   type="button"
@@ -24,7 +24,7 @@
                   :disabled="isSearching"
                 >
                   <span class="fa fa-search" aria-hidden="true" />
-                  {{ i18n.search }}
+                  {{ gettext('Search') }}
                 </button>
               </div>
             </div>
@@ -38,7 +38,7 @@
                   class="btn btn-secondary dropdown-toggle d-block w-100"
                   data-bs-toggle="dropdown"
                 >
-                  {{ i18n.level }}
+                  {{ pgettext('Publicbody filter', 'Level') }}
                 </button>
                 <div class="dropdown-menu p-3">
                   <ul class="list-unstyled mb-0">
@@ -101,7 +101,7 @@
                   data-bs-toggle="dropdown"
                   data-bs-auto-close="outside"
                 >
-                  {{ i18n.dateRange }}
+                  {{ gettext('Date range') }}
                 </button>
                 <div class="dropdown-menu p-3">
                   <div
@@ -113,7 +113,7 @@
                     -->
                     <select
                       class="form-select"
-                      :aria-label="i18n.dateRangeFrom"
+                      :aria-label="gettext('From')"
                       v-model="dateStart"
                       style="min-width: 10ch"
                     >
@@ -133,7 +133,7 @@
                     -->
                     <select
                       class="form-select"
-                      :aria-label="i18n.dateRangeTo"
+                      :aria-label="gettext('Until')"
                       v-model="dateEnd"
                       style="min-width: 10ch"
                     >
@@ -158,7 +158,7 @@
                   class="btn btn-secondary dropdown-toggle d-block w-100"
                   data-bs-toggle="dropdown"
                 >
-                  {{ i18n.campaign }}
+                  {{ gettext('Campaign') }}
                 </button>
                 <div class="dropdown-menu p-3">
                   <ul class="list-unstyled mb-0">
@@ -173,7 +173,7 @@
                           v-model="selectedCampaign"
                         />
                         <label for="campaign_none" class="form-check-label">
-                          {{ i18n.noCampaign }}
+                          {{ gettext('No campaign') }}
                         </label>
                       </div>
                     </li>
@@ -212,7 +212,7 @@
               "
               class="mb-1"
               @remove-click="jurisdictionRegionKind = null"
-              :label="i18n.level"
+              :label="pgettext('Publicbody filter', 'Level')"
               :value="jurisdictionsByRegionKind[jurisdictionRegionKind].name"
             />
             <!-- alt
@@ -229,7 +229,7 @@
               v-if="selectedJurisdiction"
               class="mb-1"
               @remove-click="selectedJurisdiction = null"
-              :label="i18n['groupBy_' + selectedJurisdiction.region_kind]"
+              :label="groupByLabel(selectedJurisdiction.region_kind)"
               :value="selectedJurisdiction.name"
             />
             <!-- Badges: from/to year -->
@@ -237,14 +237,14 @@
               v-if="dateStart"
               class="mb-1"
               @remove-click="dateStart = null"
-              :label="i18n.dateRangeFrom"
+              :label="gettext('From')"
               :value="dateStart"
             />
             <PbFilterBadge
               v-if="dateEnd"
               class="mb-1"
               @remove-click="dateEnd = null"
-              :label="i18n.dateRangeTo"
+              :label="gettext('Until')"
               :value="dateEnd"
             />
             <!-- Badge: campaign -->
@@ -252,7 +252,7 @@
               v-if="selectedCampaign"
               @remove-click="selectedCampaign = null"
               class="mb-1"
-              :label="i18n.campaign"
+              :label="gettext('Campaign')"
               :value="selectedCampaign.name"
             />
           </div>
@@ -263,14 +263,14 @@
     <!-- API errors -->
 
     <div v-if="apiError" class="alert alert-danger alert-dismissible">
-      <strong>{{ i18n.error }}</strong
+      <strong>{{ gettext('Error') }}</strong
       ><br />
       <!-- ugly, but better than nothing? -->
       <small>{{ apiError }}</small>
       <button
         type="button"
         class="btn-close"
-        :aria-label="i18n.close"
+        :aria-label="gettext('Close')"
         @click="apiError = null"
       ></button>
     </div>
@@ -278,7 +278,7 @@
     <!-- Results with count + pagination -->
 
     <div v-if="showResults">
-      <p>{{ i18n._('results', { count: resultsCount }) }}</p>
+      <p>{{ resultsLabel(resultsCount) }}</p>
 
       <ResultsPagination :response-meta="resultsMeta" v-model="pagination" />
 
@@ -298,7 +298,9 @@
 </template>
 
 <script setup>
-import { computed, inject, ref, reactive, watch } from 'vue'
+import { computed, ref, reactive, watch } from 'vue'
+import { t } from 'vuepo'
+import { useGettext } from 'vuepo/vue'
 import { useStore } from 'vuex'
 import debounce from 'lodash.debounce'
 import {
@@ -318,7 +320,18 @@ const props = defineProps({
   }
 })
 
-const i18n = inject('i18n')
+const { gettext, pgettext, ngettext } = useGettext()
+
+const groupByLabel = (kind) => {
+  if (kind === 'state') {
+    return gettext('state')
+  }
+  return kind
+}
+
+const resultsLabel = (count) => {
+  return ngettext('One result', t`${count} results`, count)
+}
 
 const searchResultPageSize = 10
 

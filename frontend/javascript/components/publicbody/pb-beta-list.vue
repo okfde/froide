@@ -1,7 +1,7 @@
 <template>
   <div class="search-result-container">
     <h3 v-if="searchResultsLength > 0 || emptyResults" class="visually-hidden">
-      {{ i18n.searchResults }}
+      {{ gettext('Search results') }}
     </h3>
     <ul
       v-if="searchResultsLength > 0 || emptyResults"
@@ -20,19 +20,17 @@
             </h4>
             <small>
               {{ result.jurisdiction.name }},
-              {{ i18n._('requestCount', { count: result.number_of_requests }) }}
+              {{ requestCount(result.number_of_requests) }}
             </small>
           </div>
           <div class="col-sm-4">
             <a
               class="btn btn-primary"
               :href="getMakeRequestURLForResult(result)"
-              :aria-label="
-                i18n._('makeRequestToPublicBody', { name: result.name })
-              "
+              :aria-label="gettext`Make request to ${result.name}`"
               @click.prevent="selectSearchResult(result.id)"
             >
-              {{ i18n.makeRequest }}
+              {{ gettext('Make request') }}
             </a>
           </div>
         </div>
@@ -43,17 +41,21 @@
 
 <script>
 import { mapMutations } from 'vuex'
+import { t } from 'vuepo'
+import { translateMixin } from 'vuepo/vue'
 import { SET_PUBLICBODY_ID } from '../../store/mutation_types'
 
 import PBListMixin from './lib/pb-list-mixin'
-import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
   name: 'PbActionList',
-  mixins: [PBListMixin, I18nMixin],
+  mixins: [translateMixin, PBListMixin],
   emits: ['stepNext'],
   props: ['name', 'scope', 'config'],
   methods: {
+    requestCount(count) {
+      return this.npgettext('js', 'one request', t`${count} requests`, count)
+    },
     selectSearchResult(pbid) {
       this.setPublicBodyId({
         publicBodyId: pbid,

@@ -14,7 +14,7 @@
           'col-md-3',
           'col-form-label'
         ]"
-        >{{ i18n.yourFirstName }}
+        >{{ gettext('Your first name') }}
       </label>
       <div class="col-sm-8 col-md-5">
         <input
@@ -51,7 +51,7 @@
           'col-md-3',
           'col-form-label'
         ]"
-        >{{ i18n.yourLastName }}
+        >{{ gettext('Your last name') }}
       </label>
       <div class="col-sm-8 col-md-5">
         <input
@@ -89,7 +89,7 @@
           'field-required': !user
         }"
       >
-        {{ i18n.yourEmail }}
+        {{ gettext('Your email address') }}
       </label>
       <div class="col-sm-8 col-md-5">
         <input
@@ -136,7 +136,7 @@
               for="id_password"
               class="col-sm-3 col-form-label"
               >
-              {{ i18n.password }}
+              {{ gettext('Password') }}
             </label>
             <div
               class="col-sm-9"
@@ -153,7 +153,7 @@
               for="id_password2"
               class="col-sm-3 col-form-label"
               >
-              {{ i18n.passwordRepeated }}
+              {{ gettext('Password (repeated)') }}
             </label>
             <div
               class="col-sm-9"
@@ -171,9 +171,8 @@
 </template>
 
 <script>
-import I18nMixin from '../../lib/i18n-mixin'
-
 import { mapGetters, mapMutations } from 'vuex'
+import { translateMixin } from 'vuepo/vue'
 
 import {
   UPDATE_FIRST_NAME_VALIDITY,
@@ -186,7 +185,7 @@ import {
 
 export default {
   name: 'UserRegistration',
-  mixins: [I18nMixin],
+  mixins: [translateMixin],
   props: {
     config: {
       type: Object

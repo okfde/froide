@@ -8,7 +8,7 @@
       keep-visited-clickable
       @step-click="stepperClick"
     >
-      {{ i18n.step }}
+      {{ gettext('Step') }}
       <!-- avoid 0 -->
       <strong
         >{{ this.stepperStepCurrent + 1 }}/{{
@@ -39,7 +39,7 @@
                   :href="'#step-' + stepBack"
                   @click="setStep(stepBack)"
                 >
-                  {{ i18n.back }}
+                  {{ gettext('Back') }}
                 </a>
                 <button
                   v-if="topNextLabel"
@@ -64,7 +64,7 @@
                 />
               </div>
               <div v-if="fetchError" class="alert alert-danger">
-                <strong>{{ i18n.error }}</strong>
+                <strong>{{ gettext('Error') }}</strong>
                 {{ fetchError }}
               </div>
 
@@ -72,13 +72,13 @@
                 v-if="hidePublicbodyChooser && hasPublicBodies"
                 class="my-3 fs-5"
               >
-                {{ i18n.requestTo }}
-                <PbTruncatedList :public-bodies="publicBodies" :i18n="i18n">
+                {{ gettext('Request to:') }}
+                <PbTruncatedList :public-bodies="publicBodies">
                   <template #default="{ pb, index }">
                     <template v-if="index > 0">, </template>{{ pb.name }}
                   </template>
                   <template #truncation="{ count }">
-                    , … ({{ i18n._('publicBodiesCount', { count }) }})
+                    , … ({{ publicBodiesCount(count) }})
                   </template>
                 </PbTruncatedList>
               </h1>
@@ -111,7 +111,7 @@
                     class="btn btn-primary"
                     @click="setStep(stepNext)"
                   >
-                    {{ i18n.stepNext }}
+                    {{ gettext('Next') }}
                   </button>
                 </div>
                 <IntroSkipPreference :config="config" />
@@ -132,7 +132,7 @@
 
                 <SimilarRequestSearch :config="config">
                   <template #header>
-                    <h2>{{ i18n.findSimilarRequests }}</h2>
+                    <h2>{{ gettext('Similar requests') }}</h2>
                     <div class="row">
                       <div class="col-lg-9">
                         <DjangoSlot name="find-similar-requests-preamble" />
@@ -146,7 +146,7 @@
                     class="btn btn-primary"
                     @click="setStep(stepNext)"
                   >
-                    {{ i18n.stepSkip }}
+                    {{ gettext('Skip') }}
                   </button>
                 </div>
                 <IntroSkipPreference :config="config" />
@@ -166,13 +166,13 @@
                 />
 
                 <p v-if="publicBodies.length > 0">
-                  {{ i18n.currentlyChosen }}
-                  <PbTruncatedList :public-bodies="publicBodies" :i18n="i18n">
+                  {{ gettext('Currently chosen:') }}
+                  <PbTruncatedList :public-bodies="publicBodies">
                     <template #default="{ pb, index }">
                       <template v-if="index > 0">, </template>{{ pb.name }}
                     </template>
                     <template #truncation="{ count }">
-                      , … ({{ i18n._('publicBodiesCount', { count }) }})
+                      , … ({{ publicBodiesCount(count) }})
                     </template>
                   </PbTruncatedList>
                 </p>
@@ -231,7 +231,6 @@
               >
                 <PbMultiReview
                   name="publicbody"
-                  :i18n="i18n"
                   :scope="pbScope"
                   @step-next="setStep(stepNext)"
                 />
@@ -240,11 +239,15 @@
               <!-- STEPS: LOGIN or CREATE ? -->
 
               <div v-show="step === STEPS.LOGIN_CREATE" id="step_login_create">
-                <h2>{{ i18n.account }}</h2>
+                <h2>
+                  {{ pgettext('Make request breadcrumbs/stepper', 'Account') }}
+                </h2>
                 <div class="row">
                   <div class="col-md-6 mb-4">
                     <p class="mb-auto">
-                      {{ i18n.createAccountPreamble }}
+                      {{
+                        gettext`You need to create an account at ${config.siteName} so you will be able to manage your request.`
+                      }}
                     </p>
                     <div class="mt-3">
                       <button
@@ -252,21 +255,25 @@
                         class="btn btn-primary"
                         @click="setStep(stepNext)"
                       >
-                        {{ i18n.createAccount }}
+                        {{ gettext('Create account') }}
                       </button>
                     </div>
                   </div>
                   <div class="col-md-6 mb-4">
                     <p class="mb-auto">
-                      {{ i18n.doYouAlreadyHaveAccount }}<br />
-                      <small>{{ i18n.thisFormRemembers }}</small>
+                      {{ gettext('Do you already have an account?') }}<br />
+                      <small>{{
+                        gettext(
+                          'This form remembers your inputs, as long as stay in the same tab.'
+                        )
+                      }}</small>
                     </p>
                     <div class="mt-3">
                       <a
                         :href="config.url.login"
                         class="btn btn-primary"
                         @click="writeToStorage"
-                        >{{ i18n.login }}</a
+                        >{{ pgettext('Make request', 'Log in') }}</a
                       >
                     </div>
                   </div>
@@ -280,7 +287,7 @@
                 v-show="step === STEPS.CREATE_ACCOUNT"
                 id="step_create_account"
               >
-                <h2>{{ i18n.createAccount }}</h2>
+                <h2>{{ gettext('Create account') }}</h2>
                 <UserCreateAccount
                   v-if="!user.id"
                   :config="config"
@@ -306,7 +313,7 @@
                 id="step_write_request"
                 class="mt-3"
               >
-                <h2>{{ i18n.writeRequest }}</h2>
+                <h2>{{ gettext('Write the request') }}</h2>
                 <div class="row">
                   <div class="col-lg-3 order-lg-2">
                     <div
@@ -361,7 +368,9 @@
                 v-show="step == STEPS.REQUEST_PUBLIC"
                 id="step_request_public"
               >
-                <h2 id="id_public_label">{{ i18n.requestVisibility }}</h2>
+                <h2 id="id_public_label">
+                  {{ gettext('Public visibility of the request') }}
+                </h2>
                 <div id="id_public_preamble">
                   <DjangoSlot name="request-public-preamble" />
                 </div>
@@ -379,7 +388,7 @@
                     class="btn btn-primary"
                     @click="setStep(stepNext)"
                   >
-                    {{ i18n.stepNext }}
+                    {{ gettext('Next') }}
                   </button>
                 </div>
               </div>
@@ -390,9 +399,8 @@
                 v-if="step === STEPS.PREVIEW_SUBMIT"
                 id="step_preview_submit"
               >
-                <h2>{{ i18n.previewAndSubmit }}</h2>
+                <h2>{{ gettext('Preview & submit') }}</h2>
                 <ReviewRequest
-                  :i18n="i18n"
                   :config="config"
                   :pb-scope="pbScope"
                   :publicbodies="publicBodies"
@@ -425,7 +433,7 @@
           v-if="submitting"
         >
           <i class="fa fa-spinner fa-pulse me-3" aria-hidden="true" />
-          {{ i18n.loading }}
+          {{ gettext('Loading...') }}
         </div>
       </Transition>
     </div>
@@ -463,7 +471,9 @@ import {
   UPDATE_TERMS
 } from '../../store/mutation_types'
 
-import I18nMixin from '../../lib/i18n-mixin'
+import { t } from 'vuepo'
+import { translateMixin } from 'vuepo/vue'
+
 import RequestIntro from './request-intro.vue'
 import IntroSkipPreference from './intro-skip-preference.vue'
 import LetterMixin from './lib/letter-mixin'
@@ -488,7 +498,7 @@ export default {
     OnlineHelp,
     PbTruncatedList
   },
-  mixins: [I18nMixin, LetterMixin, StoreValueMixin],
+  mixins: [translateMixin, LetterMixin, StoreValueMixin],
   props: {
     slots: {
       type: Object,
@@ -585,10 +595,12 @@ export default {
       return this.fetchedForms?.user_form || this.userFormInitial
     },
     proofForm() {
-      if (!(
-        this.proofFormInitial?.fields?.proof ||
-        this.proofFormInitial?.fields?.proof_name
-      )) {
+      if (
+        !(
+          this.proofFormInitial?.fields?.proof ||
+          this.proofFormInitial?.fields?.proof_name
+        )
+      ) {
         return null
       }
       return this.fetchedForms?.proof_form || this.proofFormInitial
@@ -638,17 +650,23 @@ export default {
     },
     stepLabels() {
       return {
-        [STEPS.INTRO]: this.i18n.introduction,
-        [STEPS.INTRO_HOWTO]: this.i18n.introduction,
-        [STEPS.FIND_SIMILAR]: this.i18n.similarRequests,
-        [STEPS.SELECT_PUBLICBODY]: this.i18n.choosePublicBody,
-        [STEPS.REVIEW_PUBLICBODY]: this.i18n.choosePublicBody,
-        [STEPS.LOGIN_CREATE]: this.i18n.account,
-        [STEPS.CREATE_ACCOUNT]: this.i18n.account,
-        [STEPS.WRITE_REQUEST]: this.i18n.writeMessage,
-        [STEPS.REQUEST_PUBLIC]: this.i18n.writeMessage,
-        [STEPS.PREVIEW_SUBMIT]: this.i18n.submitRequest,
-        [STEPS.OUTRO]: this.i18n.submitRequest
+        [STEPS.INTRO]: this.gettext('Introduction'),
+        [STEPS.INTRO_HOWTO]: this.gettext('Introduction'),
+        [STEPS.FIND_SIMILAR]: this.gettext('Similar requests'),
+        [STEPS.SELECT_PUBLICBODY]: this.gettext('Choose public body'),
+        [STEPS.REVIEW_PUBLICBODY]: this.gettext('Choose public body'),
+        [STEPS.LOGIN_CREATE]: this.pgettext(
+          'Make request breadcrumbs/stepper',
+          'Account'
+        ),
+        [STEPS.CREATE_ACCOUNT]: this.pgettext(
+          'Make request breadcrumbs/stepper',
+          'Account'
+        ),
+        [STEPS.WRITE_REQUEST]: this.gettext('Write message'),
+        [STEPS.REQUEST_PUBLIC]: this.gettext('Write message'),
+        [STEPS.PREVIEW_SUBMIT]: this.gettext('Submit request'),
+        [STEPS.OUTRO]: this.gettext('Submit request')
       }
     },
     stepperSteps() {
@@ -698,9 +716,9 @@ export default {
         return false
       }
       if (this.step === STEPS.FIND_SIMILAR) {
-        return this.i18n.stepSkip
+        return this.gettext('Skip')
       }
-      return this.i18n.stepNext
+      return this.gettext('Next')
     },
     preventUnload() {
       // notably, not STEPS.LOGIN_CREATE
@@ -859,7 +877,9 @@ export default {
       // If you prevent default behavior in Mozilla Firefox prompt will always be shown
       e.preventDefault()
       // Chrome requires returnValue to be set
-      e.returnValue = this.i18n.sureCancel
+      e.returnValue = this.gettext(
+        'You have not completed this process. Are you sure you want to cancel?'
+      )
       return e.returnValue
     })
     window.addEventListener('popstate', (e) => {
@@ -872,6 +892,9 @@ export default {
     })
   },
   methods: {
+    publicBodiesCount(count) {
+      return this.ngettext('one public body', t`${count} public bodies`, count)
+    },
     saveDraft() {
       this.submitting = true
     },
@@ -912,7 +935,7 @@ export default {
         })
         .catch((e) => {
           console.error(e)
-          this.fetchError = e.message || this.i18n.error
+          this.fetchError = e.message || this.gettext('Error')
           this.submitting = false
         })
     },

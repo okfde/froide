@@ -1,7 +1,8 @@
 <script setup>
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
+import { useGettext } from 'vuepo/vue'
 
-const i18n = inject('i18n')
+const { gettext } = useGettext()
 
 const { responseMeta } = defineProps({
   responseMeta: {
@@ -28,7 +29,7 @@ const pages = computed(() => {
     {
       key: 'previous',
       ariaHiddenLabel: '←',
-      visuallyHiddenLabel: i18n.previous,
+      visuallyHiddenLabel: gettext('previous'),
       offset: responseMeta.offset - responseMeta.limit,
       active: false,
       disabled: !responseMeta.previous
@@ -72,7 +73,7 @@ const pages = computed(() => {
   ret.push({
     key: 'next',
     ariaHiddenLabel: '→',
-    visuallyHiddenLabel: i18n.next,
+    visuallyHiddenLabel: gettext('next'),
     offset: responseMeta.offset + responseMeta.limit,
     active: false,
     disabled: !responseMeta.next
@@ -82,7 +83,7 @@ const pages = computed(() => {
 </script>
 
 <template>
-  <nav :aria-label="i18n.pagination" v-show="show">
+  <nav :aria-label="gettext('Pagination')" v-show="show">
     <ul class="pagination flex-wrap">
       <li
         class="page-item"

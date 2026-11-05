@@ -12,14 +12,14 @@
     <div class="border border-2 border-gray-300 p-3 mb-3">
       <div class="row mb-3" v-if="!hidePublicbodyChooser">
         <div class="col-sm-3 d-flex align-items-center">
-          {{ i18n.recipientPb }}
+          {{ gettext('Receiving public body') }}
         </div>
         <div class="col-sm-9 d-flex align-items-center">
           <strong v-if="publicBodies.length === 0" class="text-danger">{{
-            i18n.none
+            gettext('None chosen')
           }}</strong>
           <strong v-else>
-            <PbTruncatedList :public-bodies="publicBodies" :i18n="i18n">
+            <PbTruncatedList :public-bodies="publicBodies">
               <template #default="{ pb, index }">
                 <template v-if="index > 0">, </template>
                 <a v-if="pb" :href="pb.site_url" target="_blank">{{
@@ -27,7 +27,9 @@
                 }}</a>
               </template>
               <template #truncation="{ count }">
-                , … ({{ i18n._('publicBodiesCount', { count }) }})
+                , … ({{
+                  ngettext('one public body', t`${count} public bodies`, count)
+                }})
               </template>
             </PbTruncatedList>
           </strong>
@@ -38,7 +40,7 @@
             class="btn btn-secondary btn-sm ms-auto text-nowrap"
             @click="setStepChangePublicbody"
           >
-            {{ i18n.change }}
+            {{ gettext('Change') }}
           </button>
         </div>
       </div>
@@ -52,7 +54,7 @@
               'text-danger': errors.subject && !subjectChanged
             }"
           >
-            {{ i18n.subject }}:
+            {{ gettext('Subject') }}:
           </label>
         </div>
         <div class="col-sm-9 d-flex flex-wrap align-items-center">
@@ -69,7 +71,7 @@
               class="btn btn-secondary btn-sm ms-auto text-nowrap"
               @click="enableEditing"
             >
-              {{ i18n.reviewEdit }}
+              {{ gettext('Edit') }}
             </button>
           </template>
           <template v-else>
@@ -127,7 +129,11 @@
 
       <div v-if="fullText && warnFullText" class="alert alert-warning">
         <p>
-          {{ i18n.warnFullText }}
+          {{
+            gettext(
+              'Watch out! You are requesting information across jurisdictions! If you write the full text, we cannot customize it according to applicable laws. Instead you have to write the text to be jurisdiction agnostic.'
+            )
+          }}
         </p>
       </div>
 
@@ -150,7 +156,7 @@
             class="btn btn-secondary"
             @click="fixBodyPlaceholders"
           >
-            {{ i18n.fixPlaceholder }}
+            {{ gettext('Fix placeholders automatically') }}
           </button>
         </div>
       </div>
@@ -173,7 +179,7 @@
             class="btn btn-secondary btn-sm"
             @click="fixBodyPlaceholders"
           >
-            {{ i18n.fixPlaceholder }}
+            {{ gettext('Fix placeholders automatically') }}
           </button>
         </div>
       </div>
@@ -187,7 +193,7 @@
           "
         >
           <div class="mb-4">
-            <label for="id_body"> {{ i18n.requestBody }}: </label>
+            <label for="id_body"> {{ gettext('Request body') }}: </label>
           </div>
           <div v-if="!fullText" class="body-text" v-text="letterStart" />
           <div v-if="editingDisabled" class="body-text-em mb-3" v-text="body" />
@@ -232,7 +238,7 @@
                   :checked="true"
                 />
                 <label class="form-check-label" for="full_letter_checkbox">
-                  {{ i18n.showEntireMessage }}
+                  {{ gettext('Show entire message') }}
                 </label>
               </div>
               <input v-model="fullText" type="hidden" name="full_text" />
@@ -263,7 +269,7 @@
                 class="btn btn-outline-secondary btn-sm"
                 @click.prevent="resetFullText"
               >
-                {{ i18n.resetFullText }}
+                {{ gettext('Reset text to template version') }}
               </button>
             </div>
             <details
@@ -271,7 +277,7 @@
               class="text-end mt-2"
             >
               <summary>
-                {{ i18n.savedFullTextChanges }}
+                {{ gettext('Your previous customized text') }}
               </summary>
               <textarea
                 v-model="savedFullTextBody"
@@ -310,7 +316,7 @@
           class="col-md-4 order-md-2"
         >
           <h6>
-            {{ i18n.savedFullTextChanges }}
+            {{ gettext('Your previous customized text') }}
           </h6>
           <textarea v-model="savedFullTextBody" class="saved-body" readonly />
         </div>
@@ -322,20 +328,18 @@
       class="border border-2 border-gray-300 p-3 mb-3"
     >
       <template v-if="proofRequired">
-        <h5>{{ i18n.includeProof }}</h5>
+        <h5>{{ gettext('Attach a proof of identity') }}</h5>
         <ProofForm
           :form="proofForm"
           :required="proofRequired"
-          :config="config.proof_config"
           @update="updateProof"
         ></ProofForm>
       </template>
       <details v-else>
-        <summary>{{ i18n.includeProof }}</summary>
+        <summary>{{ gettext('Attach a proof of identity') }}</summary>
         <ProofForm
           :form="proofForm"
           :required="proofRequired"
-          :config="config.proof_config"
           @update="updateProof"
           class="pt-3"
         ></ProofForm>
@@ -351,9 +355,8 @@
           user?.address === ''
         "
       >
-        <summary>{{ i18n.updatePostalAddress }}</summary>
+        <summary>{{ gettext('Update my postal address') }}</summary>
         <UserAddress
-          :i18n="i18n"
           :form="userForm"
           :config="config"
           :address-help-text="userForm.fields.address.help_text"
@@ -376,15 +379,17 @@
         class="btn btn-primary"
         @click="validateAllNextStep"
       >
-        {{ i18n.stepNext }}
+        {{ gettext('Next') }}
       </button>
     </div>
   </div>
 </template>
 
 <script>
+import { t } from 'vuepo'
+import { translateMixin } from 'vuepo/vue'
+
 import LetterMixin from './lib/letter-mixin'
-import I18nMixin from '../../lib/i18n-mixin'
 
 import { mapGetters, mapMutations } from 'vuex'
 
@@ -417,7 +422,7 @@ const savedFullTextBodySidebyside = false
 
 export default {
   name: 'RequestForm',
-  mixins: [I18nMixin, LetterMixin],
+  mixins: [translateMixin, LetterMixin],
   components: {
     ProofForm,
     UserAddress,
@@ -613,17 +618,26 @@ export default {
         checks = [
           ...checks,
           [
-            new RegExp(erx(this.i18n.greeting), 'gi'),
-            this.i18n.dontAddGreeting
+            new RegExp(erx(this.gettext('Dear Sir or Madam').value), 'gi'),
+            this.gettext(
+              'Do not add a greeting, it is added automatically at the start of the letter.'
+            )
           ],
           [
-            new RegExp(erx(this.i18n.kindRegards), 'gi'),
-            this.i18n.dontAddClosing
+            new RegExp(erx(this.gettext('Kind regards').value), 'gi'),
+            this.gettext(
+              'Do not add a closing, it is added automatically at the end of the letter.'
+            )
           ]
         ]
       }
       if (this.userRegex) {
-        checks.push([this.userRegex, this.i18n.dontInsertName])
+        checks.push([
+          this.userRegex,
+          this.gettext(
+            'Do not insert your name, we will add it automatically at the end of the letter.'
+          )
+        ])
       }
       checks.forEach((params) => {
         if (params[0].test(this.body)) {
@@ -671,6 +685,13 @@ export default {
     this.updateBody()
   },
   methods: {
+    minLengthMessage(count) {
+      return this.ngettext(
+        t`Ensure this value has at least ${count} character.`,
+        t`Ensure this value has at least ${count} characters.`,
+        count
+      )
+    },
     resetFullText() {
       this.savedFullTextBody = this.body
       this.fullTextDisabled = false
@@ -708,8 +729,9 @@ export default {
       this.subjectValidationErrors = []
       let valid = true
       if (this.nonMeaningfulSubjects.some((re) => re.test(this.subject))) {
-        this.subjectValidationErrors.push(this.i18n.subjectMeaningful)
-        this.$refs.subject.setCustomValidity(this.i18n.subjectMeaningful)
+        const message = this.gettext('Please write a meaningful subject')
+        this.subjectValidationErrors.push(message)
+        this.$refs.subject.setCustomValidity(message)
         valid = false
       }
       // from model via form_utils
@@ -720,9 +742,7 @@ export default {
       // so let's keep it consistent. cf. https://stackoverflow.com/a/10294291/629238 */
       if (!checkValidity || this.subject.length < minLength) {
         valid = false
-        const minLengthMessage = this.i18n._('valueMinLength', {
-          count: minLength
-        })
+        const minLengthMessage = this.minLengthMessage(minLength)
         if (checkValidity) {
           // if browser wrong, force our message
           this.$refs.subject.setCustomValidity(minLengthMessage)
@@ -748,9 +768,8 @@ export default {
       let valid = true
       this.showPlaceholderReplacer = false
       if (this.body.includes(PLACEHOLDER_MARKER)) {
-        const placeholderMessage = this.i18n._('containsPlaceholderMarker', {
-          placeholder: PLACEHOLDER_MARKER
-        })
+        const placeholderMessage = this
+          .gettext`The body contains an illegal placeholder (${PLACEHOLDER_MARKER}).`
         this.bodyValidationErrors.push(placeholderMessage)
         this.showPlaceholderReplacer = true
         this.$refs.body.setCustomValidity(placeholderMessage)
@@ -761,9 +780,7 @@ export default {
       const checkValidity = this.$refs.body.checkValidity()
       if (!checkValidity || this.body.length < minLength) {
         valid = false
-        const minLengthMessage = this.i18n._('valueMinLength', {
-          count: minLength
-        })
+        const minLengthMessage = this.minLengthMessage(minLength)
         if (checkValidity) {
           this.$refs.body.setCustomValidity(minLengthMessage)
         } else {
