@@ -11,7 +11,9 @@
         {% block navbar %}
             {% include "header.html" %}
         {% endblock %}
-        {% include "snippets/breadcrumbs.html" %}
+        {% block breadcrumbs %}
+            {% include "snippets/breadcrumbs.html" %}
+        {% endblock breadcrumbs %}
         {% block body_wrapper %}
             <main class="main" id="main">
                 {% block index_banner %}{% endblock %}
