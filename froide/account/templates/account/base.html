@@ -3,12 +3,10 @@
 {% block navbar %}
     {% include "account/header.html" %}
 {% endblock %}
+{% block breadcrumbs %}
+    {% include "account/includes/breadcrumbs.html" %}
+{% endblock %}
 {% block body %}
-    <div class="bg-body-tertiary text-body-tertiary">
-        {% block breadcrumbs %}
-            {% include "account/includes/breadcrumbs.html" %}
-        {% endblock %}
-    </div>
     {% block app_body %}
         <div class="container mb-5 mt-3">
             {% block app_container %}{% endblock %}
