@@ -3,7 +3,7 @@
 {% block title %}
     {% trans "Organizations" %}
 {% endblock %}
-{% block body %}
+{% block breadcrumbs %}
     <div class="bg-body-tertiary">
         <nav class="container" aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -23,6 +23,8 @@
             </ol>
         </nav>
     </div>
+{% endblock breadcrumbs %}
+{% block body %}
     <div class="container">
         <h1 class="py-4">{% trans "Your Organizations" %}</h1>
         <div class="row">
