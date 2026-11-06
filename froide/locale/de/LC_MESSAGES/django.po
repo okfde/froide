@@ -3992,9 +3992,7 @@ msgstr "Start"
 
 #: froide/account/templates/account/includes/breadcrumbs.html
 #: froide/foirequest/templates/foirequest/header/breadcrumb.html
-#: froide/organization/templates/organization/organization_list.html
-#: froide/organization/templates/organization/organization_list_own.html
-#: froide/organization/templates/organization/organization_update_form.html
+#: froide/organization/templates/organization/includes/breadcrumbs.html
 #: froide/publicbody/templates/publicbody/base.html
 #: froide/searchalert/templates/searchalert/base.html
 #: froide/templates/snippets/breadcrumbs.html
@@ -5363,9 +5361,9 @@ msgstr "Organisation „%(name)s“"
 msgid "Organization “%(name)s” has invited you"
 msgstr "Organisation „%(name)s“ hat Sie eingeladen"
 
+#: froide/organization/templates/organization/includes/breadcrumbs.html
 #: froide/organization/templates/organization/organization_list.html
 #: froide/organization/templates/organization/organization_list_own.html
-#: froide/organization/templates/organization/organization_update_form.html
 #: froide/organization/views.py
 msgid "Organizations"
 msgstr "Organisationen"
