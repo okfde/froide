@@ -45,10 +45,24 @@
   }
 }
 
+$breadcrumb-overlay-height: 2.3rem !default;
+$breadcrumb-overlay-z-index: 40 !default;
+
 .breadcrumb-overlay {
   position: relative;
-  margin-bottom: -2.3rem;
-  z-index: 40;
+  margin-bottom: -$breadcrumb-overlay-height;
+  z-index: $breadcrumb-overlay-z-index;
   --#{$prefix}bg-opacity: 0.75;
   background-blend-mode: screen;
+}
+
+// Flash messages on pages with overlay breadcrumbs: they stay first in
+// <main> (reading order, skip link), but take up no space, so the content
+// below still starts under the breadcrumbs. They float over it until closed.
+.messages-overlay {
+  position: relative;
+  top: $breadcrumb-overlay-height + $spacer;
+  z-index: $breadcrumb-overlay-z-index + 1;
+  height: 0;
+  min-height: 0;
 }
