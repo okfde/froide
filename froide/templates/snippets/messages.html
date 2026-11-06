@@ -1,6 +1,9 @@
 {% load i18n %}
+{% load breadcrumb_helper %}
 {% if messages %}
-    <div class="container h-list g-3">
+    {% get_breadcrumbs view as view_breadcrumbs %}
+    {# overlay: float over content below overlay breadcrumbs, see breadcrumb.scss #}
+    <div class="container h-list g-3{% if overlay|default:view_breadcrumbs.overlay %} messages-overlay{% endif %}">
         {% for message in messages %}
             <div class="alert {% if message.tags == "error" %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} show alert-dismissible"
                  role="alert">
