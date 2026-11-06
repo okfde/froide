@@ -5,28 +5,9 @@
     {% blocktrans with name=object.name %}Organization “{{ name }}”{% endblocktrans %}
 {% endblock %}
 {% block breadcrumbs %}
-    <div class="bg-body-tertiary">
-        <nav class="container" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    {# djlint:off D018 #}
-                    <a href="/">
-                        <i class="fa fa-home"></i>
-                        <span class="visually-hidden">{% trans "Home Page" %}</span>
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{% url "organization-update" slug=object.slug %}">{% translate "Edit Organization" %}</a>
-                </li>
-            </ol>
-        </nav>
-    </div>
+    {% translate "Edit Organization" as last_item %}
+    {% url "organization-update" slug=object.slug as last_item_url %}
+    {% include "organization/includes/breadcrumbs.html" with last_item=last_item last_item_url=last_item_url %}
 {% endblock breadcrumbs %}
 {% block app_body %}
     <div class="row mb-3 mt-3">

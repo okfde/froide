@@ -1,0 +1,31 @@
+{% load i18n %}
+<div class="bg-body-tertiary">
+    <nav class="container" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                {# djlint:off D018 #}
+                <a href="/">
+                    <i class="fa fa-home"></i>
+                    <span class="visually-hidden">{% trans "Home Page" %}</span>
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
+            </li>
+            {% if object %}
+                <li class="breadcrumb-item">
+                    <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
+                </li>
+            {% endif %}
+            {% if last_item %}
+                <li class="breadcrumb-item active">
+                    {% if last_item_url %}
+                        <a href="{{ last_item_url }}" aria-current="page">{{ last_item }}</a>
+                    {% else %}
+                        <span>{{ last_item }}</span>
+                    {% endif %}
+                </li>
+            {% endif %}
+        </ol>
+    </nav>
+</div>
