@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block body %}
+{% block breadcrumbs %}
     {% if request.user.is_authenticated %}
         <div class="bg-body-tertiary text-body-tertiary">
             <nav class="container" aria-label="breadcrumb">
@@ -24,6 +24,8 @@
             </nav>
         </div>
     {% endif %}
+{% endblock breadcrumbs %}
+{% block body %}
     {% block app_body %}
     {% endblock app_body %}
 {% endblock body %}
