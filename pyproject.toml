@@ -43,7 +43,7 @@ dependencies = [
   "drf-spectacular[sidecar]",
   "easy-thumbnails>=2.9.0",
   "elasticsearch-dsl>=8.0.0,<9.0.0",
-  "elasticsearch<9.0.0,>=8.0.0",
+  "elasticsearch>=8.0.0,<10.0.0",
   "geoip2",
   "icalendar",
   "lxml[html-clean]>=5.2.0",
