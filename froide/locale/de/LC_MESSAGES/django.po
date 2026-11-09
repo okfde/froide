@@ -11096,10 +11096,14 @@ msgctxt "slug"
 msgid "refused"
 msgstr "abgelehnt"
 
-#: froide/foirequest/templates/foirequest/header/breadcrumb.html
 #: froide/foirequest/views/make_request.py
 msgid "request"
 msgstr "Anfrage"
+
+#: froide/foirequest/templates/foirequest/header/breadcrumb.html
+#, python-format
+msgid "request #%(id)s"
+msgstr "Anfrage #%(id)s"
 
 #: froide/foirequest/models/event.py
 msgid "request became overdue"

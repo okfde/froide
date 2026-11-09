@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load breadcrumb_helper %}
 <div class="bg-body-tertiary text-body-tertiary">
     <nav class="container" aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -9,18 +10,12 @@
                     <span class="visually-hidden">{% trans "Home Page" %}</span>
                 </a>
             </li>
-            <li class="breadcrumb-item">
-                <a href="{% url 'account-show' %}">{% translate "Account" %}</a>
-            </li>
+            {% breadcrumb_item _("Account") url_name="account-show" %}
             {% if section_url %}
-                <li class="breadcrumb-item">
-                    <a href="{{ section_url }}">{{ section_name }}</a>
-                </li>
+                {% breadcrumb_item section_name section_url %}
             {% endif %}
             {% if last_item %}
-                <li class="breadcrumb-item active">
-                    <span>{{ last_item }}</span>
-                </li>
+                {% breadcrumb_item last_item current=True %}
             {% endif %}
         </ol>
     </nav>

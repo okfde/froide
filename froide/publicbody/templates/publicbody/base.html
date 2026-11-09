@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load breadcrumb_helper %}
 {% block nav_publicbodies %}
     active
 {% endblock nav_publicbodies %}
@@ -17,19 +18,12 @@
                         <span class="visually-hidden">{% trans "Home Page" %}</span>
                     </a>
                 </li>
-                <li class="breadcrumb-item">
-                    {# djlint:off D018 #}
-                    <a href="{% url 'publicbody-list' %}">{% trans "Public Bodies" %}</a>
-                </li>
+                {% breadcrumb_item _("Public Bodies") url_name="publicbody-list" %}
                 {% if object %}
-                    <li class="breadcrumb-item">
-                        <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
-                    </li>
+                    {% breadcrumb_item object.name object.get_absolute_url %}
                 {% endif %}
                 {% if breacrumb_item %}
-                    <li class="breadcrumb-item active">
-                        <span>{{ breacrumb_item }}</span>
-                    </li>
+                    {% breadcrumb_item breacrumb_item current=True %}
                 {% endif %}
             </ol>
         </nav>

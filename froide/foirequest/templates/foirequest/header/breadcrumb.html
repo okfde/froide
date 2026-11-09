@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load breadcrumb_helper %}
 <div class="bg-body-tertiary">
     <nav class="container" aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -9,20 +10,15 @@
                     <span class="visually-hidden">{% trans "Home Page" %}</span>
                 </a>
             </li>
-            <li class="breadcrumb-item">
-                {% if object.user == request.user %}
-                    <a href="{% url 'account-show' %}">{% trans "My requests" %}</a>
-                {% else %}
-                    <a href="{% url 'foirequest-list' %}">{% trans "Requests" %}</a>
-                {% endif %}
-            </li>
-            <li class="breadcrumb-item">
-                <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{% trans "request" %} #{{ object.id }}</a>
-            </li>
+            {% if object.user == request.user %}
+                {% breadcrumb_item _("My requests") url_name="account-show" %}
+            {% else %}
+                {% breadcrumb_item _("Requests") url_name="foirequest-list" %}
+            {% endif %}
+            {% blocktrans with id=object.id asvar request_label %}request #{{ id }}{% endblocktrans %}
+            {% breadcrumb_item request_label object.get_absolute_url link_title=object.title %}
             {% if last_item %}
-                <li class="breadcrumb-item active">
-                    <span>{{ last_item }}</span>
-                </li>
+                {% breadcrumb_item last_item current=True %}
             {% endif %}
         </ol>
     </nav>

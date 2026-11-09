@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load breadcrumb_helper %}
 {% block breadcrumbs %}
     {% if request.user.is_authenticated %}
         <div class="bg-body-tertiary text-body-tertiary">
@@ -12,13 +13,9 @@
                             <span class="visually-hidden">{% trans "Home Page" %}</span>
                         </a>
                     </li>
-                    <li class="breadcrumb-item">
-                        <a href="{% url 'searchalert:list' %}">{% translate "Search alerts" %}</a>
-                    </li>
+                    {% breadcrumb_item _("Search alerts") url_name="searchalert:list" %}
                     {% if alert %}
-                        <li class="breadcrumb-item active">
-                            <span>{{ alert.description }}</span>
-                        </li>
+                        {% breadcrumb_item alert.description current=True %}
                     {% endif %}
                 </ol>
             </nav>
