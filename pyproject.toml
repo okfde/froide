@@ -2,7 +2,7 @@
 name = "froide"
 readme = "README.md"
 license = { file = "LICENSE.txt" }
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 description = "German Freedom of Information Portal"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -36,7 +36,7 @@ dependencies = [
   "django-storages",
   "django-taggit>=2",
   "django-treebeard",
-  "django>=4.2,<5",
+  "django>=5.1",
   "djangorestframework",
   "djangorestframework-csv",
   "djangorestframework-jsonp",
