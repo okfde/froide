@@ -49,7 +49,7 @@ dependencies = [
   "lxml[html-clean]>=5.2.0",
   "markdown",
   "phonenumbers",
-  "pillow>=9.0.0",
+  "pillow>=13.0.0",
   "pikepdf==9.0.0",
   "psycopg[binary]>=3.2.1",
   "pyisemail",

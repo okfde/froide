@@ -1144,7 +1144,7 @@ requires-dist = [
     { name = "pbr", marker = "extra == 'test'" },
     { name = "phonenumbers" },
     { name = "pikepdf", specifier = "==9.0.0" },
-    { name = "pillow", specifier = ">=9.0.0" },
+    { name = "pillow", specifier = ">=13.0.0" },
     { name = "pre-commit", marker = "extra == 'test'" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.1" },
     { name = "pycodestyle", marker = "extra == 'test'" },
