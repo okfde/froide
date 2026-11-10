@@ -7381,7 +7381,7 @@ msgstr "Überspringen"
 msgid "Skip this part next time and start at “Choose public body” (optional)"
 msgstr "Diesen Teil beim nächsten Mal überspringen und direkt mit „Behörde wählen“ beginnen (optional)"
 
-#: froide/templates/header.html
+#: froide/templates/base.html
 msgid "Skip to main content"
 msgstr "Zum Hauptinhalt springen"
 

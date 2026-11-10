@@ -4,6 +4,9 @@
 {% load frontendbuild %}
 {% block body_tag %}
     {% block above_footer %}
+        {% block skip_link %}
+            <a href="#main" class="visually-hidden-focusable skippy">{% trans "Skip to main content" %}</a>
+        {% endblock skip_link %}
         {% if request.user.is_authenticated and request.session.impostor %}
             {% include "account/includes/impostor.html" %}
         {% endif %}
