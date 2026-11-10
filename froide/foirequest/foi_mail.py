@@ -187,7 +187,7 @@ class DeferredMessageNeeded(Exception):
         super().__init__(*args, **kwargs)
 
 
-def 0_deliver_mail(email: ParsedEmail, mail_bytes=None, manual=False):
+def _deliver_mail(email: ParsedEmail, mail_bytes=None, manual=False):
     received_list = (
         email.to + email.cc + email.resent_to + email.resent_cc + email.x_original_to
     )
