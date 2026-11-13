@@ -1,4 +1,3 @@
-incomplete:color-contrast
 violations:color-contrast
 violations:label
 violations:link-in-text-block
