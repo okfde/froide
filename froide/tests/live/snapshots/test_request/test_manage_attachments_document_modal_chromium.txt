@@ -4,4 +4,3 @@ violations:button-name
 violations:color-contrast
 violations:heading-order
 violations:label
-violations:scrollable-region-focusable
