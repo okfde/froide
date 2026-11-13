@@ -23,9 +23,19 @@ DEFAULT_AXE_OPTIONS: dict = {
     "resultTypes": RESULT_TYPES,
 }
 
+# Findings that depend on how the platform renders the page, not on the page itself,
+# so they differ between machines.
+DEFAULT_IGNORED_FINDINGS = frozenset({"incomplete:color-contrast"})
+
 
 @pytest.fixture
-def check_a11y(request, snapshot_regression, a11y_axe_options, pytestconfig):
+def check_a11y(
+    request,
+    snapshot_regression,
+    a11y_axe_options,
+    a11y_ignored_findings,
+    pytestconfig,
+):
     """Assert that a page turns up nothing new since the last snapshot.
 
     The snapshot is named after the test, `suffix` is appended to that. `context` and
@@ -56,7 +66,9 @@ def check_a11y(request, snapshot_regression, a11y_axe_options, pytestconfig):
             page, context=context, options={**a11y_axe_options, **(options or {})}
         )
         snapshot_regression.check(
-            "\n".join(f"{finding}" for finding in _findings(results)),
+            "\n".join(
+                f"{finding}" for finding in _findings(results, a11y_ignored_findings)
+            ),
             extension=".txt",
             basename=_basename(request.node.name, suffix),
             check_fn=lambda obtained, expected: _compare(
@@ -146,6 +158,15 @@ def a11y_axe_options() -> dict:
 
 
 @pytest.fixture(scope="session")
+def a11y_ignored_findings() -> frozenset[str]:
+    """`<result type>:<rule id>` findings that are not recorded or reported.
+
+    Override in a conftest to ignore a different set.
+    """
+    return DEFAULT_IGNORED_FINDINGS
+
+
+@pytest.fixture(scope="session")
 def snapshot_dirname() -> str:
     """Directory, relative to a test module, that regression data is kept in.
 
@@ -173,7 +194,7 @@ def snapshot_regression(
     return FileRegressionFixture(LazyDataDir(datadir, tmp_path), datadir, request)
 
 
-def _findings(results: "AxeResults") -> list[str]:
+def _findings(results: "AxeResults", ignored: frozenset[str]) -> list[str]:
     """The `<result type>:<rule id>` label of every finding on the page."""
     return sorted(
         {
@@ -181,6 +202,7 @@ def _findings(results: "AxeResults") -> list[str]:
             for result_type in RESULT_TYPES
             for finding in results.response[result_type]
         }
+        - ignored
     )
 
 
