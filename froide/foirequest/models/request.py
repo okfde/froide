@@ -761,7 +761,7 @@ class FoiRequest(models.Model):
     def get_throttle_message(cls):
         return mark_safe(
             _(
-                'You exceeded your request limit of %(count)s requests in %(time)s. <a href="%(url)s">Learn more</a>'
+                'You exceeded your request limit of %(count)s requests in %(time)s. <a href="%(url)s" class="alert-link">Learn more</a>'
             )
         )
 

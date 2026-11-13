@@ -796,7 +796,7 @@ def create_export(request):
                     format_html(
                         _(
                             "Your next export will be possible at {date}. "
-                            '<a href="{url}">You can download your current '
+                            '<a href="{url}" class="alert-link">You can download your current '
                             "export here</a>."
                         ),
                         date=formats.date_format(result, "SHORT_DATETIME_FORMAT"),
