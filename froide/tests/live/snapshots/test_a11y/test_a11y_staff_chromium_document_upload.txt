@@ -1,4 +1,3 @@
 incomplete:aria-prohibited-attr
 incomplete:aria-required-children
-incomplete:color-contrast
 violations:color-contrast

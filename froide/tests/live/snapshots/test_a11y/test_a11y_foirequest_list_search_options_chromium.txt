@@ -1,3 +1,2 @@
-incomplete:color-contrast
 violations:color-contrast
 violations:select-name
