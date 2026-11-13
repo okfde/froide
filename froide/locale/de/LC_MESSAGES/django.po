@@ -9315,8 +9315,8 @@ msgstr "Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s überschr
 
 #: froide/foirequest/models/request.py
 #, python-format
-msgid "You exceeded your request limit of %(count)s requests in %(time)s. <a href=\"%(url)s\">Learn more</a>"
-msgstr "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s überschritten. Dies ist eine automatische Vorsichtsmaßnahme. <a href=\"%(url)s\">Mehr erfahren</a>"
+msgid "You exceeded your request limit of %(count)s requests in %(time)s. <a href=\"%(url)s\" class=\"alert-link\">Learn more</a>"
+msgstr "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s überschritten. Dies ist eine automatische Vorsichtsmaßnahme. <a href=\"%(url)s\" class=\"alert-link\">Mehr erfahren</a>"
 
 #: froide/helper/spam.py
 msgid "You filled this form out too quickly."
@@ -9782,8 +9782,8 @@ msgstr "Ihr Name:"
 
 #: froide/account/views.py
 #, python-brace-format
-msgid "Your next export will be possible at {date}. <a href=\"{url}\">You can download your current export here</a>."
-msgstr "Ihr nächster Datenexport ist möglich am {date}. <a href=\"{url}\">Sie können Ihren Export hier herunterladen</a>."
+msgid "Your next export will be possible at {date}. <a href=\"{url}\" class=\"alert-link\">You can download your current export here</a>."
+msgstr "Ihr nächster Datenexport ist möglich am {date}. <a href=\"{url}\" class=\"alert-link\">Sie können Ihren Export hier herunterladen</a>."
 
 #: froide/account/views.py
 msgid "Your password has been changed."
