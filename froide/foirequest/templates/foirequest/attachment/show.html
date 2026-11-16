@@ -5,11 +5,11 @@
 {% block title %}
     {% blocktrans with name=attachment.name title=foirequest.title %}{{ name }} in request „{{ title }}“{% endblocktrans %}
 {% endblock %}
+{% block breadcrumbs %}
+    {% blocktrans with date=message.timestamp|date:"SHORT_DATE_FORMAT" asvar breadcrumb_label %}Attachment of message from {{ date }}{% endblocktrans %}
+    {% include "foirequest/header/breadcrumb.html" with object=foirequest last_item=breadcrumb_label %}
+{% endblock breadcrumbs %}
 {% block body %}
-    <div class="bg-body-tertiary">
-        {% blocktrans with date=message.timestamp|date:"SHORT_DATE_FORMAT" asvar breadcrumb_label %}Attachment of message from {{ date }}{% endblocktrans %}
-        {% include "foirequest/header/breadcrumb.html" with object=foirequest last_item=breadcrumb_label %}
-    </div>
     <div class="container mt-3 mb-3">
         {% block attachment_top %}
             <h2>{% blocktrans with name=attachment.name %}Attachment “{{ name }}”{% endblocktrans %}</h2>

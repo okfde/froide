@@ -6,7 +6,7 @@
 {% block title %}
     {% trans "Public Bodies" %} - {{ SITE_NAME }}
 {% endblock title %}
-{% block body %}
+{% block breadcrumbs %}
     <div class="bg-body-tertiary">
         <nav class="container" aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -34,5 +34,4 @@
             </ol>
         </nav>
     </div>
-    {{ block.super }}
-{% endblock body %}
+{% endblock breadcrumbs %}

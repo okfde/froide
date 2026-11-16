@@ -63,10 +63,11 @@
         {% with object.get_set_tags_form as set_tags_form %}{{ set_tags_form.media.css }}{% endwith %}
     {% endif %}
 {% endblock %}
+{% block breadcrumbs %}
+    {% include "foirequest/header/breadcrumb.html" %}
+{% endblock breadcrumbs %}
 {% block body %}
     {% block app_body %}
-        {# breadcrumb #}
-        <div class="bg-body-tertiary">{% include "foirequest/header/breadcrumb.html" %}</div>
         {# header,  #}
         <div class="bg-body-tertiary">
             {% include "foirequest/header/header.html" %}
