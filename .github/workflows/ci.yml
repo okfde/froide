@@ -11,14 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Install pnpm
-        uses: pnpm/action-setup@v5
-      - uses: actions/setup-node@v6
+      - uses: pnpm/setup@v3
         with:
-          node-version: 24
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install
+          cache: true
       - uses: j178/prek-action@v1
         env:
           SKIP: makemessages-de
@@ -27,27 +22,23 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.12", "3.13", "3.14"]
+        python-version: ['3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v6
+      - name: Install system-level dependencies
+        run: sudo apt-get update && sudo apt-get install libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev poppler-utils ghostscript gettext
       - name: Setup uv
         uses: astral-sh/setup-uv@v8.0.0
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
-      - name: Install pnpm
-        uses: pnpm/action-setup@v5
-      - uses: actions/setup-node@v6
+      - uses: pnpm/setup@v3
         with:
-          node-version: 24
-          cache: pnpm
-      - name: Install system-level dependencies
-        run: sudo apt-get update && sudo apt-get install libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev poppler-utils ghostscript gettext
+          cache: true
       - name: Install dependencies
         run: |
           uv sync
           playwright install --with-deps chromium
-          pnpm install
       - name: Check German translations are up to date
         if: matrix.python-version == '3.13'
         run: |

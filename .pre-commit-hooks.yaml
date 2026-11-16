@@ -28,3 +28,25 @@
   entry: make checkmessagesde
   files: \.(py|html|txt|po)$
   pass_filenames: false
+
+- id: unlink-frontend
+  name: Unlink frontend
+  language: script
+  entry: ./scripts/unlink_frontend.sh
+  files: pnpm-lock.yaml
+  stages: [pre-commit]
+
+- id: ensure-consistent-dependencies
+  name: Ensure consistent dependencies (pnpm/uv.lock)
+  language: python
+  language_version: '3.13'
+  entry: scripts/ensure_consistent_dependencies.py
+  additional_dependencies:
+    - pyyaml
+
+- id: relink-frontend
+  name: Re-link frontend
+  language: script
+  entry: ./scripts/relink_frontend.sh
+  always_run: true
+  stages: [post-commit]
