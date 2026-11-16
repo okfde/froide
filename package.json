@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@hey-api/openapi-ts": "^0.99.0",
-    "@okfde/filingcabinet": "github:okfde/django-filingcabinet",
+    "@okfde/filingcabinet": "github:okfde/django-filingcabinet#krmax44\/pnpm-upgrade",
     "@panzoom/panzoom": "^4.6.2",
     "@popperjs/core": "^2.11.5",
     "@types/lodash.throttle": "^4.1.9",
@@ -82,5 +82,5 @@
     }
   },
   "prettier": "prettier-config-standard",
-  "packageManager": "pnpm@9.15.5"
+  "packageManager": "pnpm@12.21.0"
 }
