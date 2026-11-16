@@ -3,8 +3,10 @@
 {% block title %}
     {% trans "Organizations" %}
 {% endblock %}
-{% block body %}
+{% block breadcrumbs %}
     {% include "organization/includes/breadcrumbs.html" %}
+{% endblock breadcrumbs %}
+{% block body %}
     <div class="container">
         <h1 class="py-4">{% trans "Your Organizations" %}</h1>
         <div class="row">
