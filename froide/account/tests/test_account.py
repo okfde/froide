@@ -708,6 +708,15 @@ def test_go_does_not_redirect_to_other_host(client, url):
 
 
 @pytest.mark.django_db
+def test_go_rejects_non_hex_token(client):
+    # The URL pattern should reject non-hex tokens so that a 404 error
+    # is thrown instead of a 500.
+    user = UserFactory.create()
+    go_url = f"/account/go/{user.id}/{'z' * 32}/"
+    assert client.get(go_url).status_code == 404
+
+
+@pytest.mark.django_db
 def test_profile_page(world, client):
     user = User.objects.get(username="sw")
     response = client.get(reverse("account-profile", kwargs={"slug": user.username}))
