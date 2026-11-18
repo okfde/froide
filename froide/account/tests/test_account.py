@@ -673,6 +673,41 @@ def test_go_redirect_without_loop(client):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("url", ["//example.com", "///example.com"])
+def test_go_does_not_redirect_to_other_host(client, url):
+    user = UserFactory.create()
+    other_user = UserFactory.create()
+    go_url = reverse(
+        "account-go",
+        kwargs={"user_id": str(user.id), "token": "a" * 32, "url": url},
+    )
+
+    # Login link form
+    response = client.get(go_url)
+    assert response.context["next"] == "/"
+
+    # Login optional, but login fails
+    response = client.post(go_url, {"nologin": "1"})
+    assert response.status_code == 302
+    assert response["Location"] == "/"
+
+    # Logged in as other user
+    client.force_login(other_user)
+    response = client.get(go_url)
+    assert response.status_code == 302
+    assert response["Location"] == "/"
+
+    # Anonymous, login optional, non-existent user id: still redirects
+    client.logout()
+    nonexistent_url = reverse(
+        "account-go", kwargs={"user_id": "80000", "token": "a" * 32, "url": url}
+    )
+    response = client.post(nonexistent_url, {"nologin": "1"})
+    assert response.status_code == 302
+    assert response["Location"] == "/"
+
+
+@pytest.mark.django_db
 def test_profile_page(world, client):
     user = User.objects.get(username="sw")
     response = client.get(reverse("account-profile", kwargs={"slug": user.username}))
