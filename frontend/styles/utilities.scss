@@ -1,6 +1,13 @@
 @use 'sass:map';
 @use 'sass:list';
 
+// Bootstrap's .focus-ring helper composes a single-tone shadow from its parts,
+// which would drop the light inner ring. Use the two-tone value instead so the
+// helper matches the focus style of every other interactive element.
+.focus-ring:focus {
+  box-shadow: var(--#{$prefix}focus-ring-box-shadow);
+}
+
 // TODO: refactor this to use the same map as bootstrap
 
 @each $name in $froide-theme {

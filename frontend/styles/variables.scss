@@ -98,6 +98,34 @@ $btn-font-weight: 600;
 $btn-box-shadow: 0 0 0 transparent; // shadow only when focused or active
 $badge-font-weight: 400;
 
+$btn-hover-bg-shade-amount: 50%;
+$btn-active-bg-shade-amount: 50%;
+
+// Focus: Two-tone focus ring
+$focus-ring-inner-width: 0.125rem;
+$focus-ring-width: 0.3125rem;
+$focus-ring-opacity: 1;
+$focus-ring-inner-color: $white;
+$focus-ring-color: $blue-800;
+$focus-ring-box-shadow-light:
+  0 0 0 $focus-ring-inner-width $focus-ring-inner-color,
+  0 0 0 $focus-ring-width $focus-ring-color;
+
+// Dark mode swaps the two tones so the sandwich keeps working
+$focus-ring-inner-color-dark: $blue-800;
+$focus-ring-color-dark: $white;
+$focus-ring-box-shadow-dark:
+  0 0 0 $focus-ring-inner-width $focus-ring-inner-color-dark,
+  0 0 0 $focus-ring-width $focus-ring-color-dark;
+
+// Bootstrap compiles $focus-ring-box-shadow into its components (inputs,
+// checks, nav links, pagination, …). Point it at the CSS variable that root.scss
+// switches per color mode, so every component follows the dark-mode swap.
+// ($prefix is not defined yet at this point, hence the literal `--bs-`.)
+$focus-ring-box-shadow: var(--bs-focus-ring-box-shadow);
+// Selects build their own single-tone ring by default
+$form-select-focus-box-shadow: $focus-ring-box-shadow;
+
 $link-decoration: none;
 $link-hover-decoration: underline;
 

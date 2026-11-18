@@ -1,3 +1,7 @@
+.btn {
+  --#{$prefix}btn-focus-box-shadow: #{$focus-ring-box-shadow};
+}
+
 .btn .on-hover {
   display: none;
 }
