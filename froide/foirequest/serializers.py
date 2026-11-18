@@ -1,6 +1,7 @@
 from typing import override
 
-from django.db.models import Prefetch
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Case, Prefetch, Value, When
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
@@ -9,6 +10,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.views import PermissionDenied
 from taggit.serializers import TaggitSerializer, TagListSerializerField
 
+from froide.comments.models import FroideComment
 from froide.document.api_views import DocumentSerializer
 from froide.helper.text_diff import get_differences
 from froide.publicbody.models import PublicBody
@@ -218,13 +220,40 @@ class FoiRequestListSerializer(
         return super().update(instance, validated_data)
 
 
+class FoiRequestCommentSerializer(serializers.ModelSerializer):
+    message = serializers.IntegerField(source="object_pk", read_only=True)
+    user_name = serializers.SerializerMethodField()
+    is_requester = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = FroideComment
+        fields = (
+            "id",
+            "message",
+            "user_name",
+            "is_requester",
+            "is_moderation",
+            "submit_date",
+            "comment",
+        )
+
+    def get_user_name(self, obj):
+        # same rules as the comment template on the website
+        if not self.context["request"].user.is_authenticated:
+            return None
+        if obj.is_requester and obj.user and obj.user.private:
+            return None
+        return obj.user_name
+
+
 class FoiRequestDetailSerializer(FoiRequestListSerializer):
     public_body = PublicBodySerializer(read_only=True)
     law = FoiLawSerializer(read_only=True)
     messages = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
 
     class Meta(FoiRequestListSerializer.Meta):
-        fields = FoiRequestListSerializer.Meta.fields + ("messages",)
+        fields = FoiRequestListSerializer.Meta.fields + ("messages", "comments")
 
     def get_messages(self, obj):
         qs = optimize_message_queryset(
@@ -232,6 +261,28 @@ class FoiRequestDetailSerializer(FoiRequestListSerializer):
         )
         return FoiMessageSerializer(
             qs, read_only=True, many=True, context=self.context
+        ).data
+
+    def get_comments(self, obj):
+        comments = (
+            FroideComment.objects.filter(
+                content_type=ContentType.objects.get_for_model(FoiMessage),
+                object_pk__in=[m.id for m in obj.messages],
+                site_id=obj.site_id,
+                is_public=True,
+                is_removed=False,
+            )
+            .annotate(
+                is_requester=Case(
+                    When(user=obj.user, then=Value(True)),
+                    default=Value(False),
+                ),
+            )
+            .order_by("submit_date")
+            .select_related("user")
+        )
+        return FoiRequestCommentSerializer(
+            comments, many=True, context=self.context
         ).data
 
 

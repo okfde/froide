@@ -5,6 +5,7 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.db import connection
 from django.test import RequestFactory, TestCase
@@ -15,7 +16,8 @@ from django.utils import timezone
 import pytest
 from oauth2_provider.models import get_access_token_model, get_application_model
 
-from froide.foirequest.models import FoiAttachment, FoiRequest
+from froide.comments.models import FroideComment
+from froide.foirequest.models import FoiAttachment, FoiMessage, FoiRequest
 from froide.foirequest.models.event import FoiEvent
 from froide.foirequest.models.request import Resolution, Status
 from froide.foirequest.serializers import FoiMessageSerializer
@@ -559,3 +561,84 @@ def test_foirequest_update(client, user):
         content_type="application/json",
     )
     assert response.status_code == 400
+
+
+def make_comment(message, user, **kwargs):
+    return FroideComment.objects.create(
+        content_type=ContentType.objects.get_for_model(FoiMessage),
+        object_pk=message.pk,
+        site_id=message.request.site_id,
+        user=user,
+        user_name=user.get_full_name(),
+        submit_date=timezone.now(),
+        **kwargs,
+    )
+
+
+@pytest.mark.django_db
+def test_request_detail_comments(client, user):
+    foirequest = factories.FoiRequestFactory.create()
+    message = factories.FoiMessageFactory.create(request=foirequest)
+    commenter = factories.UserFactory.create()
+    comment = make_comment(message, commenter, comment="Visible comment")
+    make_comment(message, commenter, comment="Removed comment", is_removed=True)
+    make_comment(message, commenter, comment="Hidden comment", is_public=False)
+    url = reverse("api:request-detail", kwargs={"pk": foirequest.pk})
+
+    # only public, non-removed comments, names only for logged in users
+    response = client.get(url)
+    assert response.status_code == 200
+    comments = response.json()["comments"]
+    assert len(comments) == 1
+    assert comments[0]["id"] == comment.id
+    assert comments[0]["message"] == message.id
+    assert comments[0]["comment"] == "Visible comment"
+    assert comments[0]["user_name"] is None
+    assert not comments[0]["is_requester"]
+
+    assert client.login(email=user.email, password="froide")
+    response = client.get(url)
+    assert response.status_code == 200
+    comments = response.json()["comments"]
+    assert comments[0]["user_name"] == commenter.get_full_name()
+
+    # comments are not part of the list response
+    response = client.get(reverse("api:request-list"))
+    assert response.status_code == 200
+    assert "comments" not in response.json()["objects"][0]
+
+
+@pytest.mark.django_db
+def test_request_detail_comments_private_requester(client, user):
+    requester = factories.UserFactory.create(private=True)
+    foirequest = factories.FoiRequestFactory.create(user=requester)
+    message = factories.FoiMessageFactory.create(request=foirequest)
+    make_comment(message, requester, comment="Requester comment")
+
+    assert client.login(email=user.email, password="froide")
+    response = client.get(reverse("api:request-detail", kwargs={"pk": foirequest.pk}))
+    assert response.status_code == 200
+    comments = response.json()["comments"]
+    assert len(comments) == 1
+    assert comments[0]["is_requester"]
+    assert comments[0]["user_name"] is None
+
+
+@pytest.mark.django_db
+def test_request_detail_comments_private_request(client, user):
+    foirequest = factories.FoiRequestFactory.create(
+        user=user, visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
+    )
+    message = factories.FoiMessageFactory.create(request=foirequest)
+    make_comment(message, user, comment="Private comment")
+    url = reverse("api:request-detail", kwargs={"pk": foirequest.pk})
+
+    response = client.get(url)
+    assert response.status_code == 404
+
+    assert client.login(email=user.email, password="froide")
+    response = client.get(url)
+    assert response.status_code == 200
+    comments = response.json()["comments"]
+    assert len(comments) == 1
+    assert comments[0]["comment"] == "Private comment"
