@@ -5080,6 +5080,11 @@ components:
           items:
             type: string
             maxLength: 255
+        address:
+          type: string
+          description: Postal address of the requester. If given, it is saved to
+            the user's profile and included in the request message.
+          maxLength: 300
       required:
       - body
       - publicbodies
