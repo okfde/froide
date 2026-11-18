@@ -22,6 +22,7 @@ from django.utils import formats, timezone, translation
 from django.utils.datastructures import MultiValueDict
 from django.utils.decorators import method_decorator
 from django.utils.html import format_html
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
@@ -169,6 +170,9 @@ def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse
     if url == "/":
         # If no further path is given, try extracting next parameter
         url = get_redirect_url(request, default=url)
+    elif not url_has_allowed_host_and_scheme(url, allowed_hosts=None):
+        # Only redirect to paths on this site, not e.g. to //example.com
+        url = "/"
     if request.user.is_authenticated:
         if request.user.id != int(user_id):
             messages.add_message(
