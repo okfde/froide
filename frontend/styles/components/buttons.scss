@@ -2,12 +2,6 @@
   --#{$prefix}btn-focus-box-shadow: #{$focus-ring-box-shadow};
 }
 
-@include color-mode(dark) {
-  .btn {
-    --#{$prefix}btn-focus-box-shadow: #{$focus-ring-box-shadow-dark};
-  }
-}
-
 .btn .on-hover {
   display: none;
 }

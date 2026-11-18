@@ -8,7 +8,7 @@
   // Two-tone focus ring, see $focus-ring-box-shadow in variables.scss
   --#{$prefix}focus-ring-inner-width: #{$focus-ring-inner-width};
   --#{$prefix}focus-ring-inner-color: #{$focus-ring-inner-color};
-  --#{$prefix}focus-ring-box-shadow: #{$focus-ring-box-shadow};
+  --#{$prefix}focus-ring-box-shadow: #{$focus-ring-box-shadow-light};
 
   @each $name, $value in $froide-theme-light {
     $bg: map.get($value, "bg");
