@@ -12,9 +12,21 @@
       const el = document.querySelector(`[name="${fieldName}"]`)
       if (el.id && window._choices_[el.id] && value) {
         const choicesInstance = window._choices_[el.id]
-        const parsedValue = JSON.parse(value)
-        choicesInstance.highlightAll().removeHighlightedItems()
-        choicesInstance.setValue(parsedValue)
+        const items = JSON.parse(value)
+        // Choices.js 11 only selects objects passed to setValue if they have
+        // selected: true, and skips values that already exist as a choice.
+        // So start from an empty store and mark every item as selected.
+        choicesInstance.clearStore()
+        choicesInstance.setValue(
+          items.map((item) => ({
+            value: String(item.value),
+            label: item.label,
+            selected: true
+          }))
+        )
+        // setValue fires no addItem event for an empty list, so update the
+        // submitted input directly
+        el.value = items.map((item) => item.value).join(',')
       } else {
         if (value === "None") {
           el.value = ""
