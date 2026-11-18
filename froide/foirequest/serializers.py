@@ -11,6 +11,7 @@ from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 from froide.document.api_views import DocumentSerializer
 from froide.helper.text_diff import get_differences
+from froide.proof.serializers import OwnProofField
 from froide.publicbody.models import PublicBody
 from froide.publicbody.serializers import (
     FoiLawSerializer,
@@ -250,6 +251,11 @@ class MakeRequestSerializer(serializers.Serializer):
     reference = serializers.CharField(required=False, default="")
     tags = serializers.ListField(
         required=False, child=serializers.CharField(max_length=255)
+    )
+    proof = OwnProofField(
+        required=False,
+        allow_null=True,
+        style={"base_template": "input.html"},
     )
 
     def validate_reference(self, value):

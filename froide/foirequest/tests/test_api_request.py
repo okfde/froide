@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core import mail
+from django.core.files.base import ContentFile
 from django.db import connection
 from django.test import RequestFactory, TestCase
 from django.test.utils import CaptureQueriesContext
@@ -20,6 +21,8 @@ from froide.foirequest.models.event import FoiEvent
 from froide.foirequest.models.request import Resolution, Status
 from froide.foirequest.serializers import FoiMessageSerializer
 from froide.foirequest.tests import factories
+from froide.proof.models import Proof
+from froide.proof.tests import JPEG_BYTES
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
 
@@ -355,6 +358,111 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
                 {"subject": "Test", "body": "Testing", "publicbodies": [self.pb.pk]},
             )
         self.assertEqual(response.status_code, 429)
+
+    def _make_proof(self, user, name="TestProof"):
+        proof = Proof(name=name, user=user)
+        proof.save_with_file(ContentFile(JPEG_BYTES))
+        return proof
+
+    def test_request_creation_with_proof(self):
+        self.access_token.scope = "read:user make:request"
+        self.access_token.save()
+        proof = self._make_proof(self.test_user)
+
+        mail.outbox = []
+        response, result = self.api_post(
+            self.request_list_url,
+            {
+                "subject": "Proof-Test",
+                "body": "Testing",
+                "publicbodies": [self.pb.pk],
+                "proof": proof.pk,
+            },
+        )
+        self.assertEqual(response.status_code, 201)
+        new_req = FoiRequest.objects.get(title="Proof-Test")
+        message = new_req.foimessage_set.get()
+        self.assertIn("testproof.jpg", message.plaintext)
+        with_proof = [m for m in mail.outbox if m.attachments]
+        self.assertEqual(len(with_proof), 1)
+        filename, content, mimetype = with_proof[0].attachments[0]
+        self.assertEqual(filename, "testproof.jpg")
+        self.assertEqual(content, JPEG_BYTES)
+        self.assertEqual(mimetype, "image/jpeg")
+
+    def test_request_creation_with_foreign_proof(self):
+        self.access_token.scope = "read:user make:request"
+        self.access_token.save()
+        proof = self._make_proof(self.dev_user)
+
+        old_count = FoiRequest.objects.all().count()
+        mail.outbox = []
+        response, result = self.api_post(
+            self.request_list_url,
+            {
+                "subject": "Foreign-Proof-Test",
+                "body": "Testing",
+                "publicbodies": [self.pb.pk],
+                "proof": proof.pk,
+            },
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("proof", result)
+        self.assertEqual(old_count, FoiRequest.objects.all().count())
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_request_creation_without_proof(self):
+        self.access_token.scope = "read:user make:request"
+        self.access_token.save()
+        self._make_proof(self.test_user)
+
+        mail.outbox = []
+        response, result = self.api_post(
+            self.request_list_url,
+            {
+                "subject": "No-Proof-Test",
+                "body": "Testing",
+                "publicbodies": [self.pb.pk],
+            },
+        )
+        self.assertEqual(response.status_code, 201)
+        new_req = FoiRequest.objects.get(title="No-Proof-Test")
+        self.assertNotIn("testproof", new_req.foimessage_set.get().plaintext)
+        self.assertFalse([m for m in mail.outbox if m.attachments])
+
+    def test_proof_list(self):
+        proof_url = reverse("api:proof-list")
+        own = self._make_proof(self.test_user, name="ID card")
+        self._make_proof(self.dev_user, name="Foreign passport")
+
+        # Not logged in
+        response = self.client.get(proof_url)
+        self.assertEqual(response.status_code, 401)
+
+        # Token without the required scope
+        auth = self._create_authorization_header(self.access_token.token)
+        response = self.client.get(proof_url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 403)
+
+        self.access_token.scope = "read:user make:request"
+        self.access_token.save()
+        response, result = self.api_get(proof_url)
+        self.assertEqual(result["meta"]["total_count"], 1)
+        item = result["objects"][0]
+        self.assertEqual(item["id"], own.pk)
+        self.assertEqual(item["name"], "ID card")
+        self.assertEqual(set(item.keys()), {"id", "name", "timestamp"})
+        self.assertNotContains(response, "Foreign passport")
+        self.assertNotContains(response, own.key)
+
+    def test_proof_list_session_auth(self):
+        own = self._make_proof(self.test_user)
+        self._make_proof(self.dev_user)
+        self.client.login(email=self.test_user.email, password="froide")
+        response = self.client.get(reverse("api:proof-list"))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content.decode("utf-8"))
+        self.assertEqual([o["id"] for o in result["objects"]], [own.pk])
 
     def test_foiattachment_upload(self):
         mes = factories.FoiMessageFactory.create(request=self.req, kind="post")
