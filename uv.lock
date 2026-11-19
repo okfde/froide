@@ -897,7 +897,7 @@ wheels = [
 [[package]]
 name = "django-filingcabinet"
 version = "0.0.1"
-source = { git = "https://github.com/okfde/django-filingcabinet.git?rev=main#3921166074f67d4c41a73cc4662a88ab7eef3c51" }
+source = { git = "https://github.com/okfde/django-filingcabinet.git?rev=krmax44%2Fpnpm-upgrade#9c541b2b9d8a226a3b96a76f7fb5763adfe72c23" }
 dependencies = [
     { name = "celery" },
     { name = "django" },
@@ -1432,7 +1432,7 @@ requires-dist = [
     { name = "django-contrib-comments" },
     { name = "django-crossdomainmedia", specifier = ">=0.0.4" },
     { name = "django-elasticsearch-dsl", specifier = ">=8.0,<9.0" },
-    { name = "django-filingcabinet", git = "https://github.com/okfde/django-filingcabinet.git?rev=main" },
+    { name = "django-filingcabinet", git = "https://github.com/okfde/django-filingcabinet.git?rev=krmax44%2Fpnpm-upgrade" },
     { name = "django-filter", specifier = ">=25.1" },
     { name = "django-json-widget" },
     { name = "django-leaflet", specifier = ">=0.32.0" },

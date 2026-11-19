@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@hey-api/openapi-ts": "^0.99.0",
-    "@okfde/filingcabinet": "github:okfde/django-filingcabinet",
+    "@okfde/filingcabinet": "github:okfde/django-filingcabinet#krmax44\/pnpm-upgrade",
     "@panzoom/panzoom": "^4.6.2",
     "@popperjs/core": "^2.11.5",
     "@types/lodash.throttle": "^4.1.9",
@@ -67,7 +67,7 @@
     "lodash.range": "^3.2.0",
     "lodash.sortby": "^4.7.0",
     "lodash.throttle": "^4.1.1",
-    "pdfjs-dist": "==2.16.105",
+    "pdfjs-dist": "=2.16.105",
     "pinia": "^3.0.4",
     "sortablejs": "^1.15.7",
     "vue": "^3.5.43",
@@ -82,5 +82,5 @@
     }
   },
   "prettier": "prettier-config-standard",
-  "packageManager": "pnpm@9.15.5"
+  "packageManager": "pnpm@12.21.0"
 }
