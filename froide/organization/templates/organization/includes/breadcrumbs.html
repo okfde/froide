@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load breadcrumb_helper %}
+<div class="bg-body-tertiary">
+    <nav class="container" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                {# djlint:off D018 #}
+                <a href="/">
+                    <i class="fa fa-home"></i>
+                    <span class="visually-hidden">{% trans "Home Page" %}</span>
+                </a>
+            </li>
+            {% breadcrumb_item _("Organizations") url_name="organization-list" %}
+            {% if object %}
+                {% breadcrumb_item object.name object.get_absolute_url %}
+            {% endif %}
+            {% if last_item %}
+                {% breadcrumb_item last_item last_item_url current=True %}
+            {% endif %}
+        </ol>
+    </nav>
+</div>
