@@ -172,7 +172,7 @@
         {% if object|can_write_foiproject:request %}</form>{% endif %}
     {% if problems %}
         <hr />
-        <h3>{% translate "Unresolved problem reports" %}</h3>
+        <h2 class="h3">{% translate "Unresolved problem reports" %}</h2>
         <div class="table-responsive">
             <table class="table table-hover table-sm">
                 <thead>
@@ -221,6 +221,6 @@
         {% trans "Assign team to project" as legend %}
         {% trans "Set team for project" as submit_button %}
         {% url 'foirequest-project_set_team' slug=object.slug as submit_url %}
-        {% include "team/_assign_team_form.html" with object=object form=team_form submit_url=submit_url legend=legend submit_button=submit_button %}
+        {% include "team/_assign_team_form.html" with object=object form=team_form submit_url=submit_url legend=legend submit_button=submit_button heading_tag="h2" %}
     {% endif %}
 {% endblock app_body %}
