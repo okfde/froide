@@ -2,7 +2,8 @@
 {% load static %}
 {% block after_field_sets %}
     {% if not original.pk %}
-        <script id="prefill-map" type="application/json">{"id_message": "{{ request.GET.prefill_message }}", "id_user": "{{ request.user.id }}"}</script>
+        <script id="prefill-map"
+                type="application/json">{"id_message": "{{ request.GET.prefill_message }}", "id_user": "{{ request.user.id }}"}</script>
         <script src="{% static 'admin/js/prefill-admin.js' %}"></script>
     {% endif %}
 {% endblock %}

@@ -89,7 +89,8 @@
             <h4>{% translate "Recovery Codes" %}</h4>
             {% if mfa_keys.by_method.TOTP or mfa_keys.by_method.FIDO2 %}
                 <p>
-                    <a class="btn btn-primary" href="{% url 'mfa:create' 'recovery' %}">{% translate "Setup recovery code" %}</a>
+                    <a class="btn btn-primary"
+                       href="{% url 'mfa:create' 'recovery' %}">{% translate "Setup recovery code" %}</a>
                 </p>
             {% else %}
                 <p>

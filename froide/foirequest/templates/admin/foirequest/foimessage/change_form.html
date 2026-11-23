@@ -6,7 +6,8 @@
             <form method="post"
                   action="{% url 'admin:foirequest-foimessage-resend_message' pk=original.pk %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-secondary">{% blocktrans %}Resend message{% endblocktrans %}</button>
+                <button type="submit"
+                        class="btn btn-secondary">{% blocktrans %}Resend message{% endblocktrans %}</button>
             </form>
         </li>
     {% endif %}

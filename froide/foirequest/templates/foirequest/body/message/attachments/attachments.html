@@ -6,13 +6,13 @@
         {# approved attachments #}
         {% if message.approved_attachments %}
             {% if object|can_read_foirequest_authenticated:request %}
-                <div class="fw-bold smaller mb-2 text-gray-600">{% trans 'Approved attachments:' %}</div>
+                <div class="fw-bold smaller mb-2 text-gray-600">{% trans "Approved attachments:" %}</div>
             {% endif %}
             {% include "foirequest/body/message/attachments/list.html" with attachment_list=message.approved_attachments %}
         {% endif %}
         {# unapproved attachments #}
         {% if message.unapproved_attachments %}
-            <div class="fw-bold smaller mb-2 text-gray-600">{% trans 'Unapproved attachments:' %}</div>
+            <div class="fw-bold smaller mb-2 text-gray-600">{% trans "Unapproved attachments:" %}</div>
             {% include "foirequest/body/message/attachments/list.html" with attachment_list=message.unapproved_attachments %}
         {% endif %}
         {% if message.hidden_attachments %}

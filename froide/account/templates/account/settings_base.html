@@ -10,16 +10,19 @@
         <nav class="col-md-4" aria-label="{% trans "Account Settings" %}">
             <div class="sticky-top sticky-top-offset">
                 <div class="d-grid">
-                    <a href="{% url 'account-show' %}" class="btn btn-secondary mb-3">{% trans "back to your account" %}</a>
+                    <a href="{% url 'account-show' %}"
+                       class="btn btn-secondary mb-3">{% trans "back to your account" %}</a>
                 </div>
                 <div class="list-group mb-3">
                     <a href="#general" class="list-group-item list-group-item-action">{% trans "General settings" %}</a>
                     {% if not request.user.private %}
-                        <a href="#profile" class="list-group-item list-group-item-action">{% trans "Public profile" %}</a>
+                        <a href="#profile"
+                           class="list-group-item list-group-item-action">{% trans "Public profile" %}</a>
                     {% endif %}
                     <a href="#change-password-now"
                        class="list-group-item list-group-item-action">{% trans "Change password" %}</a>
-                    <a href="#mfa" class="list-group-item list-group-item-action">{% trans "Setup two-factor login" %}</a>
+                    <a href="#mfa"
+                       class="list-group-item list-group-item-action">{% trans "Setup two-factor login" %}</a>
                     {% block post_password_menu %}
                     {% endblock post_password_menu %}
                     <a href="#proofs" class="list-group-item list-group-item-action">{% trans "Proofs" %}</a>

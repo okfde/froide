@@ -3,16 +3,16 @@
 <div>
     {% with heading_tag=heading_tag|default:"h5" %}
         <{{ heading_tag }} class="h5 mt-0 mb-1">
-        <a href="{{ object.url }}">{{ object.title }}</a>
-        {% if object.follower_count %}
-            <span class="badge text-bg-primary ms-2">
-                {% blocktrans trimmed count counter=object.follower_count %}
-                    One follower
-                {% plural %}
-                    {{ counter }} followers
-                {% endblocktrans %}
-            </span>
-        {% endif %}
+            <a href="{{ object.url }}">{{ object.title }}</a>
+            {% if object.follower_count %}
+                <span class="badge text-bg-primary ms-2">
+                    {% blocktrans trimmed count counter=object.follower_count %}
+                        One follower
+                    {% plural %}
+                        {{ counter }} followers
+                    {% endblocktrans %}
+                </span>
+            {% endif %}
         </{{ heading_tag }}>
     {% endwith %}
     <small>

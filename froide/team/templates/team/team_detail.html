@@ -1,4 +1,4 @@
-{% extends 'team/base.html' %}
+{% extends "team/base.html" %}
 {% load i18n %}
 {% load form_helper %}
 {% block title %}
@@ -55,7 +55,8 @@
                                             {% csrf_token %}
                                             <div class="input-group input-group-sm">
                                                 {{ member.change_role_form.role }}
-                                                <button type="submit" class="btn btn-primary btn-sm">{% trans "Change" %}</button>
+                                                <button type="submit"
+                                                        class="btn btn-primary btn-sm">{% trans "Change" %}</button>
                                             </div>
                                         </form>
                                     {% else %}
@@ -200,7 +201,8 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title h5" id="delete-team-modal-label">{% trans "Are you sure you want to delete this team?" %}</h1>
+                                <h1 class="modal-title h5"
+                                    id="delete-team-modal-label">{% trans "Are you sure you want to delete this team?" %}</h1>
                                 <button type="button"
                                         class="btn-close"
                                         data-bs-dismiss="modal"

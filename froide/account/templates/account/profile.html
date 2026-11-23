@@ -1,4 +1,4 @@
-{% extends 'account/base.html' %}
+{% extends "account/base.html" %}
 {% load i18n %}
 {% load markup %}
 {% load humanize %}
@@ -26,7 +26,8 @@
                     {% if object.organization_url and object.organization_name %}
                         <p>
                             <strong>
-                                <a rel="external nofollow" href="{{ object.organization_url }}">{{ object.organization_name }}</a>
+                                <a rel="external nofollow"
+                                   href="{{ object.organization_url }}">{{ object.organization_name }}</a>
                             </strong>
                         </p>
                     {% elif object.organization_name %}
@@ -84,7 +85,9 @@
                                 <h2 class="h4 text-center">{% translate "Most followed requests" %}</h2>
                                 <ul class="list-unstyled">
                                     {% for foirequest in top_followers %}
-                                        <li>{% include "foirequest/snippets/request_item.html" with object=foirequest heading_tag="h3" %}</li>
+                                        <li>
+                                            {% include "foirequest/snippets/request_item.html" with object=foirequest heading_tag="h3" %}
+                                        </li>
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -117,7 +120,9 @@
                     <div class="card-body">
                         <ul class="list-unstyled">
                             {% for foirequest in foirequests %}
-                                <li>{% include "foirequest/snippets/request_item.html" with object=foirequest heading_tag="h3" %}</li>
+                                <li>
+                                    {% include "foirequest/snippets/request_item.html" with object=foirequest heading_tag="h3" %}
+                                </li>
                             {% endfor %}
                         </ul>
                         <a href="{% url 'foirequest-list' %}?user={{ object.username }}">

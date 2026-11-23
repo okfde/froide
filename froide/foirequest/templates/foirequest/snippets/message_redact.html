@@ -22,7 +22,8 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title h5" id="message-redact-{{ message.pk }}-title">{% trans "Redact / unredact message" %}</h1>
+                    <h1 class="modal-title h5"
+                        id="message-redact-{{ message.pk }}-title">{% trans "Redact / unredact message" %}</h1>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -42,7 +43,8 @@
                                             {% translate "If there's important information below the message like inline replies, use the following button to unredact that part. Afterwards, personally identifiable information may need to be redacted again." %}
                                         </p>
                                         <input type="hidden" name="unredact_closing" value="1" />
-                                        <button type="submit" class="btn btn-outline-secondary">{% translate "Unredact footer" %}</button>
+                                        <button type="submit"
+                                                class="btn btn-outline-secondary">{% translate "Unredact footer" %}</button>
                                     </form>
                                 </details>
                             </div>

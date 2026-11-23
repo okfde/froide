@@ -42,7 +42,8 @@
                             <p class="text-body-secondary">
                                 {% trans "You are still responsible for redacting attachments when they contain your personal information." %}
                             </p>
-                            <button type="submit" class="btn btn-danger float-end">{% trans "Make account private" %}</button>
+                            <button type="submit"
+                                    class="btn btn-danger float-end">{% trans "Make account private" %}</button>
                         </form>
                     </div>
                 </div>
@@ -95,7 +96,8 @@
                     {% else %}
                         {% render_form request.user.get_profile_form %}
                     {% endif %}
-                    <button type="submit" class="btn btn-secondary">{% blocktrans %}Save changes{% endblocktrans %}</button>
+                    <button type="submit"
+                            class="btn btn-secondary">{% blocktrans %}Save changes{% endblocktrans %}</button>
                 </form>
             </div>
         </div>
@@ -130,10 +132,11 @@
                 {% else %}
                     <p>{% translate "You have not setup any two-factor login methods." %}</p>
                 {% endif %}
-                <a href="{% url 'mfa:list' %}" class="btn btn-secondary">{% translate "Manage two-factor login methods" %}</a>
+                <a href="{% url 'mfa:list' %}"
+                   class="btn btn-secondary">{% translate "Manage two-factor login methods" %}</a>
             {% endif %}
-        {% endrecentauthrequired %}
-    </div>
+{% endrecentauthrequired %}
+</div>
 </div>
 {% block post_password %}
 {% endblock post_password %}
@@ -142,8 +145,8 @@
     <div class="card-body">
         {% recentauthrequired "proofs" %}
         {% include "proof/proof_settings.html" %}
-    {% endrecentauthrequired %}
-</div>
+        {% endrecentauthrequired %}
+    </div>
 </div>
 <hr />
 <div id="apps" class="card mb-3">
@@ -153,8 +156,8 @@
         <a href="{% url 'oauth2_provider:authorized-token-list' %}">
             {% trans "Show external apps with access to your account" %}
         </a>
-    {% endrecentauthrequired %}
-</div>
+        {% endrecentauthrequired %}
+    </div>
 </div>
 <hr />
 <div id="export" class="card mb-3">
@@ -166,8 +169,8 @@
             <p>{% trans "We will generate a data export and notify you by email when it is ready." %}</p>
             <button type="submit" class="btn btn-secondary">{% trans "Request data export" %}</button>
         </form>
-    {% endrecentauthrequired %}
-</div>
+        {% endrecentauthrequired %}
+    </div>
 </div>
 <hr />
 <div id="delete-account-section" class="card">
@@ -192,8 +195,8 @@
                 </button>
             </form>
         </div>
-    {% endrecentauthrequired %}
-</div>
+        {% endrecentauthrequired %}
+    </div>
 </div>
 <div id="developer" class="card mt-5">
     <h2 class="h5 card-header">{% blocktrans %}Developer{% endblocktrans %}</h2>
@@ -202,7 +205,7 @@
             {% recentauthrequired "developer" %}
             <a href="{% url 'oauth2_provider:list' %}">{% trans "Your OAuth Applications" %}</a>
         {% endrecentauthrequired %}
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
 </div>
 {% endblock settings_body %}

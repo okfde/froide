@@ -26,12 +26,13 @@
                         {% if "FIDO2" in mfa_methods %}
                             <li class="list-group-item">
                                 <h2 class="h5">{% translate "Use hardware security key" %}</h2>
-                                <form data-fido2-auth="{{ mfa_data }}" method="POST" class="disable-submit">
+                                <form data-fido2-auth="{{ mfa_data }}" method="post" class="disable-submit">
                                     {% csrf_token %}
                                     {{ form.code.as_hidden }}
                                     {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
                                     <input type="hidden" name="method" value="FIDO2" />
-                                    <button autofocus class="btn btn-success">{% translate "Click here to check hardware security key" %}</button>
+                                    <button autofocus
+                                            class="btn btn-success">{% translate "Click here to check hardware security key" %}</button>
                                 </form>
                             </li>
                         {% endif %}
@@ -43,7 +44,8 @@
                                     {% render_field form.code %}
                                     {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
                                     <input type="hidden" name="method" value="TOTP" />
-                                    <button type="submit" class="btn btn-primary float-end">{% translate "Verify code" %}</button>
+                                    <button type="submit"
+                                            class="btn btn-primary float-end">{% translate "Verify code" %}</button>
                                 </form>
                             </li>
                         {% endif %}
@@ -56,7 +58,8 @@
                                     {{ form.hidden_email }}
                                     {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
                                     <input type="hidden" name="method" value="password" />
-                                    <button type="submit" class="btn btn-primary float-end">{% translate "Check password" %}</button>
+                                    <button type="submit"
+                                            class="btn btn-primary float-end">{% translate "Check password" %}</button>
                                 </form>
                             </li>
                         {% endif %}

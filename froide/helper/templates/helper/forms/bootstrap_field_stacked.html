@@ -18,9 +18,9 @@
                 {% if field.id_for_label %}
                     <label class="fw-bold form-label{% if required %} field-required{% endif %}"
                            for="{{ field.id_for_label }}">
-                    {% endif %}
-                    {{ label }}
-                    {% if field.id_for_label %}</label>{% endif %}
+                {% endif %}
+                {{ label }}
+                {% if field.id_for_label %}</label>{% endif %}
             {% endif %}
             {{ field }}
         {% endif %}

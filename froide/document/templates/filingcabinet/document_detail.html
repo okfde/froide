@@ -17,8 +17,8 @@
             {% endif %}
         </h1>
         {% if object|can_write_document:request %}
-            {% include 'filingcabinet/_set_title_form.html' with form_id='document-title-form' %}
-            {% include 'filingcabinet/_set_description_form.html' with form_id='document-description-form' %}
+            {% include "filingcabinet/_set_title_form.html" with form_id="document-title-form" %}
+            {% include "filingcabinet/_set_description_form.html" with form_id="document-description-form" %}
         {% endif %}
         {% if not object.public %}
             <span class="badge text-bg-secondary">{% trans "private" %}</span>
@@ -39,7 +39,9 @@
                 {% endblocktrans %}
             </p>
             {% if object.foirequest.campaign %}
-                <div class="my-3">{% include object.foirequest.campaign.banner_templates with object=object.foirequest %}</div>
+                <div class="my-3">
+                    {% include object.foirequest.campaign.banner_templates with object=object.foirequest %}
+                </div>
             {% endif %}
         {% endif %}
     </div>

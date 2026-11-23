@@ -41,7 +41,8 @@
                                 {% blocktrans %}Please choose the law under which you received an answer. If it is not obvious, leave it as it is.{% endblocktrans %}
                             </p>
                             {% render_form object.get_concrete_law_form %}
-                            <button type="submit" class="btn btn-primary">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
+                            <button type="submit"
+                                    class="btn btn-primary">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
                         </form>
                     </div>
                 </div>

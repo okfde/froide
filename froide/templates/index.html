@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load i18n %}
 {% load content_helper %}
 {% block title %}{{ SITE_NAME }}{% endblock %}
@@ -33,29 +33,29 @@
                     {% endblock %}
                 </div>
             </div>
-        {% endblock %}
-        {% block index_requests_row %}
-            <div class="row">
-                <div class="col-lg-6 col-md-6">
-                    {% if successful_foi_requests %}
-                        <h2 class="h3">{% blocktrans %}Successful Requests{% endblocktrans %}</h2>
-                        <ul class="list-unstyled">
-                            {% for object in successful_foi_requests %}
-                                <li>{% include "foirequest/snippets/request_item.html" with heading_tag="h3" %}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-                <div class="col-lg-6 col-md-6">
-                    {% if unsuccessful_foi_requests %}
-                        <h2 class="h3">{% blocktrans %}Unsuccessful Requests{% endblocktrans %}</h2>
-                        <ul class="list-unstyled">
-                            {% for object in unsuccessful_foi_requests %}
-                                <li>{% include "foirequest/snippets/request_item.html" with heading_tag="h3" %}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
+        </div>
+    {% endblock %}
+    {% block index_requests_row %}
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                {% if successful_foi_requests %}
+                    <h2 class="h3">{% blocktrans %}Successful Requests{% endblocktrans %}</h2>
+                    <ul class="list-unstyled">
+                        {% for object in successful_foi_requests %}
+                            <li>{% include "foirequest/snippets/request_item.html" with heading_tag="h3" %}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="col-lg-6 col-md-6">
+                {% if unsuccessful_foi_requests %}
+                    <h2 class="h3">{% blocktrans %}Unsuccessful Requests{% endblocktrans %}</h2>
+                    <ul class="list-unstyled">
+                        {% for object in unsuccessful_foi_requests %}
+                            <li>{% include "foirequest/snippets/request_item.html" with heading_tag="h3" %}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
         </div>
     {% endblock %}

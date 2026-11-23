@@ -9,7 +9,7 @@
     {% translate "Setup Hardware security key" %}
 {% endblock %}
 {% block mfa_inner %}
-    <form data-fido2-create="{{ mfa_data }}" method="POST">
+    <form data-fido2-create="{{ mfa_data }}" method="post">
         {% csrf_token %}
         {% include "helper/forms/errors.html" with errors=form.code.errors %}
         <p>{% translate "Please give your key a name, e.g. main blue key." %}</p>

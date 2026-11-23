@@ -41,7 +41,8 @@
                         <a href="#more-commenttext-{{ comment.id }}"
                            class="hideparent"
                            data-bs-toggle="collapse">{% trans "Read all" %}</a></span>
-                    <span id="more-commenttext-{{ comment.id }}" class="collapse">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</span>
+                    <span id="more-commenttext-{{ comment.id }}"
+                          class="collapse">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</span>
                 {% else %}
                     {{ comment.comment|urlizetrunc:40|linebreaksbr }}
                 {% endif %}

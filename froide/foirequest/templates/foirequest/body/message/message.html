@@ -33,8 +33,7 @@
                          alt=""
                          class="img-fluid rounded-circle">
                 {% else %}
-                    <i class="fa fa-{% if message.is_response %}{% if message.is_mediator %}shield{% else %}bank{% endif %}{% else %}user{% endif %}"
-                       aria-hidden="true"></i>
+                    <i class="fa fa-{% if message.is_response %}{% if message.is_mediator %}shield{% else %}bank{% endif %}{% else %}user{% endif %}" aria-hidden="true"></i>
                 {% endif %}
             </div>
             {# sender, recipient, message preview, meta infos #}
@@ -94,7 +93,7 @@
                             {% if message.subject %}
                                 {% redact_subject message request %}
                             {% else %}
-                                <i>{% trans 'No message text' %}</i>
+                                <i>{% trans "No message text" %}</i>
                             {% endif %}
                         {% else %}
                             {% redact_message_short message request %}
@@ -147,7 +146,8 @@
                                   method="post"
                                   action="{% url 'foirequest-approve_message' slug=object.slug message_id=message.pk %}">
                                 {% csrf_token %}
-                                <button class="btn btn-secondary" type="submit">{% trans "Publish message content" %}</button>
+                                <button class="btn btn-secondary"
+                                        type="submit">{% trans "Publish message content" %}</button>
                             </form>
                         </div>
                     {% endif %}
@@ -166,7 +166,7 @@
                 <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-2">
                     {# Comments button #}
                     <button type="button"
-                            class="btn btn-outline-secondary btn-sm mb-1 me-sm-auto order-last order-sm-first "
+                            class="btn btn-outline-secondary btn-sm mb-1 me-sm-auto order-last order-sm-first"
                             data-bs-toggle="collapse"
                             aria-expanded="false"
                             aria-controls="comments-{{ message.id }}"

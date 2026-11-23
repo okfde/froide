@@ -62,7 +62,8 @@
                                             {% csrf_token %}
                                             <div class="input-group input-group-sm">
                                                 {{ member.change_role_form.role }}
-                                                <button type="submit" class="btn btn-primary btn-sm">{% trans "Change" %}</button>
+                                                <button type="submit"
+                                                        class="btn btn-primary btn-sm">{% trans "Change" %}</button>
                                             </div>
                                         </form>
                                     {% else %}

@@ -34,9 +34,9 @@
                 {% if field.id_for_label %}
                     <label class="fw-bold col-md-4 col-form-label{% if required %} field-required{% endif %}"
                            for="{{ field.id_for_label }}">
-                    {% endif %}
-                    {{ label }}
-                    {% if field.id_for_label %}</label>{% endif %}
+                {% endif %}
+                {{ label }}
+                {% if field.id_for_label %}</label>{% endif %}
             {% endif %}
             <div class="col-md-8">
                 {{ field }}

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load i18n %}
 {% load static %}
 {% load flatpages %}
@@ -49,7 +49,8 @@
                         </p>
                     </div>
                     <div class="card-footer text-center">
-                        <a class="btn btn-secondary" href="{{ laws.0.get_absolute_url }}">{% trans "Get to know your right!" %}</a>
+                        <a class="btn btn-secondary"
+                           href="{{ laws.0.get_absolute_url }}">{% trans "Get to know your right!" %}</a>
                     </div>
                 </div>
             </div>
@@ -104,7 +105,9 @@
                             </h2>
                             <ul class="list-unstyled">
                                 {% for foirequest in foirequests %}
-                                    <li>{% include "foirequest/snippets/request_item.html" with object=foirequest heading_tag="h3" %}</li>
+                                    <li>
+                                        {% include "foirequest/snippets/request_item.html" with object=foirequest heading_tag="h3" %}
+                                    </li>
                                 {% endfor %}
                             </ul>
                         {% endblock %}

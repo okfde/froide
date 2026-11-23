@@ -149,7 +149,8 @@
                                 </label>
                                 {{ message_pb_form.recipient }}
                                 <p class="text-end">
-                                    <button type="submit" class="btn btn-primary">{% blocktrans %}Set receiving public body{% endblocktrans %}</button>
+                                    <button type="submit"
+                                            class="btn btn-primary">{% blocktrans %}Set receiving public body{% endblocktrans %}</button>
                                 </p>
                             </form>
                         {% endwith %}
@@ -190,7 +191,8 @@
                             <i class="fa fa-info-circle"></i>
                             <span class="visually-hidden">{% trans "Show technical delivery log" %}</span>
                         </span>
-                    </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ delivery_status.log }}</pre>
+                    </a><pre id="{{ message.get_html_id }}-deliverylog"
+                             class="collapse d-print-none">{{ delivery_status.log }}</pre>
                 {% endif %}
             {% endif %}
             {% if message.request|can_read_foirequest_authenticated:request and message.is_response and message.is_email and message.has_authenticity_info %}

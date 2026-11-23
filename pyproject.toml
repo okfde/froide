@@ -102,6 +102,7 @@ dev = [
   "pytest-xdist>=3.8.0",
   "pytest-cov>=7.1.0",
   "django-stubs-ext<5.3",
+  "djlint>=1.54.0",
 ]
 
 [project.entry-points.pytest11]
@@ -146,7 +147,9 @@ known-first-party = ["froide"]
 django = ["django"]
 
 [tool.djlint]
-ignore = "T002,T003,H005,H006,H021,H023,H029,H030,H031"
+profile = "django"
+ignore_blocks = "thumbnail"
+ignore = "T002,T003,H005,H006,H021,H023,H029,H030,H031,H043"
 
 [tool.coverage.run]
 source = ["froide"]

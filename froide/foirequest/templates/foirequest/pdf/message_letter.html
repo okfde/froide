@@ -75,9 +75,7 @@
         }
         {% endblock %}
         </style>
-        <title>
-            {% block title %}{{ object.title }}{% endblock %}
-        </title>
+        <title>{% block title %}{{ object.title }}{% endblock %}</title>
         <meta name="description" content="{{ object.description }}">
         <meta name="author" content="{{ SITE_NAME }}">
     </head>

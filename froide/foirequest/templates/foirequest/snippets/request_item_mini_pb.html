@@ -2,7 +2,7 @@
 {% load humanize %}
 <div class="mb-0 d-flex flex-column">
     {% if object.status_representation %}
-        <a class="flex-shrink-0 "
+        <a class="flex-shrink-0"
            href="{{ url|default:object.url }}"
            title="{{ object.readable_status }}"></a>
     {% endif %}

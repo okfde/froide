@@ -78,98 +78,99 @@
               action="{% url 'foirequest-project_execute_action' slug=object.slug %}">
             {% csrf_token %}
             <input type="hidden" name="actionstep" value="initial" />
-        {% endif %}
-        {% if object|can_write_foiproject:request %}
-            <div class="mb-1">
-                <p class="mb-0">{% translate "Perform action for selected requests:" %}</p>
-                {% if object|can_manage_foiproject:request %}
-                    <button class="btn btn-outline-secondary btn-sm me-2"
-                            name="action"
-                            value="publish">{% translate "Publish..." %}</button>
-                {% endif %}
+    {% endif %}
+    {% if object|can_write_foiproject:request %}
+        <div class="mb-1">
+            <p class="mb-0">{% translate "Perform action for selected requests:" %}</p>
+            {% if object|can_manage_foiproject:request %}
                 <button class="btn btn-outline-secondary btn-sm me-2"
                         name="action"
-                        value="writemessage">{% translate "Write message..." %}</button>
-                <button class="btn btn-outline-secondary btn-sm me-2"
-                        name="action"
-                        value="setstatus">{% translate "Set status..." %}</button>
-            </div>
-        {% endif %}
-        <div class="table-responsive">
-            <table class="table table-hover table-sm">
-                <thead>
+                        value="publish">{% translate "Publish..." %}</button>
+            {% endif %}
+            <button class="btn btn-outline-secondary btn-sm me-2"
+                    name="action"
+                    value="writemessage">{% translate "Write message..." %}</button>
+            <button class="btn btn-outline-secondary btn-sm me-2"
+                    name="action"
+                    value="setstatus">{% translate "Set status..." %}</button>
+        </div>
+    {% endif %}
+    <div class="table-responsive">
+        <table class="table table-hover table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        {% if object|can_write_foiproject:request %}
+                            <label class="visually-hidden"
+                                   for="check-all-foirequests">{% translate "Check all requests" %}</label>
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="check-all-foirequests"
+                                   data-checkall="foirequest">
+                        {% else %}
+                            #
+                        {% endif %}
+                    </th>
+                    <th scope="col">{% trans "status" %}</th>
+                    <th scope="col">{% trans "last message" %}</th>
+                    <th scope="col">{% trans "public body" %}</th>
+                    {% if object|can_read_foiproject_authenticated:request %}
+                        <th scope="col">{% trans "is public?" %}</th>
+                        <th scope="col">{% trans "has problems?" %}</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in foirequests %}
                     <tr>
-                        <th scope="col">
+                        <td>
                             {% if object|can_write_foiproject:request %}
-                                <label class="visually-hidden" for="check-all-foirequests">{% translate "Check all requests" %}</label>
+                                <label class="visually-hidden" for="check-foirequest-{{ req.id }}">
+                                    {% blocktranslate with num=req.id %}Check request #{{ num }}{% endblocktranslate %}
+                                </label>
                                 <input class="form-check-input"
                                        type="checkbox"
-                                       id="check-all-foirequests"
-                                       data-checkall="foirequest">
+                                       name="foirequest"
+                                       id="check-foirequest-{{ req.id }}"
+                                       value="{{ req.id }}">
                             {% else %}
-                                #
+                                {{ req.project_number }}
                             {% endif %}
-                        </th>
-                        <th scope="col">{% trans "status" %}</th>
-                        <th scope="col">{% trans "last message" %}</th>
-                        <th scope="col">{% trans "public body" %}</th>
+                        </td>
+                        <td>
+                            <a href="{{ req.get_absolute_url }}">{{ req.readable_status }}</a>
+                        </td>
+                        <td>
+                            <a href="{{ req.get_absolute_url_last_message }}">{{ req.last_message|date:"SHORT_DATE_FORMAT" }}</a>
+                        </td>
+                        <td>
+                            <a href="{{ req.public_body.get_absolute_url }}">{{ req.public_body.name }}</a>
+                        </td>
                         {% if object|can_read_foiproject_authenticated:request %}
-                            <th scope="col">{% trans "is public?" %}</th>
-                            <th scope="col">{% trans "has problems?" %}</th>
-                        {% endif %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for req in foirequests %}
-                        <tr>
-                            <td>
-                                {% if object|can_write_foiproject:request %}
-                                    <label class="visually-hidden" for="check-foirequest-{{ req.id }}">
-                                        {% blocktranslate with num=req.id %}Check request #{{ num }}{% endblocktranslate %}
-                                    </label>
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           name="foirequest"
-                                           id="check-foirequest-{{ req.id }}"
-                                           value="{{ req.id }}">
+                            <td class="text-center">
+                                {% if req.is_public %}
+                                    <span class="fa fa-check"></span>
+                                    <span class="visually-hidden">{% translate "Yes" %}</span>
                                 {% else %}
-                                    {{ req.project_number }}
+                                    <span class="fa fa-ban"></span>
+                                    <span class="visually-hidden">{% translate "No" %}</span>
                                 {% endif %}
                             </td>
-                            <td>
-                                <a href="{{ req.get_absolute_url }}">{{ req.readable_status }}</a>
+                            <td class="text-center">
+                                {% if req.has_problems %}
+                                    <span class="fa fa-exclamation-triangle"></span>
+                                    <span class="visually-hidden">{% translate "Yes" %}</span>
+                                {% else %}
+                                    <span class="visually-hidden">{% translate "No" %}</span>
+                                {% endif %}
                             </td>
-                            <td>
-                                <a href="{{ req.get_absolute_url_last_message }}">{{ req.last_message|date:"SHORT_DATE_FORMAT" }}</a>
-                            </td>
-                            <td>
-                                <a href="{{ req.public_body.get_absolute_url }}">{{ req.public_body.name }}</a>
-                            </td>
-                            {% if object|can_read_foiproject_authenticated:request %}
-                                <td class="text-center">
-                                    {% if req.is_public %}
-                                        <span class="fa fa-check"></span>
-                                        <span class="visually-hidden">{% translate "Yes" %}</span>
-                                    {% else %}
-                                        <span class="fa fa-ban"></span>
-                                        <span class="visually-hidden">{% translate "No" %}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="text-center">
-                                    {% if req.has_problems %}
-                                        <span class="fa fa-exclamation-triangle"></span>
-                                        <span class="visually-hidden">{% translate "Yes" %}</span>
-                                    {% else %}
-                                        <span class="visually-hidden">{% translate "No" %}</span>
-                                    {% endif %}
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% if object|can_write_foiproject:request %}</form>{% endif %}
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if object|can_write_foiproject:request %}</form>{% endif %}
     {% if problems %}
         <hr />
         <h2 class="h3">{% translate "Unresolved problem reports" %}</h2>
@@ -202,13 +203,15 @@
                             <td>
                                 {% if request.user.is_staff and request.user|has_perm:"problem.view_problemreport" %}
                                     <a href="{% url 'admin:problem_problemreport_change' object_id=report.id %}">
-                                    {% endif %}
-                                    {% if report.resolved %}
-                                        <span class="badge text-bg-success">{% trans "Resolved" %}</span>
-                                    {% else %}
-                                        <span class="badge text-bg-secondary">{% trans "Pending" %}</span>
-                                    {% endif %}
-                                    {% if request.user.is_staff and request.user|has_perm:"problem.view_problemreport" %}</a>{% endif %}
+                                {% endif %}
+                                {% if report.resolved %}
+                                    <span class="badge text-bg-success">{% trans "Resolved" %}</span>
+                                {% else %}
+                                    <span class="badge text-bg-secondary">{% trans "Pending" %}</span>
+                                {% endif %}
+                                {% if request.user.is_staff and request.user|has_perm:"problem.view_problemreport" %}
+                                    </a>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
