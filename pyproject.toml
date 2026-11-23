@@ -60,7 +60,7 @@ dependencies = [
   "wand",
   "weasyprint>=65.1",
   "websockets",
-  "django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@krmax44/pnpm-upgrade",
+  "django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@main",
   "dogtail @ git+https://github.com/okfde/dogtail.git@main",
 ]
 

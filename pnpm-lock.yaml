@@ -179,8 +179,8 @@ importers:
         specifier: ^0.99.0
         version: 0.99.0(typescript@5.9.3)
       '@okfde/filingcabinet':
-        specifier: github:okfde/django-filingcabinet#krmax44/pnpm-upgrade
-        version: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/9c541b2b9d8a226a3b96a76f7fb5763adfe72c23(typescript@5.9.3)(worker-loader@3.0.8(webpack@5.94.0(esbuild@0.28.2)(postcss@8.5.28)))
+        specifier: github:okfde/django-filingcabinet
+        version: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/5f825a21cf276d2e0bf5a703a1b9c5a630a5a44a(typescript@5.9.3)(worker-loader@3.0.8(webpack@5.94.0(esbuild@0.28.2)(postcss@8.5.28)))
       '@panzoom/panzoom':
         specifier: ^4.6.2
         version: 4.6.2
@@ -609,8 +609,8 @@ packages:
       prettier: ^3.5.3
       prettier-config-standard: ^7.0.0
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/9c541b2b9d8a226a3b96a76f7fb5763adfe72c23':
-    resolution: {gitHosted: true, integrity: sha512-3lkRiwiPyxqjgD/QmH5uvujlVufSHmZ05hN26hGPQAmTAHHL5qDii7Gto264o5c7/7uqMdP8+QP3eCK+yccwTQ==, tarball: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/9c541b2b9d8a226a3b96a76f7fb5763adfe72c23}
+  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/5f825a21cf276d2e0bf5a703a1b9c5a630a5a44a':
+    resolution: {gitHosted: true, integrity: sha512-ACblyxpvMX4w5Io3FxmWur0i3a9+qMwOruMednlxjER3qkXdNWtKWyi55dXnhUt7IaHHVN9TNdgpKraunHbyew==, tarball: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/5f825a21cf276d2e0bf5a703a1b9c5a630a5a44a}
     version: 0.0.4
 
   '@panzoom/panzoom@4.6.2':
@@ -2907,7 +2907,7 @@ snapshots:
       - typescript
       - vue-eslint-parser
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/9c541b2b9d8a226a3b96a76f7fb5763adfe72c23(typescript@5.9.3)(worker-loader@3.0.8(webpack@5.94.0(esbuild@0.28.2)(postcss@8.5.28)))':
+  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/5f825a21cf276d2e0bf5a703a1b9c5a630a5a44a(typescript@5.9.3)(worker-loader@3.0.8(webpack@5.94.0(esbuild@0.28.2)(postcss@8.5.28)))':
     dependencies:
       '@popperjs/core': 2.11.8
       bootstrap: 5.3.8(@popperjs/core@2.11.8)
