@@ -10,13 +10,13 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: pnpm/setup@v3
         with:
           cache: true
-      - uses: j178/prek-action@v1
+      - uses: j178/prek-action@v3.1.1
         env:
-          SKIP: makemessages-de
+          SKIP: checkmessages-de
 
   test:
     runs-on: ubuntu-latest
@@ -24,11 +24,13 @@ jobs:
       matrix:
         python-version: ['3.12', '3.13', '3.14']
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Install system-level dependencies
         run: sudo apt-get update && sudo apt-get install libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev poppler-utils ghostscript gettext
+      - name: Start services
+        run: docker compose -f compose-dev.yaml up --wait
       - name: Setup uv
-        uses: astral-sh/setup-uv@v8.0.0
+        uses: astral-sh/setup-uv@v10.3.3
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
@@ -55,18 +57,3 @@ jobs:
           coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         env:
           DATABASE_URL: postgis://postgres:postgres@localhost/froide
-
-    services:
-      postgres:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: froide
-        ports:
-          - 5432:5432
-      elasticsearch:
-        image: elasticsearch:8.14.3
-        options: -e "discovery.type=single-node" -e "xpack.security.enabled=false" --expose 9200 --health-cmd "curl localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 10
-        ports:
-          - 9200:9200
