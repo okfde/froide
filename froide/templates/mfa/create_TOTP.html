@@ -16,7 +16,7 @@
     </ol>
     {{ mfa_data.url|qrcode }}
     {{ mfa_data.secret }}
-    <form method="POST">
+    <form method="post">
         {% csrf_token %}
         {% include "helper/forms/errors.html" with errors=form.code.errors %}
         {% include "helper/forms/errors.html" with errors=form.non_field_errors %}

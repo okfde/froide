@@ -57,7 +57,8 @@
                                                name="proposal_delete"
                                                id="proposal_delete-{{ proposal.obj.id }}"
                                                value="{{ proposal.obj.id }}">
-                                        <label class="form-check-label" for="proposal_delete-{{ proposal.obj.id }}">{% trans "Delete" %}</label>
+                                        <label class="form-check-label"
+                                               for="proposal_delete-{{ proposal.obj.id }}">{% trans "Delete" %}</label>
                                     </div>
                                 {% endif %}
                             {% endwith %}
@@ -85,7 +86,8 @@
                                        id="proposal_id-{{ proposal.obj.id }}"
                                        value="{{ proposal.obj.id }}"
                                        required>
-                                <label class="form-check-label" for="proposal_id-{{ proposal.obj.id }}">{% trans "Accept this proposal" %}</label>
+                                <label class="form-check-label"
+                                       for="proposal_id-{{ proposal.obj.id }}">{% trans "Accept this proposal" %}</label>
                             </div>
                         </td>
                     {% endfor %}

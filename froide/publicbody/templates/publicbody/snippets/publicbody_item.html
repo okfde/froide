@@ -2,16 +2,16 @@
 <div class="flex-grow-1 ms-3 mb-3">
     {% with heading_tag=heading_tag|default:"h5" %}
         <{{ heading_tag }} class="h5 mt-0 mb-1">
-        <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
-        <br />
-        <small>
-            {{ object.jurisdiction.name }},
-            {% if object.number_of_requests %}
-                {% blocktrans count num=object.number_of_requests %}{{ num }} request{% plural %}{{ num }} requests{% endblocktrans %}
-            {% else %}
-                {% trans "no requests yet" %}
-            {% endif %}
-        </small>
+            <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
+            <br />
+            <small>
+                {{ object.jurisdiction.name }},
+                {% if object.number_of_requests %}
+                    {% blocktrans count num=object.number_of_requests %}{{ num }} request{% plural %}{{ num }} requests{% endblocktrans %}
+                {% else %}
+                    {% trans "no requests yet" %}
+                {% endif %}
+            </small>
         </{{ heading_tag }}>
     {% endwith %}
 </div>

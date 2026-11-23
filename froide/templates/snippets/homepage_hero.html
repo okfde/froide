@@ -6,9 +6,7 @@
             {% block first_index_row %}
                 <div class="col-lg-6 col-md-6">
                     {% block first_index_row_search %}
-                        <h1 class="h2">
-                            {% block site_name %}{{ SITE_NAME }}{% endblock %}
-                        </h1>
+                        <h1 class="h2">{% block site_name %}{{ SITE_NAME }}{% endblock %}</h1>
                         {% block site_description %}
                             <p class="lead">
                                 {% blocktrans %}This site publishes Freedom of Information requests and helps you to make your own!{% endblocktrans %}
@@ -83,7 +81,8 @@
       Dear Sir or Madam,
       I request information about the following:
       ...{% endblocktrans %}
-                                    <a class="make-request-icon" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Write a Request Now!{% endblocktrans %}</a>
+                                    <a class="make-request-icon"
+                                       href="{% url 'foirequest-make_request' %}">{% blocktrans %}Write a Request Now!{% endblocktrans %}</a>
                                 </div>
                             {% endif %}
                         </div>

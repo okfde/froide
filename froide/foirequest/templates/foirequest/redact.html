@@ -1,4 +1,4 @@
-{% extends 'foirequest/base_wide.html' %}
+{% extends "foirequest/base_wide.html" %}
 {% load i18n %}
 {% load static %}
 {% load frontendbuild %}
@@ -11,7 +11,8 @@
         <div class="row">
             <div class="col-lg-12">
                 <div>
-                    <a href="{{ attachment.get_anchor_url }}" class="text-decoration-none">&larr; <u>{% trans "Cancel redaction" %} / {% trans "Back" %}</u></a>
+                    <a href="{{ attachment.get_anchor_url }}"
+                       class="text-decoration-none">← <u>{% trans "Cancel redaction" %} / {% trans "Back" %}</u></a>
                 </div>
                 <h2>{% blocktrans with name=attachment.name %}Redact "{{ name }}"{% endblocktrans %}</h2>
             </div>
@@ -22,9 +23,7 @@
         <form id="redaction-form" method="post" style="display:none">
             {% csrf_token %}
         </form>
-        <pdf-redaction id="redact" pdf-path="{{ attachment_url }}" attachment-id="{{ attachment.id }}" attachment-url="{{ attachment.get_anchor_url }}" :redact-regex="{{ foirequest.get_redaction_regexes }}"
-        {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %}
-        :config="{{ config }}" :bottom-toolbar="true">
+        <pdf-redaction id="redact" pdf-path="{{ attachment_url }}" attachment-id="{{ attachment.id }}" attachment-url="{{ attachment.get_anchor_url }}" :redact-regex="{{ foirequest.get_redaction_regexes }}" {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %} :config="{{ config }}" :bottom-toolbar="true">
         <div class="text-center">
             <h3>{% trans "Redaction tool is loading..." %}</h3>
             <div class="spinner-border" role="status">
@@ -49,7 +48,9 @@
     {% addfrontendbuild "redact.js" %}
     {% if not attachment.file %}
         {% addtoblock "css" %}
+        {# djlint:off H052 #}
         <meta http-equiv="refresh" content="15">
+        {# djlint:on #}
     {% endaddtoblock %}
 {% endif %}
 {% endblock %}

@@ -101,13 +101,15 @@
                                             <td>
                                                 {% if request.user.is_staff and request.user|has_perm:"problem.view_problemreport" %}
                                                     <a href="{% url 'admin:problem_problemreport_change' object_id=report.id %}">
-                                                    {% endif %}
-                                                    {% if report.resolved %}
-                                                        <span class="badge text-bg-success">{% trans "Resolved" %}</span>
-                                                    {% else %}
-                                                        <span class="badge text-bg-secondary">{% trans "Pending" %}</span>
-                                                    {% endif %}
-                                                    {% if request.user.is_staff and request.user|has_perm:"problem.view_problemreport" %}</a>{% endif %}
+                                                {% endif %}
+                                                {% if report.resolved %}
+                                                    <span class="badge text-bg-success">{% trans "Resolved" %}</span>
+                                                {% else %}
+                                                    <span class="badge text-bg-secondary">{% trans "Pending" %}</span>
+                                                {% endif %}
+                                                {% if request.user.is_staff and request.user|has_perm:"problem.view_problemreport" %}
+                                                    </a>
+                                                {% endif %}
                                             </td>
                                         </tr>
                                         {% if report.description or report.resolution %}

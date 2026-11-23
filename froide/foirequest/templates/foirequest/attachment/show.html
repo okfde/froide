@@ -39,7 +39,7 @@
             {% if not attachment.approved and attachment.can_approve %}
                 <form class="d-inline ajaxified ajax-parent"
                       action="{% url 'foirequest-approve_attachment' slug=foirequest.slug attachment_id=attachment.id %}"
-                      method="POST">
+                      method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm btn-success">{% translate "Approve" %}</button>
                 </form>
@@ -50,6 +50,7 @@
         {% if attachment.is_pdf %}
             <div class="container-sm-full d-none d-md-block">
                 <iframe src="{{ attachment_url }}"
+                        title="{% trans "Attachment PDF" %}"
                         frameborder="0"
                         style="width: 100%;
                                height: 90vh;
@@ -67,22 +68,22 @@
                        style="max-width: 100%"
                        {% if attachment.filetype %}type="{{ attachment.filetype }}"{% endif %}>
             </embed>
-        </div>
+            </div>
+        {% endif %}
     {% endif %}
-{% endif %}
-<div class="container mb-5">
-    {% if attachment.can_embed %}
-        <div class="text-end d-none d-md-block">
-            <small>
-                {# expose direct links through redirects in case they get copied #}
-                <a href="{{ attachment.get_absolute_domain_auth_url }}">{% trans "Download original" %}</a>
-            </small>
-        </div>
-    {% else %}
-        <p>
-            {% trans "This file cannot be previewed." %}
-            <a href="{{ attachment.get_absolute_domain_auth_url }}">{% trans "Download the file here." %}</a>
-        </p>
-    {% endif %}
-</div>
+    <div class="container mb-5">
+        {% if attachment.can_embed %}
+            <div class="text-end d-none d-md-block">
+                <small>
+                    {# expose direct links through redirects in case they get copied #}
+                    <a href="{{ attachment.get_absolute_domain_auth_url }}">{% trans "Download original" %}</a>
+                </small>
+            </div>
+        {% else %}
+            <p>
+                {% trans "This file cannot be previewed." %}
+                <a href="{{ attachment.get_absolute_domain_auth_url }}">{% trans "Download the file here." %}</a>
+            </p>
+        {% endif %}
+    </div>
 {% endblock %}

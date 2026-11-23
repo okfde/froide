@@ -11,7 +11,8 @@
             {% if post_instructions %}{{ post_instructions|markdown }}{% endif %}
             <div class="text-center">
                 <p>
-                    <a href="{{ download_link }}" class="btn btn-primary btn-lg">{% trans "Download letter as PDF" %}</a>
+                    <a href="{{ download_link }}"
+                       class="btn btn-primary btn-lg">{% trans "Download letter as PDF" %}</a>
                 </p>
                 <p>
                     <a href="{{ message.get_absolute_url }}">{% trans "Go to your request" %}</a>

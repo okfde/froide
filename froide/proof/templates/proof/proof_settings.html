@@ -6,7 +6,7 @@
 </p>
 {% get_proof_settings_form as form %}
 <form action="{% url 'proof-add' %}"
-      method="POST"
+      method="post"
       enctype="multipart/form-data"
       class="disable-submit">
     {% csrf_token %}
@@ -31,31 +31,31 @@
                 </div>
             </div>
             <div class="col-8">
-            {% endif %}
-            <!-- Tab panes -->
-            <div class="tab-content">
-                {% for proof in proofs %}
-                    <div class="tab-pane {% if forloop.first %}active{% endif %}"
-                         id="proof-{{ proof.id }}"
-                         role="tabpanel">
-                        <form action="{% url 'proof-delete' proof_id=proof.id %}" method="POST">
-                            {% csrf_token %}
-                            <p>
-                                {% blocktranslate trimmed with date=proof.timestamp|date name=proof.name %}
-                                    Uploaded on {{ date }} as “{{ name }}”.
-                                {% endblocktranslate %}
-                            </p>
-                            <img alt="" src="{{ proof.get_image_data_url }}" class="img-fluid">
-                            <button type="submit" class="btn btn-outline-danger mt-3">
-                                <i class="fa fa-trash"></i>
-                                {% translate "Delete this proof" %}
-                            </button>
-                        </form>
-                    </div>
-                {% endfor %}
+    {% endif %}
+    <!-- Tab panes -->
+    <div class="tab-content">
+        {% for proof in proofs %}
+            <div class="tab-pane {% if forloop.first %}active{% endif %}"
+                 id="proof-{{ proof.id }}"
+                 role="tabpanel">
+                <form action="{% url 'proof-delete' proof_id=proof.id %}" method="post">
+                    {% csrf_token %}
+                    <p>
+                        {% blocktranslate trimmed with date=proof.timestamp|date name=proof.name %}
+                            Uploaded on {{ date }} as “{{ name }}”.
+                        {% endblocktranslate %}
+                    </p>
+                    <img alt="" src="{{ proof.get_image_data_url }}" class="img-fluid">
+                    <button type="submit" class="btn btn-outline-danger mt-3">
+                        <i class="fa fa-trash"></i>
+                        {% translate "Delete this proof" %}
+                    </button>
+                </form>
             </div>
-            {% if proofs|length > 1 %}
-            </div>
+        {% endfor %}
+    </div>
+    {% if proofs|length > 1 %}
+        </div>
         </div>
     {% endif %}
 {% endif %}

@@ -21,7 +21,8 @@
         {% endif %}
         {% if original.change_proposal_count %}
             <li>
-                <a href="{% url 'publicbody-accept' pk=original.pk %}" target="_blank">{% trans "See change proposals" %}</a>
+                <a href="{% url 'publicbody-accept' pk=original.pk %}"
+                   target="_blank">{% trans "See change proposals" %}</a>
             </li>
         {% endif %}
     {% endif %}
@@ -29,7 +30,8 @@
 {% endblock %}
 {% block after_field_sets %}
     {% if not original.pk %}
-        <script id="prefill-map" type="application/json">{"id_regions": "{{ request.GET.regions }}", "id_name": "{{ request.GET.name }}"}</script>
+        <script id="prefill-map"
+                type="application/json">{"id_regions": "{{ request.GET.regions }}", "id_name": "{{ request.GET.name }}"}</script>
         <script src="{% static 'admin/js/prefill-admin.js' %}"></script>
     {% endif %}
 {% endblock %}

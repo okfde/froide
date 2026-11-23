@@ -1,13 +1,15 @@
 {% load i18n %}
-<p>{% blocktrans %}Hello {{ name }},</p>
-
-<p>This is an email from {{ site_name }} to confirm your email address.<br />
-Please visit the link below:</p>
-<p><a href="{{ action_url }}">Click here to confirm your email address</a></p>
-
-{% endblocktrans %}
+{% blocktrans trimmed %}
+    <p>Hello {{ name }},</p>
     <p>
-        {% blocktrans %}Cheers,<br />
-{{ site_name }}{% endblocktrans %}
+        This is an email from {{ site_name }} to confirm your email address.
+        <br />
+        Please visit the link below:
     </p>
-    {% include "emails/footer.html" %}
+    <p><a href="{{ action_url }}">Click here to confirm your email address</a></p>
+{% endblocktrans %}
+<p>
+    {% blocktrans %}Cheers,<br />
+{{ site_name }}{% endblocktrans %}
+</p>
+{% include "emails/footer.html" %}

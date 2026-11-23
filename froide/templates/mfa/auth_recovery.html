@@ -19,7 +19,7 @@
         {% endblocktranslate %}
     </p>
     {% get_mfa_keys as mfa_keys %}
-    <form method="POST" class="disable-submit">
+    <form method="post" class="disable-submit">
         {% csrf_token %}
         {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
         {% render_field form.code %}
@@ -31,7 +31,8 @@
                 </a>
             {% endif %}
             {% if mfa_keys.by_method.TOTP %}
-                <a class="btn btn-outline-secondary" href="{% url 'mfa:auth' 'TOTP' %}">{% translate "Use authenticator app" %}</a>
+                <a class="btn btn-outline-secondary"
+                   href="{% url 'mfa:auth' 'TOTP' %}">{% translate "Use authenticator app" %}</a>
             {% endif %}
         </p>
     </form>

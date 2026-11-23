@@ -4,7 +4,7 @@
     <p>
         {% blocktranslate with name=object.name %}Are you sure you want to delete the key “{{ name }}”?{% endblocktranslate %}
     </p>
-    <form method="POST">
+    <form method="post">
         {% csrf_token %}
         <a href="{% url 'mfa:list' %}" class="btn btn-secondary">{% translate "Cancel" %}</a>
         <button class="btn btn-danger ml-auto">{% translate "Confirm deletion" %}</button>

@@ -3,20 +3,20 @@
 {% load content_helper %}
 <div class="alpha-attachment">
     {% if attachment.redacted %}
-        {% trans 'This attachment contains personally identifying information and cannot be published.' as tooltip %}
+        {% trans "This attachment contains personally identifying information and cannot be published." as tooltip %}
     {% elif attachment.converted and not attachment.approved %}
-        {% trans 'This attachment has been converted to PDF and cannot be published.' as tooltip %}
+        {% trans "This attachment has been converted to PDF and cannot be published." as tooltip %}
     {% elif attachment.approved %}
         {% if object.public %}
-            {% trans 'This attachment is public.' as tooltip %}
+            {% trans "This attachment is public." as tooltip %}
         {% else %}
-            {% trans 'This attachment is only visible for users with access to this request.' as tooltip %}
+            {% trans "This attachment is only visible for users with access to this request." as tooltip %}
         {% endif %}
     {% else %}
         {% if not attachment.can_approve %}
-            {% trans 'This attachment is not public yet.' as tooltip %}
+            {% trans "This attachment is not public yet." as tooltip %}
         {% else %}
-            {% trans 'This attachment cannot be published.' as tooltip %}
+            {% trans "This attachment cannot be published." as tooltip %}
         {% endif %}
     {% endif %}
     <div class="alpha-attachment__file-icon {% if not attachment.approved %}alpha-attachment__file-icon--gray{% else %}alpha-attachment__file-icon--blue{% endif %} flex-shrink-0 rounded me-2 d-flex align-items-center justify-content-center"
@@ -54,8 +54,9 @@
                 {% endif %}
                 {% if attachment.approved %}
                     {% if attachment.is_mail_decoration %}
-                        {# djlint:off #}
-                        <span data-bs-toggle="tooltip" data-bs-html="true" title="
+                        <span data-bs-toggle="tooltip"
+                              data-bs-html="true"
+                              title="
                             <h6>{{ attachment.name }}</h6>
                             <img src='{{ attachment.get_authorized_absolute_domain_file_url }}'
                                  alt='{{ attachment.name }}'/>
@@ -72,7 +73,9 @@
                 {% if attachment.pending %}
                     <span class="me-1 badge text-bg-info">{% blocktrans %}PDF Pending{% endblocktrans %}</span>
                 {% elif attachment.is_mail_decoration and object|can_read_foirequest_authenticated:request %}
-                    <span data-bs-toggle="tooltip" data-bs-html="true" title="
+                    <span data-bs-toggle="tooltip"
+                          data-bs-html="true"
+                          title="
                         <h6>{{ attachment.name }}</h6>
                         <img src='{{ attachment.get_authorized_absolute_domain_file_url }}'
                              alt='{{ attachment.name }}'/>

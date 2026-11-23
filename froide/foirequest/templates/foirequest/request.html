@@ -1,4 +1,4 @@
-{% extends 'foirequest/base.html' %}
+{% extends "foirequest/base.html" %}
 {% load i18n %}
 {% load static %}
 {% load searchtags %}
@@ -36,18 +36,7 @@
         {% for k, v in config.items %}
             {% if v %}<input type="hidden" name="{{ k }}" value="1" />{% endif %}
         {% endfor %}
-        <request-page id="make-request" v-cloak publicbody-default-search="{{ public_body_search }}" :publicbodies="{{ publicbodies_json }}" :request-form-initial="{{ request_form.as_json }}" :user-form-initial="{{ user_form.as_json }}"
-        {% if request.user.is_authenticated %}:user-info="{{ request.user.as_json }}"{% endif %}
-        {% if proof_form %}:proof-form-initial="{{ proof_form.as_json }}"{% endif %}
-        {% if not config.hide_similar %}:show-similar="true"{% endif %}
-        {% if not config.hide_draft %}:show-draft="true"{% endif %}
-        {% if config.hide_publicbody %}:hide-publicbody-chooser="true"{% endif %}
-        {% if config.hide_full_text %}:hide-full-text="true"{% endif %}
-        {% if config.hide_editing %}:hide-editing="true"{% endif %}
-        {% if config.hide_public %}:hide-public="true"{% endif %}
-        {% if multi_request %}:multi-request="true"{% endif %}
-        {% if confirm_required %}:confirm-required="true"{% endif %}
-        :config="{{ js_config }}">
+        <request-page id="make-request" v-cloak publicbody-default-search="{{ public_body_search }}" :publicbodies="{{ publicbodies_json }}" :request-form-initial="{{ request_form.as_json }}" :user-form-initial="{{ user_form.as_json }}" {% if request.user.is_authenticated %}:user-info="{{ request.user.as_json }}"{% endif %} {% if proof_form %}:proof-form-initial="{{ proof_form.as_json }}"{% endif %} {% if not config.hide_similar %}:show-similar="true"{% endif %} {% if not config.hide_draft %}:show-draft="true"{% endif %} {% if config.hide_publicbody %}:hide-publicbody-chooser="true"{% endif %} {% if config.hide_full_text %}:hide-full-text="true"{% endif %} {% if config.hide_editing %}:hide-editing="true"{% endif %} {% if config.hide_public %}:hide-public="true"{% endif %} {% if multi_request %}:multi-request="true"{% endif %} {% if confirm_required %}:confirm-required="true"{% endif %} :config="{{ js_config }}">
         <template data-slot="intro_howto">
             {# request-page will skip the INTRO_HOWTO step if this is empty #}
             {% include "foirequest/snippets/request_intro_howto.html" %}
@@ -66,7 +55,8 @@
                             {% endif %}
                             {% if campaign.short_description %}<p>{{ campaign.short_description }}</p>{% endif %}
                             <div class="mt-auto">
-                                <a href="{{ campaign.url }}" class="action-link arrow-end">{% trans "Make a request" %}</a>
+                                <a href="{{ campaign.url }}"
+                                   class="action-link arrow-end">{% trans "Make a request" %}</a>
                             </div>
                         </div>
                     </li>
@@ -127,7 +117,8 @@
             </div>
             {% if not request.user.is_authenticated %}
                 <div class="alert alert-warning">
-                    <a href="{% url 'account-login' %}" class="alert-link">{% trans "You have to login or signup first in order to make a request." %}</a>
+                    <a href="{% url 'account-login' %}"
+                       class="alert-link">{% trans "You have to login or signup first in order to make a request." %}</a>
                 </div>
             {% else %}
                 {% if publicbodies %}

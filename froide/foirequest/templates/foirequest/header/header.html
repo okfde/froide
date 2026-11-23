@@ -34,13 +34,13 @@
             <ul>
                 <li>
                     {% blocktrans %}Have you received a reply by <b>postal mail</b>?{% endblocktrans %}
-                    &rarr;
+                    →
                     <a href="{% url 'foirequest-upload_postal_message' slug=object.slug %}"
                        class="alert-link">{% translate "Upload the letter now!" %}</a>
                 </li>
                 <li>
                     {% blocktrans %}Have you not gotten any reply?{% endblocktrans %}
-                    &rarr;
+                    →
                     <a href="#write-messages"
                        data-scrollto="write-messages"
                        class="alert-link">{% translate "Write a reminder to the public body!" %}</a>
@@ -165,7 +165,8 @@
                                               class="form-control mb-3"
                                               name="summary"
                                               placeholder="{% trans 'Summary of the result of your request' %}">{{ object.summary }}</textarea>
-                                    <button type="submit" class="btn btn-primary me-2">{% blocktrans %}Save{% endblocktrans %}</button>
+                                    <button type="submit"
+                                            class="btn btn-primary me-2">{% blocktrans %}Save{% endblocktrans %}</button>
                                     <button type="button" class="btn btn-secondary" data-inlineeditcancel="true">
                                         {% blocktrans %}Cancel{% endblocktrans %}
                                     </button>
@@ -178,7 +179,9 @@
                 {% include "foirequest/header/_tags.html" with object=object %}
                 {% block make_same_request %}
                     {% if object.not_publishable %}
-                        <div id="make-same-request" class="p-3 bg-body border">{% include "foirequest/snippets/make_same_request.html" %}</div>
+                        <div id="make-same-request" class="p-3 bg-body border">
+                            {% include "foirequest/snippets/make_same_request.html" %}
+                        </div>
                     {% endif %}
                 {% endblock %}
             </div>

@@ -21,15 +21,16 @@
                     {% for object in object_list %}
                         <tr>
                             <td>
-                                {% if object.status == 'active' %}<a href="{{ object.get_absolute_url }}">{% endif %}
-                                    {{ object.name }}
-                                    {% if object.status == 'active' %}</a>{% endif %}
+                                {% if object.status == "active" %}<a href="{{ object.get_absolute_url }}">{% endif %}
+                                {{ object.name }}
+                                {% if object.status == "active" %}</a>{% endif %}
                             </td>
                             <td>
-                                {% if object.status == 'invited' %}
+                                {% if object.status == "invited" %}
                                     <form method="post" action="{% url 'team-join_user' pk=object.member_id %}">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-primary">{% trans "Join this team" %}</button>
+                                        <button type="submit"
+                                                class="btn btn-sm btn-primary">{% trans "Join this team" %}</button>
                                     </form>
                                 {% else %}
                                     {{ object.get_role_display }}

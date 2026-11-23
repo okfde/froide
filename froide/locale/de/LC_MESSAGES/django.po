@@ -16,15 +16,15 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-09 09:51+0200\n"
-"PO-Revision-Date: 2026-08-10 17:46+0100\n"
-"Last-Translator: krmax44 <github@krmax44.de>\n"
+"PO-Revision-Date: 2026-11-23 12:29+0100\n"
+"Last-Translator: Max <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/froide/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.9\n"
+"X-Generator: Poedit 3.10\n"
 
 #: froide/foirequest/templates/foirequest/emails/dummy_mail_end.txt
 msgid ""
@@ -109,6 +109,7 @@ msgstr[1] "%(num)s Anfragen"
 msgid "%(query)s document search"
 msgstr "%(query)s Dokumentensuche"
 
+#. Translators: meta description
 #: froide/templates/scaffold.html
 #, python-format
 msgid "%(site)s helps you to make freedom of information requests to public bodies"
@@ -429,6 +430,11 @@ msgstr "<int:pk>/set_title"
 #: froide/foirequest/templates/foirequest/request.html
 msgid "<p>Before you write your own request, you can search our archives. Maybe the information you are looking for has already been published.</p>"
 msgstr "<p>Suchen Sie in unserem Archiv nach ähnlichen Anfragen, bevor Sie eine eigene Anfrage stellen. Vielleicht sind die gewünschten Informationen bereits veröffentlicht.</p>"
+
+#: froide/account/templates/account/emails/confirmation_mail.html
+#, python-format
+msgid "<p>Hello %(name)s,</p> <p> This is an email from %(site_name)s to confirm your email address. <br /> Please visit the link below: </p> <p><a href=\"%(action_url)s\">Click here to confirm your email address</a></p>"
+msgstr "<p>Hallo %(name)s,</p> <p>dies ist eine E-Mail von %(site_name)s, um Ihre E-Mail-Adresse zu bestätigen. <br/> Bitte besuchen Sie folgenden Link: </p> <p><a href=\"%(action_url)s\">Bitte klicken Sie hier um Ihre E-Mail-Adresse zu bestätigen</a></p>"
 
 #: froide/foirequest/templates/foirequest/request.html
 msgid "<p>Your name will be sent to public bodies. If you want to remain anonymous to the public, you can choose to not display your name on the website. Your name will then be redacted.</p>"
@@ -1011,6 +1017,10 @@ msgstr "Identitätsnachweis beifügen"
 #: froide/foirequest/models/attachment.py
 msgid "Attachment"
 msgstr "Anhang"
+
+#: froide/foirequest/templates/foirequest/attachment/show.html
+msgid "Attachment PDF"
+msgstr "Anhangs-PDF"
 
 #: froide/foirequest/views/attachment.py
 msgid "Attachment approved."
@@ -3789,23 +3799,6 @@ msgstr ""
 "Beste Grüße\n"
 "%(site_name)s\n"
 
-#: froide/account/templates/account/emails/confirmation_mail.html
-#, python-format
-msgid ""
-"Hello %(name)s,</p>\n"
-"\n"
-"<p>This is an email from %(site_name)s to confirm your email address.<br />\n"
-"Please visit the link below:</p>\n"
-"<p><a href=\"%(action_url)s\">Click here to confirm your email address</a></p>\n"
-"\n"
-msgstr ""
-"Hallo %(name)s,</p>\n"
-"\n"
-"<p>dies ist eine E-Mail von %(site_name)s, um Ihre E-Mail-Adresse zu bestätigen.<br/>\n"
-"Bitte besuchen Sie folgenden Link:</p>\n"
-"<p><a href=\"%(action_url)s\">Bitte klicken Sie hier um Ihre E-Mail-Adresse zu bestätigen</a></p>\n"
-"\n"
-
 #: froide/follow/templates/follow/emails/batch_update_follower.txt
 #: froide/follow/templates/follow/emails/confirm_follow.txt
 #: froide/follow/templates/follow/emails/update_follower.txt
@@ -4404,6 +4397,10 @@ msgstr "Los geht's!"
 #: froide/foirequest/serializers.py froide/letter/apps.py
 msgid "Letter"
 msgstr "Brief"
+
+#: froide/letter/templates/letter/default.html
+msgid "Letter preview"
+msgstr "Briefvorschau"
 
 #: froide/foirequest/forms/message.py
 msgid "Letter text summary"
@@ -12730,9 +12727,6 @@ msgstr "👋 Viel Erfolg!"
 
 #~ msgid "Link to law text:"
 #~ msgstr "Link zum Gesetzestext:"
-
-#~ msgid "Load preview"
-#~ msgstr "Vorschau laden"
 
 #~ msgid "Login using that email address"
 #~ msgstr "Melden Sie sich mit dieser E-Mail-Adresse an"

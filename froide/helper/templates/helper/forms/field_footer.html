@@ -1,8 +1,6 @@
 {% with tag=inline|yesno:"small,div" %}
     {% if help_text %}
-        <{{ tag }} class="form-text"
-        {% if field.auto_id %}id="{{ field.auto_id }}_helptext"{% endif %}
-        >{{ help_text }}</{{ tag }}>
+        <{{ tag }} class="form-text" {% if field.auto_id %}id="{{ field.auto_id }}_helptext"{% endif %}>{{ help_text }}</{{ tag }}>
     {% endif %}
 {% endwith %}
 {% if field.errors %}

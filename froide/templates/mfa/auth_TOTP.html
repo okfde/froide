@@ -12,7 +12,7 @@
     <h1>{% translate "Two-factor login" %}</h1>
     <p>{% translate "Open your authenticator app to get an authentication code." %}</p>
     {% get_mfa_keys as mfa_keys %}
-    <form method="POST" class="disable-submit">
+    <form method="post" class="disable-submit">
         {% csrf_token %}
         {% if form.non_field_errors %}
             <div class="alert alert-danger">

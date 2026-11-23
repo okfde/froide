@@ -15,7 +15,7 @@
         <h1 id="subscription-urls" class="h2 mb-3">{% trans "Private Subscription URLs" %}</h1>
         <p>{% trans "You can generate private URLs to subscribe to your requests in other applications." %}</p>
         <form action="{% url 'accesstoken-reset' %}#subscription-urls"
-              method="POST">
+              method="post">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.get_full_path }}" />
             {% trans "Private RSS feed URL" as url_label %}

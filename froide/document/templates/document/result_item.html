@@ -10,13 +10,13 @@
 <div class="col ms-3 mb-3">
     {% with heading_tag=heading_tag|default:"h5" %}
         <{{ heading_tag }} class="h5 mt-0 mb-1">
-        <a href="{{ object.get_absolute_url }}">
-            {% if has_query %}
-                {% trans "Page" %} {{ object.number }} – {{ object.document.title }}
-            {% else %}
-                {{ object.document.title }}
-            {% endif %}
-        </a>
+            <a href="{{ object.get_absolute_url }}">
+                {% if has_query %}
+                    {% trans "Page" %} {{ object.number }} – {{ object.document.title }}
+                {% else %}
+                    {{ object.document.title }}
+                {% endif %}
+            </a>
         </{{ heading_tag }}>
     {% endwith %}
     {% if object.document.foirequest %}

@@ -1,4 +1,4 @@
-{% extends 'publicbody/base.html' %}
+{% extends "publicbody/base.html" %}
 {% load i18n %}
 {% load markup %}
 {% block title %}{{ object.name }} - {{ SITE_NAME }}{% endblock %}
@@ -32,7 +32,9 @@
                 {% endif %}
                 {% if not legal_text %}
                     <p class="my-0">
-                        <a href="{{ object.url }}" target="_blank" rel="noopener">→ {% blocktrans %}Official law text{% endblocktrans %}</a>
+                        <a href="{{ object.url }}"
+                           target="_blank"
+                           rel="noopener">→ {% blocktrans %}Official law text{% endblocktrans %}</a>
                     </p>
                 {% endif %}
                 {% if object.scale_of_fees %}

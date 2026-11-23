@@ -4,11 +4,11 @@
             {% if group %}
                 <div>
                     <label class="form-label">{{ group }}</label>
-                {% endif %}
-                {% for option in options %}
-                    {% include option.template_name with widget=option %}
-                {% endfor %}
-                {% if group %}</div>{% endif %}
+            {% endif %}
+            {% for option in options %}
+                {% include option.template_name with widget=option %}
+            {% endfor %}
+            {% if group %}</div>{% endif %}
         {% endfor %}
     </div>
 {% endwith %}

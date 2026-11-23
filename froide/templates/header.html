@@ -17,9 +17,7 @@
                              class="navbar-logo"
                              alt="">
                     {% endblock %}
-                    <span class="navbar-brand-name">
-                        {% block nav_brand_name %}{{ SITE_NAME }}{% endblock %}
-                    </span>
+                    <span class="navbar-brand-name">{% block nav_brand_name %}{{ SITE_NAME }}{% endblock %}</span>
                 </a>
             {% endblock %}
             <button class="navbar-toggler d-print-none"
@@ -36,7 +34,8 @@
                 {% block nav %}
                     <ul class="navbar-nav col-auto ms-auto">
                         <li class="nav-item {% block nav_requests %}{% endblock %}">
-                            <a class="nav-link" href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a>
+                            <a class="nav-link"
+                               href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a>
                         </li>
                         <li class="nav-item {% block nav_makerequest %}{% endblock %}">
                             <a class="btn btn-primary" href="{% url 'foirequest-make_request' %}">
@@ -96,7 +95,8 @@
                                     <div class="dropdown-item">
                                         <form action="{% url 'account-logout' %}" method="post" class="text-center">
                                             {% csrf_token %}
-                                            <button type="submit" class="btn btn-secondary">{% blocktrans %}Logout{% endblocktrans %}</button>
+                                            <button type="submit"
+                                                    class="btn btn-secondary">{% blocktrans %}Logout{% endblocktrans %}</button>
                                         </form>
                                     </div>
                                 </div>
@@ -134,7 +134,9 @@
                                                     name="language"
                                                     value="{{ lang_code }}">
                                                 {{ language|title }}
-                                                {% if lang_code == CURRENT_LANGUAGE_CODE %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %}
+                                                {% if lang_code == CURRENT_LANGUAGE_CODE %}
+                                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                                {% endif %}
                                             </button>
                                         </form>
                                     {% endfor %}
