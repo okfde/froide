@@ -56,4 +56,4 @@ jobs:
           pytest -n auto --cov --cov-report= froide/
           coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         env:
-          DATABASE_URL: postgis://postgres:postgres@localhost/froide
+          DATABASE_URL: postgis://froide:froide@localhost/froide
