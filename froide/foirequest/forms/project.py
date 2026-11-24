@@ -38,16 +38,7 @@ class AssignProjectForm(forms.Form):
         self.fields["project"].initial = self.instance.project
 
     def save(self):
-        project = self.cleaned_data["project"]
-        old_project = self.instance.project
-        self.instance.project = project
-        self.instance.save()
-
-        if old_project is not None:
-            old_project.recalculate_order()
-        if project is not None:
-            project.recalculate_order()
-
+        FoiProject.move_requests([self.instance], self.cleaned_data["project"])
         return self.instance
 
 
