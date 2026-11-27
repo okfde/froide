@@ -17,6 +17,11 @@ class ProofConfig(AppConfig):
     def ready(self):
         from froide.account import account_canceled, account_merged
         from froide.account.export import registry
+        from froide.api import api_router
+
+        from .api_views import ProofViewSet
+
+        api_router.register(r"proof", ProofViewSet, basename="proof")
 
         account_merged.connect(merge_user)
         registry.register(export_user_data)
