@@ -3,9 +3,12 @@ from datetime import datetime, timedelta
 from django.test import Client
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext
 
 import pytest
 from oauth2_provider.models import get_access_token_model, get_application_model
+
+from froide.comments.models import FroideComment
 
 from ..models import FoiEvent, FoiRequest
 from ..models.message import MessageKind
@@ -467,3 +470,107 @@ def test_create_draft_message_with_oauth(client, dummy_user, get_oauth_header):
     assert response.status_code == 201, response.json()
     message_response = response.json()
     assert message_response["is_draft"]
+
+
+@pytest.mark.django_db
+def test_comment_message_with_oauth(client, dummy_user, get_oauth_header):
+    message = factories.FoiMessageFactory.create()
+    url = reverse("api:message-comment", kwargs={"pk": message.pk})
+    auth_header = get_oauth_header("write:comment")
+
+    # same validation as the web comment form
+    response = client.post(
+        url,
+        data={"comment": "x" * 3001},
+        HTTP_AUTHORIZATION=auth_header,
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+    assert FroideComment.objects.count() == 0
+
+    response = client.post(
+        url,
+        data={"comment": "Thanks for publishing this"},
+        HTTP_AUTHORIZATION=auth_header,
+        content_type="application/json",
+    )
+    assert response.status_code == 201, response.json()
+    data = response.json()
+    assert data["message"] == message.pk
+    assert data["comment"] == "Thanks for publishing this"
+    assert data["user_name"] == dummy_user.get_full_name()
+
+    comment = FroideComment.objects.get()
+    assert comment.content_object == message
+    assert comment.user == dummy_user
+    assert comment.is_public
+    assert not comment.is_moderation
+    # email and url are not stored, see pre_comment_foimessage
+    assert comment.user_email == ""
+    assert comment.user_url == ""
+
+
+@pytest.mark.django_db
+def test_comment_message_scope_missing(client, get_oauth_header):
+    message = factories.FoiMessageFactory.create()
+    url = reverse("api:message-comment", kwargs={"pk": message.pk})
+    data = {"comment": "My comment"}
+
+    response = client.post(url, data=data, content_type="application/json")
+    assert response.status_code == 401
+
+    response = client.post(
+        url,
+        data=data,
+        HTTP_AUTHORIZATION=get_oauth_header("read:request write:request"),
+        content_type="application/json",
+    )
+    assert response.status_code == 403
+    assert FroideComment.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_comment_message_private_request(client, dummy_user, get_oauth_header):
+    other_request = factories.FoiRequestFactory.create(
+        visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
+    )
+    other_message = factories.FoiMessageFactory.create(request=other_request)
+    dummy_user.private = True
+    dummy_user.save()
+    own_request = factories.FoiRequestFactory.create(
+        user=dummy_user, visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
+    )
+    own_message = factories.FoiMessageFactory.create(request=own_request)
+    data = {"comment": "My comment"}
+
+    # private requests need the read:request scope, like reading them
+    auth_header = get_oauth_header("write:comment")
+    for message in (other_message, own_message):
+        response = client.post(
+            reverse("api:message-comment", kwargs={"pk": message.pk}),
+            data=data,
+            HTTP_AUTHORIZATION=auth_header,
+            content_type="application/json",
+        )
+        assert response.status_code == 404
+    AccessToken.objects.all().delete()
+
+    auth_header = get_oauth_header("read:request write:comment")
+    response = client.post(
+        reverse("api:message-comment", kwargs={"pk": other_message.pk}),
+        data=data,
+        HTTP_AUTHORIZATION=auth_header,
+        content_type="application/json",
+    )
+    assert response.status_code == 404
+
+    response = client.post(
+        reverse("api:message-comment", kwargs={"pk": own_message.pk}),
+        data=data,
+        HTTP_AUTHORIZATION=auth_header,
+        content_type="application/json",
+    )
+    assert response.status_code == 201
+    # private users show up as requester on their own request
+    assert response.json()["user_name"] == gettext("requester")
+    assert FroideComment.objects.get().content_object == own_message

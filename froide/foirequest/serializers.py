@@ -1,9 +1,12 @@
 from typing import override
 
+from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
+from django_comments import get_form as get_comment_form
+from django_comments.signals import comment_was_posted, comment_will_be_posted
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import PermissionDenied
@@ -261,6 +264,43 @@ class MakeRequestSerializer(serializers.Serializer):
     def create(self, validated_data):
         service = CreateRequestService(validated_data)
         return service.execute(validated_data["request"])
+
+
+class CreateCommentSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    message = serializers.IntegerField(source="object_pk", read_only=True)
+    name = serializers.CharField(required=False, write_only=True, max_length=50)
+    user_name = serializers.CharField(read_only=True)
+    submit_date = serializers.DateTimeField(read_only=True)
+    comment = serializers.CharField()
+
+    def validate(self, attrs):
+        # fill in the web comment form like django_comments' post_comment view
+        message = self.context["message"]
+        user = self.context["request"].user
+        data = get_comment_form()(message).generate_security_data()
+        data["name"] = attrs.get("name") or user.get_full_name() or user.get_username()
+        data["email"] = user.email
+        data["comment"] = attrs["comment"]
+        self.form = get_comment_form()(message, data=data)
+        if not self.form.is_valid():
+            raise serializers.ValidationError(self.form.errors)
+        return attrs
+
+    def create(self, validated_data):
+        request = self.context["request"]
+        comment = self.form.get_comment_object(site_id=get_current_site(request).id)
+        comment.user = request.user
+        responses = comment_will_be_posted.send(
+            sender=comment.__class__, comment=comment, request=request
+        )
+        if any(response is False for _receiver, response in responses):
+            raise serializers.ValidationError("Comment was rejected")
+        comment.save()
+        comment_was_posted.send(
+            sender=comment.__class__, comment=comment, request=request
+        )
+        return comment
 
 
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):

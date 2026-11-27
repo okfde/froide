@@ -8,7 +8,7 @@ from froide.foirequest.models.attachment import FoiAttachment
 from froide.foirequest.models.message import FoiMessage
 from froide.foirequest.models.request import FoiRequest
 
-from .auth import can_read_foirequest, can_write_foirequest
+from .auth import FoiRequestScope, can_read_foirequest, can_write_foirequest
 
 
 class WriteFoiRequestPermission(permissions.BasePermission):
@@ -48,5 +48,16 @@ class WriteMessageScopePermission(TokenHasScope):
         if request.user.is_authenticated and request.auth is None:
             # allow api use with session authentication
             # see https://www.django-rest-framework.org/api-guide/authentication/#sessionauthentication
+            return True
+        return super().has_permission(request, view)
+
+
+class WriteCommentScopePermission(TokenHasScope):
+    def get_scopes(self, request, view):
+        return [FoiRequestScope.WRITE_COMMENT]
+
+    def has_permission(self, request: Request, view: ViewSet):
+        if request.user.is_authenticated and request.auth is None:
+            # allow api use with session authentication
             return True
         return super().has_permission(request, view)
