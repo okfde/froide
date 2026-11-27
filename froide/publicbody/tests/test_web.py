@@ -162,14 +162,14 @@ Public Body 76 X,{},pb-76@76.example.com,bund,,,http://example.com,,Ministry,Som
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
 
-        # Add entity if only same slug
+        # don't add entity if slug already exists
         csv = """name,slug,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address
 Public Body 76 X,{},pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address""".format(
             pb.slug
         )
         imp.import_from_file(BytesIO(csv.encode("utf-8")))
         now_count = PublicBody.objects.all().count()
-        self.assertEqual(now_count, prev_count + 1)
+        self.assertEqual(now_count, prev_count)
 
     def test_csv_new_import(self):
         # Make sure classification exist
@@ -181,6 +181,14 @@ Public Body X 76,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some c
         imp.import_from_file(BytesIO(csv.encode("utf-8")))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count - 1, prev_count)
+
+        # unless we specify an id or slug, it just creates another public body when importing again
+        csv = """name,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address,website_dump,request_note
+Public Body X 76,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address,,"""
+        imp = CSVImporter()
+        imp.import_from_file(BytesIO(csv.encode("utf-8")))
+        now_count = PublicBody.objects.all().count()
+        self.assertEqual(now_count - 2, prev_count)
 
     def test_csv_command(self):
         from django.core.management import call_command
