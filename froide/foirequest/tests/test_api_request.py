@@ -356,6 +356,19 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
             )
         self.assertEqual(response.status_code, 429)
 
+    def test_set_status_with_scope(self):
+        url = reverse("api:request-set-status", kwargs={"pk": self.req.pk})
+        data = {"status": Status.RESOLVED, "resolution": Resolution.SUCCESSFUL}
+        response, result = self.api_post(url, data)
+        self.assertEqual(response.status_code, 404)
+
+        self.access_token.scope = "read:user write:request"
+        self.access_token.save()
+        response, result = self.api_post(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(result["status"], Status.RESOLVED)
+        self.assertEqual(result["resolution"], Resolution.SUCCESSFUL)
+
     def test_foiattachment_upload(self):
         mes = factories.FoiMessageFactory.create(request=self.req, kind="post")
         mes_url = reverse("api:message-detail", kwargs={"pk": mes.pk})
@@ -559,3 +572,68 @@ def test_foirequest_update(client, user):
         content_type="application/json",
     )
     assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_set_status(client, user):
+    foirequest = factories.FoiRequestFactory.create(
+        user=user, status=Status.AWAITING_CLASSIFICATION, costs=10
+    )
+    message = factories.FoiMessageFactory.create(request=foirequest, status=None)
+    refusal_reason = foirequest.law.get_refusal_reason_choices()[0][0]
+    url = reverse("api:request-set-status", kwargs={"pk": foirequest.pk})
+    assert client.login(email=user.email, password="froide")
+
+    # same validation as the status form on the website
+    for data in (
+        {"status": Status.RESOLVED},
+        {"status": Status.PUBLICBODY_NEEDED},
+        {"status": Status.RESOLVED, "resolution": "foo"},
+    ):
+        response = client.post(url, data=data, content_type="application/json")
+        assert response.status_code == 400
+
+    response = client.post(
+        url,
+        data={
+            "status": Status.RESOLVED,
+            "resolution": Resolution.REFUSED,
+            "refusal_reason": refusal_reason,
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 200, response.json()
+    data = response.json()
+    assert data["status"] == Status.RESOLVED
+    assert data["resolution"] == Resolution.REFUSED
+    assert data["refusal_reason"] == refusal_reason
+    # costs were not sent and are kept
+    assert data["costs"] == 10
+
+    # the response message gets the status, like on the website
+    message.refresh_from_db()
+    assert message.status == Status.RESOLVED
+    assert FoiEvent.objects.get(
+        request=foirequest,
+        event_name=FoiEvent.EVENTS.STATUS_CHANGED,
+        context__status=Status.RESOLVED,
+        context__resolution=Resolution.REFUSED,
+        context__previous_status=Status.AWAITING_CLASSIFICATION,
+    )
+
+
+@pytest.mark.django_db
+def test_set_status_not_allowed(client, user):
+    foirequest = factories.FoiRequestFactory.create()
+    url = reverse("api:request-set-status", kwargs={"pk": foirequest.pk})
+    data = {"status": Status.RESOLVED, "resolution": Resolution.SUCCESSFUL}
+
+    response = client.post(url, data=data, content_type="application/json")
+    assert response.status_code == 401
+
+    # only the requester can set the status
+    assert client.login(email=user.email, password="froide")
+    response = client.post(url, data=data, content_type="application/json")
+    assert response.status_code == 404
+    foirequest.refresh_from_db()
+    assert foirequest.status == ""
